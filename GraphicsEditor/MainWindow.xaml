@@ -5,9 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GraphicsEditor"
         mc:Ignorable="d"
-        Title="MainWindow" Height="200" Width="120">
+        Title="MainWindow" Height="400" Width="750">
     <Grid x:Name="grid1">
-        <TextBox x:Name="textBox" Width="100" Height="20"/>
-        <Button x:Name="button1"  Width="100" Height="30" Click="button_Click" Margin="10,64,10,-10" >клик</Button>
+        <DockPanel>
+            <StackPanel DockPanel.Dock="Left" Orientation="Vertical">
+                <Button DockPanel.Dock="Left" x:Name="segment" Height="30" Click="segment_Click">отрезок</Button>
+                <Button DockPanel.Dock="Left" x:Name="rictangle" Height="30" Click="rictangle_Click">прямоугольник</Button>
+            </StackPanel>
+
+            <Grid DockPanel.Dock="Right">
+                <Canvas x:Name="canvas" DockPanel.Dock="Right" Background="White" MouseUp="canvas_MouseUp" MouseDown="canvas_MouseDown" MouseMove="canvas_MouseMove"/>
+            </Grid>
+        </DockPanel>
     </Grid>
 </Window>

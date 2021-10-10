@@ -20,19 +20,68 @@ namespace GraphicsEditor
     /// </summary>
     public partial class MainWindow : Window
     {
+        IPaint paint;
+
+        Point currentPoint = new();
+
+        Line line;
+        Rectangle rectangle;
+
+        int numberLine = 0;
+
         public MainWindow()
         {
+            paint = new Paint();
+            
             InitializeComponent();
         }
 
-        private void button_Click(object sender, RoutedEventArgs e)
+        private void canvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            string df = textBox.Text;
-
-            if (!string.IsNullOrEmpty(df))
+            if (e.LeftButton == MouseButtonState.Pressed)
             {
-                MessageBox.Show(df);
+                currentPoint = e.GetPosition(canvas);
+
+                paint.StartObject(currentPoint);
             }
+        }
+
+        private void canvas_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                currentPoint = e.GetPosition(canvas);
+
+                paint.NowObject(currentPoint);
+            }
+        }
+
+        private void canvas_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (line != null)
+            {
+                line.Name = "line" + numberLine;
+                line.X2 = e.GetPosition(canvas).X;
+                line.Y2 = e.GetPosition(canvas).Y;
+                numberLine++;
+
+                paint.AppNewObject(canvas, new Segment());
+                line = (Line)paint.GetCurrentItem();
+            }
+        }
+
+        private void segment_Click(object sender, RoutedEventArgs e)
+        {   
+            paint.AppNewObject(canvas, new Segment());
+
+            line = (Line)paint.GetCurrentItem();
+        }
+
+        private void rictangle_Click(object sender, RoutedEventArgs e)
+        {
+            paint.AppNewObject(canvas, new Square());
+
+            rectangle = (Rectangle)paint.GetCurrentItem();
         }
     }
 }
