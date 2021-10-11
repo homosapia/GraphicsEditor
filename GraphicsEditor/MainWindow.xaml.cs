@@ -21,13 +21,9 @@ namespace GraphicsEditor
     public partial class MainWindow : Window
     {
         IPaint paint;
+        IFigure figure;
 
         Point currentPoint = new();
-
-        Line line;
-        Rectangle rectangle;
-
-        int numberLine = 0;
 
         public MainWindow()
         {
@@ -36,52 +32,49 @@ namespace GraphicsEditor
             InitializeComponent();
         }
 
-        private void canvas_MouseDown(object sender, MouseButtonEventArgs e)
+        private void canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                currentPoint = e.GetPosition(canvas);
+            currentPoint = e.GetPosition(canvas);
 
-                paint.StartObject(currentPoint);
-            }
+            paint.AppNewObject(canvas, figure);
+            paint.StartObject(currentPoint);
+
         }
 
         private void canvas_MouseMove(object sender, MouseEventArgs e)
         {
+            currentPoint = e.GetPosition(canvas);
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                currentPoint = e.GetPosition(canvas);
-
                 paint.NowObject(currentPoint);
             }
+
+            try
+            {
+                paint.ShowMarker(canvas, paint.FindFigure(currentPoint));
+            }
+            catch { paint.DelMarker(canvas); }
         }
 
-        private void canvas_MouseUp(object sender, MouseButtonEventArgs e)
+        private void canvas_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (line != null)
-            {
-                line.Name = "line" + numberLine;
-                line.X2 = e.GetPosition(canvas).X;
-                line.Y2 = e.GetPosition(canvas).Y;
-                numberLine++;
-
-                paint.AppNewObject(canvas, new Segment());
-                line = (Line)paint.GetCurrentItem();
-            }
+            currentPoint = e.GetPosition(canvas);
+            paint.EndObject(currentPoint);
         }
 
         private void segment_Click(object sender, RoutedEventArgs e)
         {   
-            paint.AppNewObject(canvas, new Segment());
-
-            line = (Line)paint.GetCurrentItem();
+            figure = new Segment();
         }
 
         private void rictangle_Click(object sender, RoutedEventArgs e)
         {
-            paint.AppNewObject(canvas, new Square());
+            figure = new Square();
+        }
 
-            rectangle = (Rectangle)paint.GetCurrentItem();
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
