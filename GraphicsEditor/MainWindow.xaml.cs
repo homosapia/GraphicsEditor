@@ -52,7 +52,7 @@ namespace GraphicsEditor
 
             if (e.RightButton == MouseButtonState.Pressed)
             {
-                figure.ChangePosition(currentPoint);
+                paint.ChangePosition(currentPoint);
             }
         }
 

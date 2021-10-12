@@ -15,8 +15,6 @@ namespace GraphicsEditor
 
         public void AppNewObject(Canvas canvas, IFigure obj);
 
-        public UIElement GetCurrentItem();
-
         public void NowObject(Point point);
 
         public void EndObject(Point point);

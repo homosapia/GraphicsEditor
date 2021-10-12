@@ -58,7 +58,6 @@ namespace GraphicsEditor
         private void Marker_MouseRightButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             clicMarker = true;
-            ClickMarker.Invoke(this);
         }
 
         public void ChangePosition(Point point)
@@ -92,9 +91,11 @@ namespace GraphicsEditor
 
         private void Line_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
+            ClickMarker.Invoke(this);
             for (int i = 0; i < points.Length; i++)
             {
-                if (Math.Abs(points[i].X - e.GetPosition(canvas).X) < 5 && (Math.Abs(points[i].Y - e.GetPosition(canvas).Y) < 5))
+                Point point = e.GetPosition(canvas);
+                if (Math.Abs(points[i].X - point.X) < 5 && (Math.Abs(points[i].Y - point.Y) < 5))
                 {
 
                     Canvas.SetLeft(marker, points[i].X - 5);

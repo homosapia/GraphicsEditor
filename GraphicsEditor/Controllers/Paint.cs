@@ -12,47 +12,40 @@ namespace GraphicsEditor
 {
     class Paint : IPaint
     {
-        List<IFigure> figures = new();
-        UIElement uiElement;
+        IFigure Element;
 
         public void AppNewObject(Canvas canvas, IFigure figure)
         {
-            figures.Add(figure);
-            uiElement = (UIElement)figure.NewObject(canvas);
+            Element = figure;
 
-            figure.ClickMarker += mes;
+            figure.ClickMarker += Mes;
 
-            canvas.Children.Add(uiElement);
+            canvas.Children.Add((UIElement)figure.NewObject(canvas));
         }
 
-        public void mes(IFigure figure)
+        public void Mes(IFigure figure)
         {
-            MessageBox.Show(figure.ToString());
-        }
-
-        public UIElement GetCurrentItem()
-        {
-            return uiElement;
+            Element = figure;
         }
 
         public void StartObject(Point point)
         {
-            figures.Last().StartObject(point);
+            Element.StartObject(point);
         }
 
         public void NowObject(Point point)
         {
-            figures.Last().EndObject(point);
+            Element.EndObject(point);
         }
 
         public void EndObject(Point point)
         {
-            figures.Last().EndObject(point);
+            Element.EndObject(point);
         }
 
         public void ChangePosition(Point MousePoint)
         {
-
+            Element.ChangePosition(MousePoint);
         }
     }
 }
