@@ -37,6 +37,7 @@ namespace GraphicsEditor
             currentPoint = e.GetPosition(canvas);
 
             paint.AppNewObject(canvas, figure);
+
             paint.StartObject(currentPoint);
 
         }
@@ -49,11 +50,10 @@ namespace GraphicsEditor
                 paint.NowObject(currentPoint);
             }
 
-            try
+            if (e.RightButton == MouseButtonState.Pressed)
             {
-                paint.ShowMarker(canvas, paint.FindFigure(currentPoint));
+                figure.ChangePosition(currentPoint);
             }
-            catch { paint.DelMarker(canvas); }
         }
 
         private void canvas_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)

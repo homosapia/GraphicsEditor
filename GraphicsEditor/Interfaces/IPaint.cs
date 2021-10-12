@@ -11,8 +11,6 @@ namespace GraphicsEditor
 {
     public interface IPaint
     {
-        public object NewObject(IFigure obj);
-
         public void StartObject(Point point);
 
         public void AppNewObject(Canvas canvas, IFigure obj);
@@ -23,12 +21,7 @@ namespace GraphicsEditor
 
         public void EndObject(Point point);
 
-        public Point FindFigure(Point MousePoint);
+        public void ChangePosition(Point MousePoint);
 
-        public void SetMarker(IFigure figure);
-
-        public void DelMarker(Canvas canvas);
-
-        public void ShowMarker(Canvas canvas, Point figure);
     }
 }

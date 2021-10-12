@@ -14,13 +14,18 @@ namespace GraphicsEditor
     {
         private Rectangle rectangle;
         Point [] point = new Point[2];
+        
+        Rectangle marker;
 
-        List<Rectangle> marker;
+        public event EventClickMarker ClickMarker;
 
-        public object NewObject()
+        public object NewObject(Canvas canvas)
         {
             rectangle = new();
             rectangle.Fill = new SolidColorBrush(Colors.Black);
+
+            SetMarker();
+
             return rectangle;
         }
 
@@ -78,23 +83,24 @@ namespace GraphicsEditor
             return point;
         }
 
-        public void SetMarker(Rectangle[] marker)
+        public void SetMarker()
         {
-            this.marker = new();
-            foreach (var m in marker)
-            {
-                this.marker.Add(m);
-            }
-        }
-
-        public List<Rectangle> GetMarker()
-        {
-            return marker;
+            marker = new();
+            var color = SystemColors.WindowFrameBrush;
+            color.Color = Brushes.Red.Color;
+            marker.Stroke = color;
+            marker.Width = 10;
+            marker.Height = 10;
         }
 
         public void DelMarker()
         {
-            marker.Clear();
+            marker = null;
+        }
+
+        public void ChangePosition(Point point)
+        {
+            throw new NotImplementedException();
         }
     }
 }

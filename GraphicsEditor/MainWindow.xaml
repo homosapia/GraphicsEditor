@@ -13,7 +13,7 @@
                 <Button x:Name="rictangle" Height="30" Click="rictangle_Click">прямоугольник</Button>
                 <Button x:Name="buttonColor" Height="20" Width="20" Background="Black" Click="Button_Click"/>
             </StackPanel>
-
+            
             <Grid DockPanel.Dock="Right">
                 <Canvas x:Name="canvas" DockPanel.Dock="Right" Background="White" MouseMove="canvas_MouseMove" MouseLeftButtonDown="canvas_MouseLeftButtonDown" MouseLeftButtonUp="canvas_MouseLeftButtonUp"/>
             </Grid>
