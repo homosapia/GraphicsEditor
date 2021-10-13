@@ -18,7 +18,6 @@ namespace GraphicsEditor
         {
             Element = figure;
 
-            figure.ClickMarker += Mes;
 
             canvas.Children.Add((UIElement)figure.NewObject(canvas));
         }
@@ -46,6 +45,11 @@ namespace GraphicsEditor
         public void ChangePosition(Point MousePoint)
         {
             Element.ChangePosition(MousePoint);
+        }
+
+        public IFigure CurrentItem()
+        {
+            return Element;
         }
     }
 }

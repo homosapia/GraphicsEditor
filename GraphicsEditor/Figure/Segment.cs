@@ -12,29 +12,35 @@ namespace GraphicsEditor
 {
     class Segment : IFigure
     {
-        public event EventClickMarker ClickMarker;
+        public event EventGetFigure GetFigure;
+        public event EventCilckMarker ClickMarker;
 
-        private Line line;
-        Point [] points = new Point[2];
+        Polyline polyline;
 
         int currentPoint;
-        bool clicMarker;
+        bool clickMarker;
 
         Rectangle marker;
         Canvas canvas;
 
+        public Segment(Canvas canvas)
+        {
+            this.canvas = canvas;
+            SetMarker();
+            NewPoliLine();
+        }
 
         public object NewObject(Canvas canvas)
         {
-            line = new();
-            line.Stroke = SystemColors.WindowFrameBrush;
+            //del
+            return "dfdf";
+        }
 
-            line.MouseMove += Line_MouseMove;
-            line.MouseDown += Line_MouseDown;
-
-            this.canvas = canvas;
-            SetMarker();
-            return line;
+        public void CreateFigure(Point mouse)
+        {
+            polyline.Points.Add(mouse);
+            currentPoint++;
+            polyline.Points.Add(mouse);
         }
 
         public void SetMarker()
@@ -42,76 +48,67 @@ namespace GraphicsEditor
             marker = new();
             marker.Fill = Brushes.Red;
 
-            marker.MouseRightButtonDown += Marker_MouseRightButtonDown; ;
+            marker.MouseLeftButtonDown += Marker_MouseLeftButtonDown;
             marker.MouseLeave += Marker_MouseLeave;
-            marker.MouseRightButtonUp += Marker_MouseRightButtonUp; ;
+            marker.MouseLeftButtonUp += Marker_MouseLeftButtonUp;
 
             marker.Width = 10;
             marker.Height = 10;
         }
 
-        private void Marker_MouseRightButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void NewPoliLine()
         {
-            clicMarker = false;
+            polyline = new();
+            polyline.Stroke = SystemColors.WindowFrameBrush;
+
+            polyline.MouseDown += Polyline_MouseDown;
+            polyline.MouseMove += Polyline_MouseMove;
         }
 
-        private void Marker_MouseRightButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+
+
+        private void Polyline_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            clicMarker = true;
+            GetFigure(this);
+            for (int i = 0; i < polyline.Points.Count; i++)
+            {
+                Point point = e.GetPosition(canvas);
+
+                if (Math.Abs(polyline.Points[i].X - point.X) < 5 && (Math.Abs(polyline.Points[i].Y - point.Y) < 5))
+                {
+                    currentPoint = i;
+
+                    if (!canvas.Children.Contains(marker))
+                        canvas.Children.Add(marker);
+                }
+            }
+        }
+
+        private void Polyline_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+
+        }
+
+        private void Marker_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            ClickMarker(false);
+        }
+
+        private void Marker_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            ClickMarker(true);
         }
 
         public void ChangePosition(Point point)
         {
-            if (clicMarker)
-            {
-                points[currentPoint].X = point.X;
-                points[currentPoint].Y = point.Y;
-
-                if (currentPoint == 0)
-                {
-                    line.X1 = point.X;
-                    line.Y1 = point.Y;
-                }
-                else
-                {
-                    line.X2 = point.X;
-                    line.Y2 = point.Y;
-                }
-
-                Canvas.SetLeft(marker, point.X - 5);
-                Canvas.SetTop(marker, point.Y - 5);
-            }
+            polyline.Points[currentPoint] = point;
+            Canvas.SetLeft(marker, polyline.Points[currentPoint].X - 5);
+            Canvas.SetTop(marker, polyline.Points[currentPoint].Y - 5);
         }
-
 
         private void Marker_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             canvas.Children.Remove(marker);
-        }
-
-        private void Line_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            ClickMarker.Invoke(this);
-            for (int i = 0; i < points.Length; i++)
-            {
-                Point point = e.GetPosition(canvas);
-                if (Math.Abs(points[i].X - point.X) < 5 && (Math.Abs(points[i].Y - point.Y) < 5))
-                {
-
-                    Canvas.SetLeft(marker, points[i].X - 5);
-                    Canvas.SetTop(marker, points[i].Y - 5);
-
-                    currentPoint = i;
-
-                    if (!canvas.Children.Contains(marker))
-                    {
-                        canvas.Children.Add(marker);
-                        break;
-                    }
-                    else
-                        break;
-                }
-            }
         }
 
         
@@ -122,26 +119,15 @@ namespace GraphicsEditor
 
         public void StartObject(Point point)
         {
-            this.points[0] = point;
-            line.X1 = point.X;
-            line.Y1 = point.Y;
         }
 
         public void EndObject(Point point)
         {
-            this.points[1] = point;
-            line.X2 = point.X;
-            line.Y2 = point.Y;
         }
 
         public object Figure()
         {
-            return line;
-        }
-
-        public Point[] GetPointObject()
-        {
-            return points;
+            return polyline;
         }
 
         public void DelMarker()

@@ -21,5 +21,7 @@ namespace GraphicsEditor
 
         public void ChangePosition(Point MousePoint);
 
+        public IFigure CurrentItem();
+
     }
 }

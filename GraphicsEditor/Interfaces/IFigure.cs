@@ -9,23 +9,26 @@ using System.Windows.Shapes;
 
 namespace GraphicsEditor
 {
-    public delegate void EventClickMarker(IFigure figure);
+    public delegate void EventGetFigure(IFigure figure);
+    public delegate void EventCilckMarker(bool click);
 
     public interface IFigure
     {
-        public event EventClickMarker ClickMarker;
+        public event EventGetFigure GetFigure;
+        public event EventCilckMarker ClickMarker;
+
         public object NewObject(Canvas canvas);
         public object Figure();
         public void StartObject(Point point);
         public void EndObject(Point point);
-
-        public Point[] GetPointObject();
 
         public void SetMarker();
 
         public void ChangePosition(Point point);
 
         public void DelMarker();
+
+        public void CreateFigure(Point mouse);
 
     }
 }

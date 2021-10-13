@@ -20,61 +20,67 @@ namespace GraphicsEditor
     /// </summary>
     public partial class MainWindow : Window
     {
-        IPaint paint;
         IFigure figure;
+
+        bool transform;
 
         Point currentPoint = new();
 
         public MainWindow()
-        {
-            paint = new Paint();
-            
+        {   
             InitializeComponent();
         }
 
         private void canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            currentPoint = e.GetPosition(canvas);
-
-            paint.AppNewObject(canvas, figure);
-
-            paint.StartObject(currentPoint);
-
+            if(!canvas.Children.Contains((UIElement)figure.Figure()))
+            {
+                transform = true;
+                figure.CreateFigure(e.GetPosition(canvas));
+                canvas.Children.Add((UIElement)figure.Figure());
+            }
         }
 
         private void canvas_MouseMove(object sender, MouseEventArgs e)
         {
-            currentPoint = e.GetPosition(canvas);
-            if (e.LeftButton == MouseButtonState.Pressed)
+            if(e.LeftButton == MouseButtonState.Pressed && transform)
             {
-                paint.NowObject(currentPoint);
-            }
-
-            if (e.RightButton == MouseButtonState.Pressed)
-            {
-                paint.ChangePosition(currentPoint);
+                figure.ChangePosition(e.GetPosition(canvas));
             }
         }
 
         private void canvas_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            currentPoint = e.GetPosition(canvas);
-            paint.EndObject(currentPoint);
+            transform = false;
         }
 
         private void segment_Click(object sender, RoutedEventArgs e)
-        {   
-            figure = new Segment();
+        {
+            figure = new Segment(canvas);
+            figure.GetFigure += СurrentFigure;
+            figure.ClickMarker += ShowMarker;
         }
 
         private void rictangle_Click(object sender, RoutedEventArgs e)
         {
             figure = new Square();
+            figure.GetFigure += СurrentFigure;
+            figure.ClickMarker += ShowMarker;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        public void СurrentFigure(IFigure figure)
+        {
+            this.figure = figure;
+        }
+
+        public void ShowMarker(bool click)
+        {
+            transform = click;
         }
     }
 }
