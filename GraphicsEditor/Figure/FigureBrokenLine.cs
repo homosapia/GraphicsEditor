@@ -67,7 +67,8 @@ namespace GraphicsEditor
         {
             if (BeginningOrEnd == 1)
             {
-                FindLinesWithSamePoints(point);
+                Point point1 = new(currentLine.X1, currentLine.Y1);
+                FindLinesWithSamePoints(point1);
 
                 currentLine.X1 = point.X;
                 currentLine.Y1 = point.Y;
@@ -77,7 +78,8 @@ namespace GraphicsEditor
             }
             if (BeginningOrEnd == 2)
             {
-                FindLinesWithSamePoints(point);
+                Point point1 = new(currentLine.X2, currentLine.Y2);
+                FindLinesWithSamePoints(point1);
 
                 currentLine.X2 = point.X;
                 currentLine.Y2 = point.Y;
@@ -111,22 +113,12 @@ namespace GraphicsEditor
         {
             foreach (Line line in connectedLines)
             {
-                if (currentLine.X1 == line.X1 && currentLine.Y1 == line.Y1)
+                if (Math.Abs(point.X - line.X1) < 5 && Math.Abs(point.Y - line.Y1) < 5)
                 {
                     line.X1 = point.X;
                     line.Y1 = point.Y;
                 }
-                if (currentLine.X2 == line.X2 && currentLine.Y2 == line.Y2)
-                {
-                    line.X2 = point.X;
-                    line.Y2 = point.Y;
-                }
-                if (currentLine.X1 == line.X2 && currentLine.Y1 == line.Y2)
-                {
-                    line.X1 = point.X;
-                    line.Y1 = point.Y;
-                }
-                if (currentLine.X2 == line.X1 && currentLine.Y2 == line.Y1)
+                if (Math.Abs(point.X - line.X2) < 5 && Math.Abs(point.Y - line.Y2) < 5)
                 {
                     line.X2 = point.X;
                     line.Y2 = point.Y;
@@ -142,22 +134,22 @@ namespace GraphicsEditor
                 if (currentLine == line)
                     continue;
 
-                if (currentLine.X1 == line.X1 && currentLine.Y1 == line.Y1)
+                if (Math.Abs(currentLine.X1 - line.X1) < 5 && Math.Abs(currentLine.Y1 - line.Y1) < 5) 
                 {
                     connectedLines.Add(line);
                     continue;
                 }
-                if (currentLine.X2 == line.X2 && currentLine.Y2 == line.Y2)
+                if (Math.Abs(currentLine.X2 - line.X2) < 5 && Math.Abs(currentLine.Y2 - line.Y2) < 5)
                 {
                     connectedLines.Add(line);
                     continue;
                 }
-                if (currentLine.X1 == line.X2 && currentLine.Y1 == line.Y2)
+                if (Math.Abs(currentLine.X1 - line.X2) < 5 && Math.Abs(currentLine.Y1 - line.Y2) < 5)
                 {
                     connectedLines.Add(line);
                     continue;
                 }
-                if (currentLine.X2 == line.X2 && currentLine.Y2 == line.Y1)
+                if (Math.Abs(currentLine.X2 - line.X2) < 5 && Math.Abs(currentLine.Y2 - line.Y1) < 5)
                 {
                     connectedLines.Add(line);
                     continue;
@@ -179,6 +171,7 @@ namespace GraphicsEditor
                     {
                         currentLine = lines[i];
                         numberLine = i;
+                        FindLinesWithSamePoints();
                     }
                 }
             }
