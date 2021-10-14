@@ -5,12 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
 namespace GraphicsEditor
 {
-    class Segment : IFigure
+    class FigurePolyline : IFigure
     {
         public event EventGetFigure GetFigure;
         public event EventCilckMarker ClickMarker;
@@ -21,12 +22,12 @@ namespace GraphicsEditor
         bool clickMarker;
 
         Rectangle marker;
+
         Canvas canvas;
 
-        public Segment(Canvas canvas)
+        public FigurePolyline(Canvas canvas)
         {
             this.canvas = canvas;
-            SetMarker();
             NewPoliLine();
         }
 
@@ -39,8 +40,9 @@ namespace GraphicsEditor
         public void CreateFigure(Point mouse)
         {
             polyline.Points.Add(mouse);
-            currentPoint++;
             polyline.Points.Add(mouse);
+
+            SetMarker();
         }
 
         public void SetMarker()
@@ -65,18 +67,18 @@ namespace GraphicsEditor
             polyline.MouseMove += Polyline_MouseMove;
         }
 
-
-
-        private void Polyline_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        private void Polyline_MouseMove(object sender, MouseEventArgs e)
         {
             GetFigure(this);
             for (int i = 0; i < polyline.Points.Count; i++)
             {
                 Point point = e.GetPosition(canvas);
-
-                if (Math.Abs(polyline.Points[i].X - point.X) < 5 && (Math.Abs(polyline.Points[i].Y - point.Y) < 5))
+                if (Math.Abs(polyline.Points[i].X - point.X) <= 5 && Math.Abs(polyline.Points[i].Y - point.Y) <= 5)
                 {
                     currentPoint = i;
+
+                    Canvas.SetLeft(marker, polyline.Points[currentPoint].X - 5);
+                    Canvas.SetTop(marker, polyline.Points[currentPoint].Y - 5);
 
                     if (!canvas.Children.Contains(marker))
                         canvas.Children.Add(marker);
@@ -84,17 +86,25 @@ namespace GraphicsEditor
             }
         }
 
-        private void Polyline_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void Polyline_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            if(e.ClickCount == 2)
+            {
+                Point point = e.GetPosition(canvas);
 
+                Point point1 = polyline.Points.Last();
+
+                polyline.Points[^1] = point;
+                polyline.Points.Add(point1);
+            }
         }
 
-        private void Marker_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void Marker_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             ClickMarker(false);
         }
 
-        private void Marker_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void Marker_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             ClickMarker(true);
         }
@@ -102,20 +112,16 @@ namespace GraphicsEditor
         public void ChangePosition(Point point)
         {
             polyline.Points[currentPoint] = point;
+
             Canvas.SetLeft(marker, polyline.Points[currentPoint].X - 5);
             Canvas.SetTop(marker, polyline.Points[currentPoint].Y - 5);
         }
 
-        private void Marker_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        private void Marker_MouseLeave(object sender, MouseEventArgs e)
         {
             canvas.Children.Remove(marker);
         }
 
-        
-        private void Line_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-
-        }
 
         public void StartObject(Point point)
         {
@@ -132,7 +138,6 @@ namespace GraphicsEditor
 
         public void DelMarker()
         {
-            marker = null;
         }
     }
 }

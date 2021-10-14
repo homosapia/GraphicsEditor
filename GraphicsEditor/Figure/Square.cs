@@ -24,21 +24,33 @@ namespace GraphicsEditor
 
         Rectangle marker;
 
-        public object NewObject(Canvas canvas)
+        public Square(Canvas canvas)
         {
             this.canvas = canvas;
 
             rectangle = new();
+
+            rectangle.Stroke = new SolidColorBrush(Colors.Black);
             rectangle.MouseMove += Rectangle_MouseMove;
             rectangle.MouseDown += Rectangle_MouseDown;
-            rectangle.Stroke = new SolidColorBrush(Colors.Black);
 
             SetMarker();
+        }
+        public void SetMarker()
+        {
+            marker = new();
+            marker.Fill = Brushes.Red;
+            marker.Width = 10;
+            marker.Height = 10;
+
             marker.MouseRightButtonDown += Marker_MouseRightButtonDown;
             marker.MouseRightButtonUp += Marker_MouseRightButtonUp;
             marker.MouseLeave += Marker_MouseLeave;
+        }
 
-            return rectangle;
+        public object NewObject(Canvas canvas)
+        {
+            return canvas;
         }
 
         private void Rectangle_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -77,13 +89,7 @@ namespace GraphicsEditor
             }
         }
 
-        public void SetMarker()
-        {
-            marker = new();
-            marker.Fill = Brushes.Red;
-            marker.Width = 10;
-            marker.Height = 10;
-        }
+        
 
         public object Figure()
         {
@@ -98,6 +104,16 @@ namespace GraphicsEditor
         }
 
         public void EndObject(Point point)
+        {
+            
+        }
+
+        public void DelMarker()
+        {
+            marker = null;
+        }
+
+        public void ChangePosition(Point point)
         {
             this.points[1] = point;
             if (point.X > this.points[0].X && point.Y > this.points[0].Y)
@@ -140,22 +156,13 @@ namespace GraphicsEditor
             Canvas.SetTop(marker, points[1].Y - 5);
         }
 
-        public void DelMarker()
+        public void CreateFigure(Point point)
         {
-            marker = null;
-        }
+            Canvas.SetLeft(rectangle, point.X);
+            Canvas.SetTop(rectangle, point.Y);
 
-        public void ChangePosition(Point point)
-        {
-            if (clickMarker)
-            {
-                EndObject(point);
-            }
-        }
-
-        public void CreateFigure(Point mouse)
-        {
-            throw new NotImplementedException();
+            rectangle.Width = 10;
+            rectangle.Height = 10;
         }
     }
 }

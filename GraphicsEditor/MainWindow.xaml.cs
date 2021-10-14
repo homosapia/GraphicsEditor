@@ -37,7 +37,6 @@ namespace GraphicsEditor
             {
                 transform = true;
                 figure.CreateFigure(e.GetPosition(canvas));
-                canvas.Children.Add((UIElement)figure.Figure());
             }
         }
 
@@ -56,14 +55,14 @@ namespace GraphicsEditor
 
         private void segment_Click(object sender, RoutedEventArgs e)
         {
-            figure = new Segment(canvas);
+            figure = new FigureBrokenLine(canvas);
             figure.GetFigure += СurrentFigure;
             figure.ClickMarker += ShowMarker;
         }
 
         private void rictangle_Click(object sender, RoutedEventArgs e)
         {
-            figure = new Square();
+            figure = new Square(canvas);
             figure.GetFigure += СurrentFigure;
             figure.ClickMarker += ShowMarker;
         }
@@ -75,7 +74,10 @@ namespace GraphicsEditor
 
         public void СurrentFigure(IFigure figure)
         {
-            this.figure = figure;
+            if(!transform && this.figure != figure)
+                this.figure = figure;
+            if (!canvas.Children.Contains((UIElement)this.figure.Figure()))
+                canvas.Children.Add((UIElement)this.figure.Figure());
         }
 
         public void ShowMarker(bool click)
