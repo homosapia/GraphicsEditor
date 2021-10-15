@@ -99,6 +99,8 @@ namespace GraphicsEditor
                 {
                     canvas.Children.Add(marker);
                 }
+
+                
             }
 
             if (Math.Abs(points[1].X - point.X) < 5 && (Math.Abs(points[0].Y - point.Y) < 5))
@@ -112,6 +114,8 @@ namespace GraphicsEditor
                     marker.Fill = Brushes.Green;
                     canvas.Children.Add(marker);
                 }
+
+
             }
         }
 

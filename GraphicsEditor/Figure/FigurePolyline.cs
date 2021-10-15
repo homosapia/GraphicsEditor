@@ -32,12 +32,6 @@ namespace GraphicsEditor
             NewPoliLine();
         }
 
-        public object NewObject(Canvas canvas)
-        {
-            //del
-            return "dfdf";
-        }
-
         public void CreateFigure(Point mouse)
         {
             polyline.Points.Add(mouse);
