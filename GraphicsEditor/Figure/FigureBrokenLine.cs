@@ -12,15 +12,14 @@ namespace GraphicsEditor
 {
     class FigureBrokenLine : IFigure
     {
-        public event EventGetFigure GetFigure;
+        public event EventGetFigure ReceiveFigure;
         public event EventCilckMarker ClickMarker;
+        public event EventRemoveFigure RemoveFigure;
 
         List<Line> lines;
-        List<Line> connectedLines;
+        List<int> idPointLine;
 
         Line currentLine;
-        int numberLine;
-        int BeginningOrEnd;
 
         bool transform;
 
@@ -32,7 +31,12 @@ namespace GraphicsEditor
         {
             this.canvas = canvas;
             lines = new();
-            marker = new();
+            marker = SetMarker();
+        }
+
+        private Rectangle SetMarker()
+        {
+            Rectangle marker = new();
 
             marker.Fill = Brushes.Red;
 
@@ -42,16 +46,37 @@ namespace GraphicsEditor
             marker.MouseLeave += Marker_MouseLeave;
             marker.MouseLeftButtonDown += Marker_MouseLeftButtonDown;
             marker.MouseLeftButtonUp += Marker_MouseLeftButtonUp;
+            return marker;
         }
 
         private void Marker_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            for (int i = 0; i < lines.Count; i++)
+            {
+                Point point = new(Canvas.GetLeft(marker) + 5, Canvas.GetTop(marker) + 5);
+                if (Math.Abs(lines[i].X1 - lines[i].X2) <= 5 && Math.Abs(lines[i].Y1 - lines[i].Y2) <= 5)
+                {
+                    if ((i - 1) >= 0 && (i + 1) < lines.Count)
+                    {
+                        lines[i - 1].X2 = point.X;
+                        lines[i - 1].Y2 = point.Y;
+                        lines[i + 1].X1 = point.X;
+                        lines[i + 1].Y1 = point.Y;
+                    }
+
+                    canvas.Children.Remove(lines[i]);
+
+                    lines.Remove(lines[i]);
+                }
+            }
             transform = false;
             ClickMarker(transform);
         }
 
         private void Marker_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            FindLinesWithSamePoints();
+
             transform = true;
             ClickMarker(transform);
         }
@@ -61,37 +86,34 @@ namespace GraphicsEditor
             canvas.Children.Remove(marker);
         }
 
-
-
         public void ChangePosition(Point point)
         {
-            if (BeginningOrEnd == 1)
+            FindLinesWithSamePoints(point);
+            Canvas.SetLeft(marker, point.X - 5);
+            Canvas.SetTop(marker, point.Y - 5);
+        }
+
+        private void FindLinesWithSamePoints(Point point)
+        {
+            for (int i = 0; i < lines.Count; i++)
             {
-                Point point1 = new(currentLine.X1, currentLine.Y1);
-                FindLinesWithSamePoints(point1);
-
-                currentLine.X1 = point.X;
-                currentLine.Y1 = point.Y;
-
-                Canvas.SetLeft(marker, currentLine.X1 - 5);
-                Canvas.SetTop(marker, currentLine.Y1 - 5);
-            }
-            if (BeginningOrEnd == 2)
-            {
-                Point point1 = new(currentLine.X2, currentLine.Y2);
-                FindLinesWithSamePoints(point1);
-
-                currentLine.X2 = point.X;
-                currentLine.Y2 = point.Y;
-
-                Canvas.SetLeft(marker, currentLine.X2 - 5);
-                Canvas.SetTop(marker, currentLine.Y2 - 5);
+                if (idPointLine[i] == 1)
+                {
+                    lines[i].X1 = point.X;
+                    lines[i].Y1 = point.Y;
+                }
+                if (idPointLine[i] == 2)
+                {
+                    lines[i].X2 = point.X;
+                    lines[i].Y2 = point.Y;
+                }
             }
         }
 
         public void CreateFigure(Point mouse)
         {
-            connectedLines = new();
+            idPointLine = new();
+
             currentLine = new();
             currentLine.Stroke = Brushes.Black;
             currentLine.X1 = mouse.X;
@@ -99,90 +121,48 @@ namespace GraphicsEditor
             currentLine.X2 = mouse.X;
             currentLine.Y2 = mouse.Y;
 
-            BeginningOrEnd = 2;
 
             currentLine.MouseDown += Line_MouseDown;
             currentLine.MouseMove += Line_MouseMove;
 
             lines.Add(currentLine);
+            idPointLine.Add(2);
 
-            GetFigure(this);
-        }
-
-        private void FindLinesWithSamePoints(Point point)
-        {
-            foreach (Line line in connectedLines)
-            {
-                if (Math.Abs(point.X - line.X1) < 5 && Math.Abs(point.Y - line.Y1) < 5)
-                {
-                    line.X1 = point.X;
-                    line.Y1 = point.Y;
-                }
-                if (Math.Abs(point.X - line.X2) < 5 && Math.Abs(point.Y - line.Y2) < 5)
-                {
-                    line.X2 = point.X;
-                    line.Y2 = point.Y;
-                }
-            }
+            ReceiveFigure(this);
         }
 
         private void FindLinesWithSamePoints()
         {
-            connectedLines = new();
+            idPointLine = new();
             foreach (Line line in lines)
             {
-                if (currentLine == line)
-                    continue;
-
-                if (Math.Abs(currentLine.X1 - line.X1) < 5 && Math.Abs(currentLine.Y1 - line.Y1) < 5) 
+                Point point = new(Canvas.GetLeft(marker) + 5, Canvas.GetTop(marker) + 5);
+                if (Math.Abs(point.X - line.X2) <= 5 && Math.Abs(point.Y - line.Y2) <= 5)
                 {
-                    connectedLines.Add(line);
+                    idPointLine.Add(2);
                     continue;
                 }
-                if (Math.Abs(currentLine.X2 - line.X2) < 5 && Math.Abs(currentLine.Y2 - line.Y2) < 5)
+                if (Math.Abs(point.X - line.X1) <= 5 && Math.Abs(point.Y - line.Y1) <= 5) 
                 {
-                    connectedLines.Add(line);
+                    idPointLine.Add(1);
                     continue;
                 }
-                if (Math.Abs(currentLine.X1 - line.X2) < 5 && Math.Abs(currentLine.Y1 - line.Y2) < 5)
-                {
-                    connectedLines.Add(line);
-                    continue;
-                }
-                if (Math.Abs(currentLine.X2 - line.X2) < 5 && Math.Abs(currentLine.Y2 - line.Y1) < 5)
-                {
-                    connectedLines.Add(line);
-                    continue;
-                }
-
+                idPointLine.Add(3);
             }
         }
 
         private void Line_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            GetFigure(this);
+            ReceiveFigure(this);
 
-            if (!transform)
-            {
-                currentLine = (Line)sender;
-                for (int i = 0; i < lines.Count; i++)
-                {
-                    if (currentLine == lines[i])
-                    {
-                        currentLine = lines[i];
-                        numberLine = i;
-                        FindLinesWithSamePoints();
-                    }
-                }
-            }
-            
+            currentLine = (Line)sender;
+
+            FindLinesWithSamePoints();
 
             Point point = e.GetPosition(canvas);
 
             if (Math.Abs(currentLine.X1 - point.X) <= 5 && Math.Abs(currentLine.Y1 - point.Y) <= 5)
             {
-                BeginningOrEnd = 1;
-
                 Canvas.SetLeft(marker, currentLine.X1 - 5);
                 Canvas.SetTop(marker, currentLine.Y1 - 5);
 
@@ -192,8 +172,6 @@ namespace GraphicsEditor
 
             if (Math.Abs(currentLine.X2 - point.X) <= 5 && Math.Abs(currentLine.Y2 - point.Y) <= 5)
             {
-                BeginningOrEnd = 2;
-
                 Canvas.SetLeft(marker, currentLine.X2 - 5);
                 Canvas.SetTop(marker, currentLine.Y2 - 5);
 
@@ -204,7 +182,7 @@ namespace GraphicsEditor
 
         private void Line_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if(e.ClickCount == 2)
+            if (e.ClickCount == 2)
             {
                 Point point = e.GetPosition(canvas);
                 Point point1 = new(currentLine.X2, currentLine.Y2);
@@ -226,7 +204,7 @@ namespace GraphicsEditor
 
                 FindLinesWithSamePoints();
 
-                GetFigure(this);
+                ReceiveFigure(this);
             }
         }
 
@@ -242,22 +220,11 @@ namespace GraphicsEditor
 
         public object Figure()
         {
-            return currentLine;
+            if (lines.Count != 0)
+                return lines.Last();
+            else
+                return null;
         }
 
-        public object NewObject(Canvas canvas)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SetMarker()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void StartObject(Point point)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

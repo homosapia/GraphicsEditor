@@ -15,7 +15,7 @@
             </StackPanel>
             
             <Grid DockPanel.Dock="Right">
-                <Canvas x:Name="canvas" DockPanel.Dock="Right" Background="White" MouseMove="canvas_MouseMove" MouseLeftButtonDown="canvas_MouseLeftButtonDown" MouseLeftButtonUp="canvas_MouseLeftButtonUp"/>
+                <Canvas x:Name="canvas" DockPanel.Dock="Right" Background="White" MouseMove="canvas_MouseMove" MouseLeftButtonDown="canvas_MouseLeftButtonDown" MouseLeftButtonUp="canvas_MouseLeftButtonUp" MouseRightButtonDown="canvas_MouseRightButtonDown"/>
             </Grid>
         </DockPanel>
     </Grid>

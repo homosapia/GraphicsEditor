@@ -13,8 +13,9 @@ namespace GraphicsEditor
 {
     class FigurePolyline : IFigure
     {
-        public event EventGetFigure GetFigure;
+        public event EventGetFigure ReceiveFigure;
         public event EventCilckMarker ClickMarker;
+        public event EventRemoveFigure RemoveFigure;
 
         Polyline polyline;
 
@@ -69,7 +70,7 @@ namespace GraphicsEditor
 
         private void Polyline_MouseMove(object sender, MouseEventArgs e)
         {
-            GetFigure(this);
+            ReceiveFigure(this);
             for (int i = 0; i < polyline.Points.Count; i++)
             {
                 Point point = e.GetPosition(canvas);

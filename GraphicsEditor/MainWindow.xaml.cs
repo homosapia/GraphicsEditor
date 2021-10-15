@@ -31,6 +31,11 @@ namespace GraphicsEditor
             InitializeComponent();
         }
 
+        private void canvas_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            figure.ChangePosition(e.GetPosition(canvas));
+        }
+
         private void canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if(!canvas.Children.Contains((UIElement)figure.Figure()))
@@ -56,15 +61,22 @@ namespace GraphicsEditor
         private void segment_Click(object sender, RoutedEventArgs e)
         {
             figure = new FigureBrokenLine(canvas);
-            figure.GetFigure += СurrentFigure;
+            figure.ReceiveFigure += СurrentFigure;
             figure.ClickMarker += ShowMarker;
+            figure.RemoveFigure += Figure_RemoveFigure;
         }
 
         private void rictangle_Click(object sender, RoutedEventArgs e)
         {
             figure = new Square(canvas);
-            figure.GetFigure += СurrentFigure;
+            figure.ReceiveFigure += СurrentFigure;
             figure.ClickMarker += ShowMarker;
+            figure.RemoveFigure += Figure_RemoveFigure;
+        }
+
+        private void Figure_RemoveFigure(UIElement figure)
+        {
+            canvas.Children.Remove(figure);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

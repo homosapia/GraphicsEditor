@@ -11,18 +11,15 @@ namespace GraphicsEditor
 {
     public delegate void EventGetFigure(IFigure figure);
     public delegate void EventCilckMarker(bool click);
+    public delegate void EventRemoveFigure(UIElement figure);
 
     public interface IFigure
     {
-        public event EventGetFigure GetFigure;
+        public event EventGetFigure ReceiveFigure;
         public event EventCilckMarker ClickMarker;
+        public event EventRemoveFigure RemoveFigure;
 
-        public object NewObject(Canvas canvas);
         public object Figure();
-        public void StartObject(Point point);
-        public void EndObject(Point point);
-
-        public void SetMarker();
 
         public void ChangePosition(Point point);
 
