@@ -17,7 +17,7 @@ namespace GraphicsEditor
         public event EventTransform Transform;
         public event EventSetMarker SetMarker;
         public event EventClickMarker ClickMarker;
-        public event EventRemoveFigure RemoveFigure;
+        public event EventRemoveMarker RemoveMarker;
 
         Polyline polyline;
 

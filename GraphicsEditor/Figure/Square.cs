@@ -16,7 +16,7 @@ namespace GraphicsEditor
         public event EventSetMarker SetMarker;
         public event EventTransform Transform;
         public event EventSelectFigure SelectObject;
-        public event EventRemoveFigure RemoveFigure;
+        public event EventRemoveMarker RemoveMarker;
 
 
         private Rectangle rectangle;

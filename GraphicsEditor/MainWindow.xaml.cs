@@ -89,7 +89,7 @@ namespace GraphicsEditor
             figure.Transform += Figure_Transform;
             figure.SelectObject += СurrentFigure;
             figure.ClickMarker += ClickMarker;
-            figure.RemoveFigure += Figure_RemoveFigure;
+            figure.RemoveMarker += Figure_RemoveMarker;
             figure.SetMarker += Figure_SetMarker;
         }
 
@@ -98,10 +98,21 @@ namespace GraphicsEditor
             transform = click;
         }
 
-        private void Figure_SetMarker(Rectangle marker)
+        private void Figure_SetMarker(List<Rectangle> markers)
         {
-            markers.Add(marker);
-            canvas.Children.Add(marker);
+            this.markers = markers;
+            foreach (Rectangle marker in markers)
+            {
+                if(!canvas.Children.Contains(marker))
+                    canvas.Children.Add(marker);
+            }
+        }
+        private void Figure_RemoveMarker(List<Rectangle> markers)
+        {
+            foreach (Rectangle marker in markers)
+            {
+                canvas.Children.Remove(marker);
+            }
         }
 
         private void rictangle_Click(object sender, RoutedEventArgs e)
@@ -110,12 +121,7 @@ namespace GraphicsEditor
             figure = new Square(canvas);
             figure.SelectObject += СurrentFigure;
             figure.ClickMarker += ClickMarker;
-            figure.RemoveFigure += Figure_RemoveFigure;
-        }
-
-        private void Figure_RemoveFigure(UIElement figure)
-        {
-            canvas.Children.Remove(figure);
+            figure.RemoveMarker += Figure_RemoveMarker;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
