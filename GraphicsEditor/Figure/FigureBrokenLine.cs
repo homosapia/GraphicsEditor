@@ -12,16 +12,16 @@ namespace GraphicsEditor
 {
     class FigureBrokenLine : IFigure
     {
-        public event EventGetFigure ReceiveFigure;
-        public event EventCilckMarker ClickMarker;
+        public event EventSelectFigure SelectObject;
+        public event EventTransform Transform;
+        public event EventClickMarker ClickMarker;
+        public event EventSetMarker SetMarker;
         public event EventRemoveFigure RemoveFigure;
 
         List<Line> lines;
         List<int> idPointLine;
 
         Line currentLine;
-
-        bool transform;
 
         Rectangle marker;
 
@@ -31,29 +31,13 @@ namespace GraphicsEditor
         {
             this.canvas = canvas;
             lines = new();
-            marker = SetMarker();
-        }
-
-        private Rectangle SetMarker()
-        {
-            Rectangle marker = new();
-
-            marker.Fill = Brushes.Red;
-
-            marker.Width = 10;
-            marker.Height = 10;
-
-            marker.MouseLeave += Marker_MouseLeave;
-            marker.MouseLeftButtonDown += Marker_MouseLeftButtonDown;
-            marker.MouseLeftButtonUp += Marker_MouseLeftButtonUp;
-            return marker;
         }
 
         private void Marker_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             for (int i = 0; i < lines.Count; i++)
             {
-                Point point = new(Canvas.GetLeft(marker) + 5, Canvas.GetTop(marker) + 5);
+                Point point = new(Canvas.GetLeft((Rectangle)sender) + 5, Canvas.GetTop((Rectangle)sender) + 5);
                 if (Math.Abs(lines[i].X1 - lines[i].X2) <= 5 && Math.Abs(lines[i].Y1 - lines[i].Y2) <= 5)
                 {
                     if ((i - 1) >= 0 && (i + 1) < lines.Count)
@@ -67,23 +51,22 @@ namespace GraphicsEditor
                     canvas.Children.Remove(lines[i]);
 
                     lines.Remove(lines[i]);
+
+                    canvas.Children.Remove((Rectangle)sender);
                 }
             }
-            transform = false;
-            ClickMarker(transform);
+            ClickMarker(false);
         }
 
         private void Marker_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            marker = (Rectangle)sender;
             FindLinesWithSamePoints();
-
-            transform = true;
-            ClickMarker(transform);
+            ClickMarker(true);
         }
 
         private void Marker_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            canvas.Children.Remove(marker);
         }
 
         public void ChangePosition(Point point)
@@ -122,13 +105,19 @@ namespace GraphicsEditor
             currentLine.Y2 = mouse.Y;
 
 
-            currentLine.MouseDown += Line_MouseDown;
+            currentLine.MouseLeftButtonDown += Line_MouseLeftDown;
             currentLine.MouseMove += Line_MouseMove;
 
             lines.Add(currentLine);
             idPointLine.Add(2);
 
-            ReceiveFigure(this);
+            SelectObject(this);
+        }
+
+        public void DrawFigure(Point point)
+        {
+            currentLine.X2 = point.X;
+            currentLine.Y2 = point.Y;
         }
 
         private void FindLinesWithSamePoints()
@@ -153,7 +142,8 @@ namespace GraphicsEditor
 
         private void Line_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ReceiveFigure(this);
+            /*
+            SelectObject(this);
 
             currentLine = (Line)sender;
 
@@ -177,11 +167,18 @@ namespace GraphicsEditor
 
                 if (!canvas.Children.Contains(marker))
                     canvas.Children.Add(marker);
-            }
+            }*/
         }
 
-        private void Line_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void Line_MouseLeftDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            if (e.ClickCount == 1)
+            {
+                SelectObject(this);
+                DrawMarker();
+                Transform(true);
+            }
+
             if (e.ClickCount == 2)
             {
                 Point point = e.GetPosition(canvas);
@@ -197,15 +194,60 @@ namespace GraphicsEditor
                 currentLine.X2 = point1.X;
                 currentLine.Y2 = point1.Y;
 
-                currentLine.MouseDown += Line_MouseDown;
+                currentLine.MouseDown += Line_MouseLeftDown;
                 currentLine.MouseMove += Line_MouseMove;
 
                 lines.Add(currentLine);
 
-                FindLinesWithSamePoints();
-
-                ReceiveFigure(this);
+                SelectObject(this);
             }
+        }
+
+        private void DrawMarker()
+        {
+            foreach (Line line in lines)
+            {
+                if(line == lines.Last())
+                {
+                    for (int i = 0; i < 2; i++) 
+                    {
+                        Rectangle marker = CreateMarker();
+                        if(i == 0)
+                        {
+                            Canvas.SetLeft(marker, line.X1 - 5);
+                            Canvas.SetTop(marker, line.Y1 - 5);
+                        }
+                        if(i == 1)
+                        {
+                            Canvas.SetLeft(marker, line.X2 - 5);
+                            Canvas.SetTop(marker, line.Y2 - 5);
+                        }
+                        SetMarker(marker);
+                    }
+                }
+                else
+                {
+                    Rectangle marker = CreateMarker();
+                    Canvas.SetLeft(marker, line.X1 - 5);
+                    Canvas.SetTop(marker, line.Y1 - 5);
+                    SetMarker(marker);
+                }
+            }
+        }
+
+        private Rectangle CreateMarker()
+        {
+            Rectangle marker = new();
+
+            marker.Fill = Brushes.Red;
+
+            marker.Width = 10;
+            marker.Height = 10;
+
+            marker.MouseLeave += Marker_MouseLeave;
+            marker.MouseLeftButtonDown += Marker_MouseLeftButtonDown;
+            marker.MouseLeftButtonUp += Marker_MouseLeftButtonUp;
+            return marker;
         }
 
         public void DelMarker()

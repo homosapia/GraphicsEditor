@@ -13,8 +13,10 @@ namespace GraphicsEditor
 {
     class FigurePolyline : IFigure
     {
-        public event EventGetFigure ReceiveFigure;
-        public event EventCilckMarker ClickMarker;
+        public event EventSelectFigure SelectObject;
+        public event EventTransform Transform;
+        public event EventSetMarker SetMarker;
+        public event EventClickMarker ClickMarker;
         public event EventRemoveFigure RemoveFigure;
 
         Polyline polyline;
@@ -37,10 +39,10 @@ namespace GraphicsEditor
             polyline.Points.Add(mouse);
             polyline.Points.Add(mouse);
 
-            SetMarker();
+            CreateMarker();
         }
 
-        public void SetMarker()
+        public void CreateMarker()
         {
             marker = new();
             marker.Fill = Brushes.Red;
@@ -64,7 +66,7 @@ namespace GraphicsEditor
 
         private void Polyline_MouseMove(object sender, MouseEventArgs e)
         {
-            ReceiveFigure(this);
+            SelectObject(this);
             for (int i = 0; i < polyline.Points.Count; i++)
             {
                 Point point = e.GetPosition(canvas);
@@ -133,6 +135,11 @@ namespace GraphicsEditor
 
         public void DelMarker()
         {
+        }
+
+        public void DrawFigure(Point point)
+        {
+            throw new NotImplementedException();
         }
     }
 }

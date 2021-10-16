@@ -22,7 +22,11 @@ namespace GraphicsEditor
     {
         IFigure figure;
 
+        bool peint;
         bool transform;
+        bool marker;
+
+        List<Rectangle> markers = new();
 
         Point currentPoint = new();
 
@@ -33,21 +37,37 @@ namespace GraphicsEditor
 
         private void canvas_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            figure.ChangePosition(e.GetPosition(canvas));
+            if (peint)
+            {
+                figure.ChangePosition(e.GetPosition(canvas));
+            }
         }
 
         private void canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if(!canvas.Children.Contains((UIElement)figure.Figure()))
+            if(peint)
             {
-                transform = true;
                 figure.CreateFigure(e.GetPosition(canvas));
             }
+            if (!transform && !marker)
+            {
+                foreach (Rectangle marker in markers)
+                {
+                    canvas.Children.Remove(marker);
+                }
+            }
+            if (!marker)
+                transform = false;
         }
 
         private void canvas_MouseMove(object sender, MouseEventArgs e)
         {
-            if(e.LeftButton == MouseButtonState.Pressed && transform)
+            if (e.LeftButton == MouseButtonState.Pressed && peint)
+            {
+                figure.DrawFigure(e.GetPosition(canvas));
+            }
+
+            if(e.LeftButton == MouseButtonState.Pressed && marker)
             {
                 figure.ChangePosition(e.GetPosition(canvas));
             }
@@ -55,22 +75,41 @@ namespace GraphicsEditor
 
         private void canvas_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            transform = false;
+            if (peint)
+            {
+                peint = false;
+                figure = null;
+            }
         }
 
         private void segment_Click(object sender, RoutedEventArgs e)
         {
+            peint = true;
             figure = new FigureBrokenLine(canvas);
-            figure.ReceiveFigure += СurrentFigure;
-            figure.ClickMarker += ShowMarker;
+            figure.Transform += Figure_Transform;
+            figure.SelectObject += СurrentFigure;
+            figure.ClickMarker += ClickMarker;
             figure.RemoveFigure += Figure_RemoveFigure;
+            figure.SetMarker += Figure_SetMarker;
+        }
+
+        private void Figure_Transform(bool click)
+        {
+            transform = click;
+        }
+
+        private void Figure_SetMarker(Rectangle marker)
+        {
+            markers.Add(marker);
+            canvas.Children.Add(marker);
         }
 
         private void rictangle_Click(object sender, RoutedEventArgs e)
         {
+            peint = true;
             figure = new Square(canvas);
-            figure.ReceiveFigure += СurrentFigure;
-            figure.ClickMarker += ShowMarker;
+            figure.SelectObject += СurrentFigure;
+            figure.ClickMarker += ClickMarker;
             figure.RemoveFigure += Figure_RemoveFigure;
         }
 
@@ -86,15 +125,15 @@ namespace GraphicsEditor
 
         public void СurrentFigure(IFigure figure)
         {
-            if(!transform && this.figure != figure)
+            if(this.figure != figure)
                 this.figure = figure;
             if (!canvas.Children.Contains((UIElement)this.figure.Figure()))
                 canvas.Children.Add((UIElement)this.figure.Figure());
         }
 
-        public void ShowMarker(bool click)
+        public void ClickMarker(bool click)
         {
-            transform = click;
+            marker = click;
         }
     }
 }

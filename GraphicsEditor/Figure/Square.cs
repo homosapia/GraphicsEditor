@@ -12,8 +12,10 @@ namespace GraphicsEditor
 {
     class Square : IFigure
     {
-        public event EventCilckMarker ClickMarker;
-        public event EventGetFigure ReceiveFigure;
+        public event EventClickMarker ClickMarker;
+        public event EventSetMarker SetMarker;
+        public event EventTransform Transform;
+        public event EventSelectFigure SelectObject;
         public event EventRemoveFigure RemoveFigure;
 
 
@@ -40,9 +42,9 @@ namespace GraphicsEditor
             rectangle.MouseMove += Rectangle_MouseMove;
             rectangle.MouseDown += Rectangle_MouseDown;
 
-            marker = SetMarker(Brushes.Red);
+            marker = CreateMarker(Brushes.Red);
         }
-        public Rectangle SetMarker(Brush brush)
+        public Rectangle CreateMarker(Brush brush)
         {
             Rectangle marker = new();
             marker.Fill = brush;
@@ -85,7 +87,7 @@ namespace GraphicsEditor
 
         private void Rectangle_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ReceiveFigure(this);
+            SelectObject(this);
 
             Point point = e.GetPosition(canvas);
 
@@ -145,7 +147,7 @@ namespace GraphicsEditor
 
             if (TransformOrTurn == 1)
             {
-                Transform();
+                _Transform();
             }
             else
             {
@@ -156,7 +158,7 @@ namespace GraphicsEditor
             Canvas.SetTop(marker, points[1].Y - 5);
         }
 
-        private void Transform()
+        private void _Transform()
         {
             if (points[1].X > this.points[0].X && points[1].Y > this.points[0].Y)
             {
@@ -209,7 +211,12 @@ namespace GraphicsEditor
             Canvas.SetLeft(rectangle, point.X);
             Canvas.SetTop(rectangle, point.Y);
 
-            ReceiveFigure(this);
+            SelectObject(this);
+        }
+
+        public void DrawFigure(Point point)
+        {
+            throw new NotImplementedException();
         }
     }
 }

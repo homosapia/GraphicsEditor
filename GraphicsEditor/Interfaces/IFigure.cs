@@ -9,19 +9,25 @@ using System.Windows.Shapes;
 
 namespace GraphicsEditor
 {
-    public delegate void EventGetFigure(IFigure figure);
-    public delegate void EventCilckMarker(bool click);
+    public delegate void EventSelectFigure(IFigure figure);
+    public delegate void EventClickMarker(bool click);
+    public delegate void EventTransform(bool click);
+    public delegate void EventSetMarker(Rectangle marker);
     public delegate void EventRemoveFigure(UIElement figure);
 
     public interface IFigure
     {
-        public event EventGetFigure ReceiveFigure;
-        public event EventCilckMarker ClickMarker;
+        public event EventSelectFigure SelectObject;
+        public event EventClickMarker ClickMarker;
+        public event EventTransform Transform;
+        public event EventSetMarker SetMarker;
         public event EventRemoveFigure RemoveFigure;
 
         public object Figure();
 
         public void ChangePosition(Point point);
+
+        public void DrawFigure(Point point);
 
         public void DelMarker();
 
