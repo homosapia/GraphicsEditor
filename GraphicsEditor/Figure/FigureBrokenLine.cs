@@ -41,34 +41,59 @@ namespace GraphicsEditor
 
         private void Marker_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            e.Handled = true;
             marker = (Rectangle)sender;
+            ClickMarker(true);
             if (e.ClickCount == 1)
             {
                 FindThePointsOfTheLinesInTheRadius(0);
-                ClickMarker(true);
             }
 
             if (e.ClickCount == 2)
             {
+                RemoveLineAndMarker(marker);
                 FindThePointsOfTheLinesInTheRadius(5);
                 Point point = new(Canvas.GetLeft(marker) + 5, Canvas.GetTop(marker) + 5);
                 FindLinesWithSamePoints(point);
-                RemoveLineAndMarker((Rectangle)sender);
+                FindIdenticalPointsOfTheLine();
             }
+        }
+
+        private void FindIdenticalPointsOfTheLine()
+        {
+            List<Point> points = new();
+            foreach (Line line in lines)
+            {
+                points.Add(new Point(line.X1, line.Y1));
+                points.Add(new Point(line.X2, line.Y2));
+            }
+            points = points.Distinct().ToList();
+
+            RemoveMarker();
+
+            markers = new();
+            for (int i = 0; i < points.Count; i++)
+            {
+                markers.Add(CreateMarker(points[i]));
+
+            }
+            SetMarker(markers);
         }
 
         private void RemoveLineAndMarker(Rectangle marker)
         {
-            for (int i = 0; i < lines.Count; i++)
+            ClickMarker(false);
+            int i = 0;
+            while (i < lines.Count)
             {
                 if (Math.Abs(lines[i].X1 - lines[i].X2) <= 5 && Math.Abs(lines[i].Y1 - lines[i].Y2) <= 5)
                 {
                     canvas.Children.Remove(lines[i]);
                     lines.Remove(lines[i]);
-                    RemoveMarker(markers);
-                    markers.Remove(marker);
-                    SetMarker(markers);
+                    i = 0;
                 }
+                else
+                    i++;
             }
         }
 
@@ -111,9 +136,6 @@ namespace GraphicsEditor
             currentLine.X2 = mouse.X;
             currentLine.Y2 = mouse.Y;
 
-            markers.Add(CreateMarker(mouse));
-            markers.Add(CreateMarker(mouse));
-
             currentLine.MouseLeftButtonDown += Line_MouseLeftDown;
             currentLine.MouseMove += Line_MouseMove;
 
@@ -127,9 +149,6 @@ namespace GraphicsEditor
         {
             currentLine.X2 = point.X;
             currentLine.Y2 = point.Y;
-
-            Canvas.SetLeft(markers[1], point.X - 5);
-            Canvas.SetTop(markers[1], point.Y - 5);
         }
 
         private void FindThePointsOfTheLinesInTheRadius(byte Radius)
@@ -184,20 +203,16 @@ namespace GraphicsEditor
 
         private void Line_MouseLeftDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            e.Handled = true;
             if (e.ClickCount == 1)
             {
-                SelectObject(this);
-                SetMarker(markers);
                 Transform(true);
+                SelectObject(this);
             }
 
             if (e.ClickCount == 2)
             {
                 Point point = e.GetPosition(canvas);
-
-                RemoveMarker(markers);
-                markers.Add(CreateMarker(point));
-                SetMarker(markers);
 
                 Line line = (Line)sender;
                 Point point1 = new(line.X2, line.Y2);
@@ -219,6 +234,7 @@ namespace GraphicsEditor
 
                 SelectObject(this);
             }
+            FindIdenticalPointsOfTheLine();
         }
         /*
         private void DrawMarker()

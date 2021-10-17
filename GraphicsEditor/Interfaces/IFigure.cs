@@ -13,7 +13,7 @@ namespace GraphicsEditor
     public delegate void EventClickMarker(bool click);
     public delegate void EventTransform(bool click);
     public delegate void EventSetMarker(List<Rectangle> markers);
-    public delegate void EventRemoveMarker(List<Rectangle> markers);
+    public delegate void EventRemoveMarker();
 
     public interface IFigure
     {

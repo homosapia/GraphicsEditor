@@ -35,14 +35,6 @@ namespace GraphicsEditor
             InitializeComponent();
         }
 
-        private void canvas_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            if (peint)
-            {
-                figure.ChangePosition(e.GetPosition(canvas));
-            }
-        }
-
         private void canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if(peint)
@@ -71,6 +63,11 @@ namespace GraphicsEditor
             {
                 figure.ChangePosition(e.GetPosition(canvas));
             }
+
+            if (e.RightButton == MouseButtonState.Pressed)
+            {
+                figure.ChangePosition(e.GetPosition(canvas));
+            }
         }
 
         private void canvas_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -84,8 +81,26 @@ namespace GraphicsEditor
 
         private void segment_Click(object sender, RoutedEventArgs e)
         {
+            foreach (Rectangle marker in markers)
+            {
+                canvas.Children.Remove(marker);
+            }
             peint = true;
             figure = new FigureBrokenLine(canvas);
+            figure.Transform += Figure_Transform;
+            figure.SelectObject += СurrentFigure;
+            figure.ClickMarker += ClickMarker;
+            figure.RemoveMarker += Figure_RemoveMarker;
+            figure.SetMarker += Figure_SetMarker;
+        }
+        private void rictangle_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (Rectangle marker in markers)
+            {
+                canvas.Children.Remove(marker);
+            }
+            peint = true;
+            figure = new Square(canvas);
             figure.Transform += Figure_Transform;
             figure.SelectObject += СurrentFigure;
             figure.ClickMarker += ClickMarker;
@@ -107,21 +122,12 @@ namespace GraphicsEditor
                     canvas.Children.Add(marker);
             }
         }
-        private void Figure_RemoveMarker(List<Rectangle> markers)
+        private void Figure_RemoveMarker()
         {
             foreach (Rectangle marker in markers)
             {
                 canvas.Children.Remove(marker);
             }
-        }
-
-        private void rictangle_Click(object sender, RoutedEventArgs e)
-        {
-            peint = true;
-            figure = new Square(canvas);
-            figure.SelectObject += СurrentFigure;
-            figure.ClickMarker += ClickMarker;
-            figure.RemoveMarker += Figure_RemoveMarker;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -132,7 +138,13 @@ namespace GraphicsEditor
         public void СurrentFigure(IFigure figure)
         {
             if(this.figure != figure)
+            {
                 this.figure = figure;
+                foreach (Rectangle marker in markers)
+                {
+                    canvas.Children.Remove(marker);
+                }
+            }
             if (!canvas.Children.Contains((UIElement)this.figure.Figure()))
                 canvas.Children.Add((UIElement)this.figure.Figure());
         }
