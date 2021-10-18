@@ -41,7 +41,6 @@ namespace GraphicsEditor
 
         private void Marker_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            e.Handled = true;
             marker = (Rectangle)sender;
             ClickMarker(true);
             if (e.ClickCount == 1)
@@ -136,6 +135,8 @@ namespace GraphicsEditor
             currentLine.X2 = mouse.X;
             currentLine.Y2 = mouse.Y;
 
+            currentLine.StrokeThickness = 5;
+
             currentLine.MouseLeftButtonDown += Line_MouseLeftDown;
             currentLine.MouseMove += Line_MouseMove;
 
@@ -149,6 +150,7 @@ namespace GraphicsEditor
         {
             currentLine.X2 = point.X;
             currentLine.Y2 = point.Y;
+
         }
 
         private void FindThePointsOfTheLinesInTheRadius(byte Radius)
@@ -203,11 +205,9 @@ namespace GraphicsEditor
 
         private void Line_MouseLeftDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            e.Handled = true;
             if (e.ClickCount == 1)
             {
                 Transform(true);
-                SelectObject(this);
             }
 
             if (e.ClickCount == 2)
@@ -230,11 +230,12 @@ namespace GraphicsEditor
                 currentLine.MouseDown += Line_MouseLeftDown;
                 currentLine.MouseMove += Line_MouseMove;
 
+                idPointLine.Add(3);
                 lines.Add(currentLine);
-
-                SelectObject(this);
+                
             }
             FindIdenticalPointsOfTheLine();
+            SelectObject(this);
         }
         /*
         private void DrawMarker()

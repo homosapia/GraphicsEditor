@@ -85,6 +85,8 @@ namespace GraphicsEditor
             {
                 canvas.Children.Remove(marker);
             }
+            marker = false;
+            transform = false;
             peint = true;
             figure = new FigureBrokenLine(canvas);
             figure.Transform += Figure_Transform;
@@ -99,8 +101,10 @@ namespace GraphicsEditor
             {
                 canvas.Children.Remove(marker);
             }
+            transform = false;
+            marker = false;
             peint = true;
-            figure = new Square(canvas);
+            figure = new FigureRectangle();
             figure.Transform += Figure_Transform;
             figure.SelectObject += СurrentFigure;
             figure.ClickMarker += ClickMarker;
@@ -118,8 +122,7 @@ namespace GraphicsEditor
             this.markers = markers;
             foreach (Rectangle marker in markers)
             {
-                if(!canvas.Children.Contains(marker))
-                    canvas.Children.Add(marker);
+                canvas.Children.Add(marker);
             }
         }
         private void Figure_RemoveMarker()
@@ -137,7 +140,7 @@ namespace GraphicsEditor
 
         public void СurrentFigure(IFigure figure)
         {
-            if(this.figure != figure)
+            if(this.figure != figure && !peint)
             {
                 this.figure = figure;
                 foreach (Rectangle marker in markers)
@@ -145,8 +148,8 @@ namespace GraphicsEditor
                     canvas.Children.Remove(marker);
                 }
             }
-            if (!canvas.Children.Contains((UIElement)this.figure.Figure()))
-                canvas.Children.Add((UIElement)this.figure.Figure());
+            if (!canvas.Children.Contains((UIElement)figure.Figure()))
+                canvas.Children.Add((UIElement)figure.Figure());
         }
 
         public void ClickMarker(bool click)
