@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Shapes;
 
 namespace GraphicsEditor
@@ -33,5 +34,10 @@ namespace GraphicsEditor
 
         public void CreateFigure(Point mouse);
 
+        public void SetColor(Color color);
+
+        public void ChangeColor(Color color);
+
+        public void ChangeThickness(double thick);
     }
 }

@@ -21,6 +21,9 @@ namespace GraphicsEditor
         List<Line> lines;
         List<int> idPointLine;
 
+        Color color;
+        double thick;
+
         Line currentLine;
 
         List<Rectangle> markers = new();
@@ -129,13 +132,13 @@ namespace GraphicsEditor
             idPointLine = new();
 
             currentLine = new();
-            currentLine.Stroke = Brushes.Black;
+            currentLine.Stroke = new SolidColorBrush(color);
             currentLine.X1 = mouse.X;
             currentLine.Y1 = mouse.Y;
             currentLine.X2 = mouse.X;
             currentLine.Y2 = mouse.Y;
 
-            currentLine.StrokeThickness = 5;
+            currentLine.StrokeThickness = thick;
 
             currentLine.MouseLeftButtonDown += Line_MouseLeftDown;
             currentLine.MouseMove += Line_MouseMove;
@@ -221,7 +224,9 @@ namespace GraphicsEditor
                 line.Y2 = point.Y;
 
                 currentLine = new();
-                currentLine.Stroke = Brushes.Black;
+                currentLine.Stroke = new SolidColorBrush(color);
+                currentLine.StrokeThickness = thick;
+
                 currentLine.X1 = point.X;
                 currentLine.Y1 = point.Y;
                 currentLine.X2 = point1.X;
@@ -309,5 +314,27 @@ namespace GraphicsEditor
                 return null;
         }
 
+        public void SetColor(Color color)
+        {
+            this.color = color;
+        }
+
+        public void ChangeColor(Color color)
+        {
+            this.color = color;
+            foreach (Line line in lines)
+            {
+                line.Stroke = new SolidColorBrush(color);
+            }
+        }
+
+        public void ChangeThickness(double thick)
+        {
+            this.thick = thick;
+            foreach (Line line in lines)
+            {
+                line.StrokeThickness = this.thick;
+            }
+        }
     }
 }

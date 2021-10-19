@@ -18,9 +18,10 @@ namespace GraphicsEditor
         public event EventSetMarker SetMarker;
         public event EventRemoveMarker RemoveMarker;
 
-        Grid grid;
+        Canvas canvas;
         Rectangle rectangle;
         Rectangle marker;
+        Thickness thickness;
 
         bool transform;
         bool turn;
@@ -28,17 +29,32 @@ namespace GraphicsEditor
 
         public FigureRectangle()
         {
-            grid = new();
+            thickness = new();
+            canvas = new();
             rectangle = new();
             marker = new();
 
-            rectangle.Fill = new SolidColorBrush(Colors.Black);
+            canvas.Background = Brushes.White;
+            canvas.MouseLeftButtonDown += Canvas_MouseLeftButtonDown;
+            canvas.Margin = thickness;
+
+            rectangle.Margin = thickness;
+
             marker.Fill = Brushes.Red;
             marker.Width = 10;
             marker.Height = 10;
 
-            grid.Children.Add(rectangle);
-            grid.Children.Add(marker);
+            canvas.Children.Add(rectangle);
+            canvas.Children.Add(marker);
+        }
+
+        private void Canvas_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+        }
+
+        public void ChangeColor(Color color)
+        {
+            throw new NotImplementedException();
         }
 
         public void ChangePosition(Point point)
@@ -46,14 +62,28 @@ namespace GraphicsEditor
             throw new NotImplementedException();
         }
 
+        public void ChangeThickness(double thick)
+        {
+        }
+
         public void CreateFigure(Point mouse)
         {
-            Canvas.SetLeft(grid, mouse.X);
-            Canvas.SetTop(grid, mouse.Y);
+            canvas.Width = 1000;
+            canvas.Height = 1000;
 
-            Canvas.SetRight(grid.Children[0], mouse.X);
-            Canvas.SetBottom(grid.Children[0], mouse.Y);
+            RotateTransform rotate = new();
+            rotate.Angle = 30;
+            canvas.RenderTransform = rotate;
+
+            thickness.Left = mouse.X;
+            thickness.Top = mouse.Y;
+
             SelectObject(this);
+        }
+
+        public void DelMarker()
+        {
+            throw new NotImplementedException();
         }
 
         public void DrawFigure(Point point)
@@ -61,15 +91,14 @@ namespace GraphicsEditor
 
         }
 
-
-
         public object Figure()
         {
-            return grid;
+            return canvas;
         }
-        public void DelMarker()
+
+        public void SetColor(Color color)
         {
-            throw new NotImplementedException();
+            rectangle.Fill = new SolidColorBrush(color);
         }
     }
 }

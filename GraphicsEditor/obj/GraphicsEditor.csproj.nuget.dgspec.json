@@ -39,6 +39,12 @@
       "frameworks": {
         "net5.0-windows7.0": {
           "targetAlias": "net5.0-windows",
+          "dependencies": {
+            "Syncfusion.Shared.WPF": {
+              "target": "Package",
+              "version": "[19.3.0.46, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

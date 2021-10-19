@@ -21,6 +21,7 @@ namespace GraphicsEditor
     public partial class MainWindow : Window
     {
         IFigure figure;
+        double thick = 1;
 
         bool peint;
         bool transform;
@@ -37,7 +38,7 @@ namespace GraphicsEditor
 
         private void canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if(peint)
+            if (peint)
             {
                 figure.CreateFigure(e.GetPosition(canvas));
             }
@@ -54,17 +55,13 @@ namespace GraphicsEditor
 
         private void canvas_MouseMove(object sender, MouseEventArgs e)
         {
+            
             if (e.LeftButton == MouseButtonState.Pressed && peint)
             {
                 figure.DrawFigure(e.GetPosition(canvas));
             }
 
             if(e.LeftButton == MouseButtonState.Pressed && marker)
-            {
-                figure.ChangePosition(e.GetPosition(canvas));
-            }
-
-            if (e.RightButton == MouseButtonState.Pressed)
             {
                 figure.ChangePosition(e.GetPosition(canvas));
             }
@@ -89,6 +86,8 @@ namespace GraphicsEditor
             transform = false;
             peint = true;
             figure = new FigureBrokenLine(canvas);
+            figure.SetColor(palette.Color);
+            figure.ChangeThickness(thick);
             figure.Transform += Figure_Transform;
             figure.SelectObject += СurrentFigure;
             figure.ClickMarker += ClickMarker;
@@ -104,7 +103,9 @@ namespace GraphicsEditor
             transform = false;
             marker = false;
             peint = true;
-            figure = new FigureRectangle();
+            figure = new Square(canvas);
+            figure.SetColor(palette.Color);
+            figure.ChangeThickness(thick);
             figure.Transform += Figure_Transform;
             figure.SelectObject += СurrentFigure;
             figure.ClickMarker += ClickMarker;
@@ -155,6 +156,23 @@ namespace GraphicsEditor
         public void ClickMarker(bool click)
         {
             marker = click;
+        }
+
+        private void palette_SelectedBrushChanged(object sender, Syncfusion.Windows.Tools.Controls.SelectedBrushChangedEventArgs e)
+        {
+            if (figure != null)
+            {
+                figure.ChangeColor(palette.Color);
+            }
+        }
+
+        private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            this.thick = slider.Value;
+            if (figure != null)
+            {
+                figure.ChangeThickness(this.thick);
+            }
         }
     }
 }

@@ -86,3 +86,5 @@ C:\Users\fnbxk\Documents\GitHub\GraphicsEditor\GraphicsEditor\obj\Debug\net5.0-w
 C:\Users\fnbxk\Documents\GitHub\GraphicsEditor\GraphicsEditor\obj\Debug\net5.0-windows\ref\GraphicsEditor.dll
 C:\Users\fnbxk\Documents\GitHub\GraphicsEditor\GraphicsEditor\obj\Debug\net5.0-windows\GraphicsEditor.pdb
 C:\Users\fnbxk\Documents\GitHub\GraphicsEditor\GraphicsEditor\obj\Debug\net5.0-windows\GraphicsEditor.genruntimeconfig.cache
+C:\Users\badazhkov\Documents\GitHub\GraphicsEditor\GraphicsEditor\bin\Debug\net5.0-windows\Syncfusion.Licensing.dll
+C:\Users\badazhkov\Documents\GitHub\GraphicsEditor\GraphicsEditor\bin\Debug\net5.0-windows\Syncfusion.Shared.WPF.dll

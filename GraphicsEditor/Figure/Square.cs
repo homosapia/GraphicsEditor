@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -31,20 +32,46 @@ namespace GraphicsEditor
         bool move;
 
         Rectangle marker;
+        Canvas substrate;
         Canvas canvas;
         ScaleTransform scaleTransform;
         public Square(Canvas canvas)
         {
             this.canvas = canvas;
+            substrate = new();
+            
+            substrate.Background = new SolidColorBrush(Color.FromArgb(0,0,0,0));
+            substrate.MouseDown += Substrate_MouseDown;
+            substrate.MouseMove += Substrate_MouseMove;
 
             rectangle = new();
 
-            rectangle.Fill = new SolidColorBrush(Colors.Black);
             rectangle.MouseMove += Rectangle_MouseMove;
             rectangle.MouseLeftButtonDown += Rectangle_MouseLeftButtonDown;
             rectangle.MouseLeave += Rectangle_MouseLeave;
- 
+
+            rectangle.Width = 10;
+            rectangle.Height = 10;
+
             scaleTransform = new();
+            rectangle.LayoutTransform = scaleTransform;
+
+            marker = CreateMarker(points[1]);
+
+            substrate.Children.Add(rectangle);
+            substrate.Children.Add(marker);
+        }
+
+        private void Substrate_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (transform)
+            {
+                points[1] = e.GetPosition(substrate);
+            }
+        }
+
+        private void Substrate_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
         }
 
         private void Rectangle_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
@@ -67,16 +94,11 @@ namespace GraphicsEditor
             turn = false;
             transform = false;
 
-            RemoveMarker();
-            List<Rectangle> markers = new();
-            marker = CreateMarker(points[1]);
-            markers.Add(marker);
-            SetMarker(markers);
-
             Transform(true);
             ClickMarker(true);
 
             SelectObject(this);
+
         }
 
         public Rectangle CreateMarker(Point point)
@@ -126,14 +148,14 @@ namespace GraphicsEditor
 
         private void Rectangle_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            
+
         }
 
         
 
         public object Figure()
         {
-            return rectangle;
+            return substrate;
         }
 
         public void StartObject(Point point)
@@ -153,11 +175,9 @@ namespace GraphicsEditor
         {
             if (transform)
             {
-                this.points[1] = point;
+                substrate.Width = rectangle.Width + 10;
+                substrate.Height = rectangle.Height + 10;
                 _Transform(point);
-
-                Canvas.SetLeft(marker, points[1].X - 5);
-                Canvas.SetTop(marker, points[1].Y - 5);
             }
             if(turn)
             {
@@ -172,41 +192,13 @@ namespace GraphicsEditor
         private void _Transform(Point point)
         {
             points[1] = point;
-            if (points[1].X > this.points[0].X && points[1].Y > this.points[0].Y)
-            {
-                Canvas.SetLeft(rectangle, points[0].X);
-                Canvas.SetTop(rectangle, points[0].Y);
+            rectangle.Width = Mouse.GetPosition(substrate).X;
+            rectangle.Height = Mouse.GetPosition(substrate).Y;
 
-                rectangle.Width = Math.Abs(points[1].X - this.points[0].X);
-                rectangle.Height = Math.Abs(points[1].Y - this.points[0].Y);
-            }
-
-            if (points[1].X < this.points[0].X && points[1].Y < this.points[0].Y)
-            {
-                Canvas.SetLeft(rectangle, points[1].X);
-                Canvas.SetTop(rectangle, points[1].Y);
-
-                rectangle.Width = Math.Abs(this.points[0].X - points[1].X);
-                rectangle.Height = Math.Abs(this.points[0].Y - points[1].Y);
-            }
-
-            if (points[1].X > this.points[0].X && points[1].Y < this.points[0].Y)
-            {
-                Canvas.SetLeft(rectangle, this.points[0].X);
-                Canvas.SetTop(rectangle, points[1].Y);
-
-                rectangle.Width = Math.Abs(this.points[0].X - points[1].X);
-                rectangle.Height = Math.Abs(this.points[0].Y - points[1].Y);
-            }
-
-            if (points[1].X < this.points[0].X && points[1].Y > this.points[0].Y)
-            {
-                Canvas.SetLeft(rectangle, points[1].X);
-                Canvas.SetTop(rectangle, this.points[0].Y);
-
-                rectangle.Width = Math.Abs(this.points[0].X - points[1].X);
-                rectangle.Height = Math.Abs(this.points[0].Y - points[1].Y);
-            }
+            Thickness thickness = new();
+            thickness.Left = rectangle.Width;
+            thickness.Top = rectangle.Height;
+            marker.Margin = thickness;
         }
 
         private void Rotate(Point point)
@@ -217,7 +209,7 @@ namespace GraphicsEditor
             RotateFigure.CenterY = rectangle.Height / 2;
 
             RotateFigure.Angle = point.Y - points[1].Y;
-            rectangle.LayoutTransform = RotateFigure;
+            substrate.RenderTransform = RotateFigure;
         }
 
         private void MoveFigure(Point point)
@@ -225,19 +217,19 @@ namespace GraphicsEditor
             points[0].X = point.X - distanceX;
             points[0].Y = point.Y - distanceY;
 
-            points[1].X = points[0].X + rectangle.Width;
-            points[1].Y = points[0].Y + rectangle.Height;
+            points[1].X = points[0].X + substrate.Width;
+            points[1].Y = points[0].Y + substrate.Height;
 
-            Canvas.SetLeft(rectangle, points[0].X);
-            Canvas.SetTop(rectangle, points[0].Y);
+            Canvas.SetLeft(substrate, points[0].X);
+            Canvas.SetTop(substrate, points[0].Y);
         }
 
         public void CreateFigure(Point point)
         {
             points[0] = point;
 
-            Canvas.SetLeft(rectangle, point.X);
-            Canvas.SetTop(rectangle, point.Y);
+            Canvas.SetLeft(substrate, point.X);
+            Canvas.SetTop(substrate, point.Y);
 
             SelectObject(this);
         }
@@ -245,6 +237,21 @@ namespace GraphicsEditor
         public void DrawFigure(Point point)
         {
             _Transform(point);
+        }
+
+        public void SetColor(Color color)
+        {
+            rectangle.Fill = new SolidColorBrush(color);
+        }
+
+        public void ChangeColor(Color color)
+        {
+            rectangle.Fill = new SolidColorBrush(color);
+        }
+
+        public void ChangeThickness(double thick)
+        {
+            rectangle.StrokeThickness = thick;
         }
     }
 }

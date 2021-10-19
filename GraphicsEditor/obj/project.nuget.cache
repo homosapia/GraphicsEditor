@@ -1,8 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "d7YHPRi86cNkZjrBcKZN7CYT1T1OkjOyhuxkhwvJS46IiBwBe5WzKZCnBDPVN+esyZaLU4pcA/VFbQRQ4Evo7w==",
+  "dgSpecHash": "HhR1qz3IGUPBiMJgczqARQzRRmj3kM5d5EcODe/FgAaFubFuSg8zmIoXqbPlHBQnX3gSKbIOPjIKiJ+zO8NiKg==",
   "success": true,
   "projectFilePath": "C:\\Users\\badazhkov\\Documents\\GitHub\\GraphicsEditor\\GraphicsEditor\\GraphicsEditor.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\badazhkov\\.nuget\\packages\\syncfusion.licensing\\19.3.0.46\\syncfusion.licensing.19.3.0.46.nupkg.sha512",
+    "C:\\Users\\badazhkov\\.nuget\\packages\\syncfusion.shared.wpf\\19.3.0.46\\syncfusion.shared.wpf.19.3.0.46.nupkg.sha512"
+  ],
   "logs": []
 }
