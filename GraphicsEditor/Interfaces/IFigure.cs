@@ -10,31 +10,15 @@ using System.Windows.Shapes;
 
 namespace GraphicsEditor
 {
-    public delegate void EventSelectFigure(IFigure figure);
-    public delegate void EventClickMarker(bool click);
-    public delegate void EventTransform(bool click);
-    public delegate void EventSetMarker(List<Rectangle> markers);
-    public delegate void EventRemoveMarker();
-
-    public interface IFigure
+    public interface IFigure : IEvents
     {
-        public event EventSelectFigure SelectObject;
-        public event EventClickMarker ClickMarker;
-        public event EventTransform Transform;
-        public event EventSetMarker SetMarker;
-        public event EventRemoveMarker RemoveMarker;
-
         public object Figure();
 
         public void ChangePosition(Point point);
 
         public void DrawFigure(Point point);
 
-        public void DelMarker();
-
         public void CreateFigure(Point mouse);
-
-        public void SetColor(Color color);
 
         public void ChangeColor(Color color);
 

@@ -27,7 +27,7 @@ namespace GraphicsEditor
         bool transform;
         bool marker;
 
-        List<Rectangle> markers = new();
+        List<Ellipse> markers = new();
 
         Point currentPoint = new();
 
@@ -44,7 +44,7 @@ namespace GraphicsEditor
             }
             if (!transform && !marker)
             {
-                foreach (Rectangle marker in markers)
+                foreach (Ellipse marker in markers)
                 {
                     canvas.Children.Remove(marker);
                 }
@@ -78,15 +78,15 @@ namespace GraphicsEditor
 
         private void segment_Click(object sender, RoutedEventArgs e)
         {
-            foreach (Rectangle marker in markers)
+            foreach (Ellipse marker in markers)
             {
                 canvas.Children.Remove(marker);
             }
             marker = false;
             transform = false;
             peint = true;
-            figure = new FigureBrokenLine(canvas);
-            figure.SetColor(palette.Color);
+            figure = new FigureBrokenLine();
+            figure.ChangeColor(palette.Color);
             figure.ChangeThickness(thick);
             figure.Transform += Figure_Transform;
             figure.SelectObject += СurrentFigure;
@@ -96,21 +96,27 @@ namespace GraphicsEditor
         }
         private void rictangle_Click(object sender, RoutedEventArgs e)
         {
-            foreach (Rectangle marker in markers)
+            foreach (Ellipse marker in markers)
             {
                 canvas.Children.Remove(marker);
             }
             transform = false;
             marker = false;
             peint = true;
-            figure = new Square(canvas);
-            figure.SetColor(palette.Color);
+            figure = new FigureRectangle();
+            figure.ChangeColor(palette.Color);
             figure.ChangeThickness(thick);
             figure.Transform += Figure_Transform;
             figure.SelectObject += СurrentFigure;
             figure.ClickMarker += ClickMarker;
             figure.RemoveMarker += Figure_RemoveMarker;
             figure.SetMarker += Figure_SetMarker;
+            figure.RemoveUiElemrnt += Figure_RemoveUiElemrnt;
+        }
+
+        private void Figure_RemoveUiElemrnt(UIElement uIElement)
+        {
+            canvas.Children.Remove(uIElement);
         }
 
         private void Figure_Transform(bool click)
@@ -118,25 +124,20 @@ namespace GraphicsEditor
             transform = click;
         }
 
-        private void Figure_SetMarker(List<Rectangle> markers)
+        private void Figure_SetMarker(List<Ellipse> markers)
         {
             this.markers = markers;
-            foreach (Rectangle marker in markers)
+            foreach (Ellipse marker in markers)
             {
                 canvas.Children.Add(marker);
             }
         }
         private void Figure_RemoveMarker()
         {
-            foreach (Rectangle marker in markers)
+            foreach (Ellipse marker in markers)
             {
                 canvas.Children.Remove(marker);
             }
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
         }
 
         public void СurrentFigure(IFigure figure)
@@ -144,7 +145,7 @@ namespace GraphicsEditor
             if(this.figure != figure && !peint)
             {
                 this.figure = figure;
-                foreach (Rectangle marker in markers)
+                foreach (Ellipse marker in markers)
                 {
                     canvas.Children.Remove(marker);
                 }
