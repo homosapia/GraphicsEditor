@@ -16,12 +16,14 @@ namespace GraphicsEditor
 
         public void ChangePosition(Point point);
 
-        public void DrawFigure(Point point);
-
-        public void CreateFigure(Point mouse);
-
         public void ChangeColor(Color color);
 
         public void ChangeThickness(double thick);
+
+        public void DeselectShape();
+
+        public void StartingPoint(Point point);
+
+        public void CurrentPositionMouseOnCanvas(Point point);
     }
 }

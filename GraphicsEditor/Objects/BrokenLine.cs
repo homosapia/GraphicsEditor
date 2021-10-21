@@ -19,7 +19,7 @@ namespace GraphicsEditor.Objects
         private List<Line> lines = new();
         private List<byte> idPointLine = new();
 
-        private Color color;
+        private Color color = Color.FromArgb(255,0,0,0);
         private double thick;
 
 

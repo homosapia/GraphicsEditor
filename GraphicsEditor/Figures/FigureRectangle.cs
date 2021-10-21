@@ -15,11 +15,11 @@ namespace GraphicsEditor
     class FigureRectangle : IFigure
     {
         public event EventClickMarker ClickMarker;
-        public event EventSetMarker SetMarker;
+        public event EventSetUIElement UIElement;
         public event EventTransform Transform;
         public event EventSelectFigure SelectObject;
-        public event EventRemoveMarker RemoveMarker;
         public event EventRemoveUiElemrnt RemoveUiElemrnt;
+        public event EventFindPositionMouse FindPositionMouse;
 
         private square square = new();
         
@@ -35,6 +35,7 @@ namespace GraphicsEditor
 
         public FigureRectangle()
         {
+            transform = true;
             square.Rectangle.MouseLeftButtonDown += Rectangle_MouseLeftButtonDown;
             square.Rectangle.MouseLeave += Rectangle_MouseLeave;
 
@@ -54,10 +55,7 @@ namespace GraphicsEditor
 
         private void Rectangle_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            distanceX = e.GetPosition(square.Rectangle).X - points[0].X;
-            distanceY = e.GetPosition(square.Rectangle).Y - points[0].Y;
-
-            pointY = e.GetPosition(square.Rectangle).Y;
+            FindPositionMouse();
 
             e.Handled = true;
             move = true;
@@ -67,7 +65,6 @@ namespace GraphicsEditor
             square.ShowMarker();
 
             Transform(true);
-            ClickMarker(true);
 
             SelectObject(this);
 
@@ -75,15 +72,14 @@ namespace GraphicsEditor
         private void Marker_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             transform = false;
-            ClickMarker(transform);
         }
 
         private void Marker_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            e.Handled = true;
             transform = true;
             move = false;
             turn = false;
-            ClickMarker(transform);
         }
 
         public object NewObject(Canvas canvas)
@@ -111,26 +107,10 @@ namespace GraphicsEditor
             }
             if(move)
             {
-                square.HideMarker();
                 points[0].X = point.X - distanceX;
                 points[0].Y = point.Y - distanceY;
                 square.SetPosition(points[0]);
             }
-        }
-
-        public void CreateFigure(Point point)
-        {
-            points[0] = point;
-
-            square.SetPosition(point);
-
-            SelectObject(this);
-        }
-
-        public void DrawFigure(Point point)
-        {
-            Point pointSubstrate = Mouse.GetPosition(square.Substrate);
-            square.resize(pointSubstrate);
         }
 
         public void ChangeColor(Color color)
@@ -141,6 +121,29 @@ namespace GraphicsEditor
         public void ChangeThickness(double thick)
         {
             square.ChangeThickness(thick);
+        }
+
+        public void DeselectShape()
+        {
+            square.HideMarker();
+            transform = false;
+            move = false;
+            turn = false;
+        }
+
+        public void StartingPoint(Point point)
+        {
+            points[0] = point;
+            square.SetPosition(point);
+            SelectObject(this);
+        }
+
+        public void CurrentPositionMouseOnCanvas(Point point)
+        {
+            distanceX = point.X - points[0].X;
+            distanceY = point.Y - points[0].Y;
+
+            pointY = point.Y;
         }
     }
 }
