@@ -16,11 +16,11 @@ namespace GraphicsEditor.Objects
         private const byte idLastPointLine = 2;
         private const byte idUnselectedPoint = 3;
 
-        private List<Line> lines = new();
-        private List<byte> idPointLine = new();
+        public List<Line> lines = new();
+        public List<byte> idPointLine = new();
 
-        private Color color = Color.FromArgb(255,0,0,0);
-        private double thick;
+        public Color color = Color.FromArgb(255,0,0,0);
+        public double thick;
 
 
         public void FindThePointsOfTheLinesInTheRadius(Point point, byte Radius)

@@ -9,7 +9,7 @@
         Title="MainWindow" Height="400" Width="750" Loaded="Window_Loaded">
     <Grid x:Name="grid1">
         <DockPanel>
-            <StackPanel DockPanel.Dock="Left" Orientation="Vertical">
+            <StackPanel x:Name="StackPanal" DockPanel.Dock="Left" Orientation="Vertical">
                 <Button x:Name="segment" Height="30" Click="segment_Click">отрезок</Button>
                 <Button x:Name="rictangle" Height="30" Click="rictangle_Click">прямоугольник</Button>
                 <StackPanel Orientation="Horizontal">
@@ -17,6 +17,10 @@
                     <syncfusion:ColorPickerPalette x:Name="palette" Color="Black" Height="30" Width="77" SelectedBrushChanged="palette_SelectedBrushChanged"/>
                 </StackPanel>
                 <Slider x:Name="slider" Width="120" Minimum="1" MouseDown="slider_MouseDown"/>
+                <Button x:Name="del" Content="Удалить" Click="del_Click"/>
+                <Button Content="Загрузить" Click="Button_Click_1"/>
+                <Button Content="Сохранить" Click="Button_Click"/>
+
             </StackPanel>
 
             <Grid DockPanel.Dock="Right">

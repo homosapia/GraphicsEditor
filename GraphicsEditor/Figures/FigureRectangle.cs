@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using Newtonsoft.Json;
 
 namespace GraphicsEditor
 {
@@ -43,6 +44,16 @@ namespace GraphicsEditor
             square.Marker.MouseLeftButtonUp += Marker_MouseLeftButtonUp;
         }
 
+        public List<object> Save()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Load(List<object> objects)
+        {
+            throw new NotImplementedException();
+        }
+
         private void Rectangle_MouseLeave(object sender, MouseEventArgs e)
         {
             if (!transform)
@@ -55,8 +66,6 @@ namespace GraphicsEditor
 
         private void Rectangle_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            FindPositionMouse();
-
             e.Handled = true;
             move = true;
             turn = false;
@@ -67,7 +76,7 @@ namespace GraphicsEditor
             Transform(true);
 
             SelectObject(this);
-
+            FindPositionMouse();
         }
         private void Marker_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
@@ -144,6 +153,13 @@ namespace GraphicsEditor
             distanceY = point.Y - points[0].Y;
 
             pointY = point.Y;
+        }
+
+        public List<UIElement> GetAllUIElements()
+        {
+            List<UIElement> uIElements = new();
+            uIElements.Add(square.Substrate);
+            return uIElements;
         }
     }
 }

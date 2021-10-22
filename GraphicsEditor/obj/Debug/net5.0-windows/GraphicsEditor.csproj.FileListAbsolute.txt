@@ -89,5 +89,5 @@ C:\Users\fnbxk\Documents\GitHub\GraphicsEditor\GraphicsEditor\obj\Debug\net5.0-w
 C:\Users\badazhkov\Documents\GitHub\GraphicsEditor\GraphicsEditor\bin\Debug\net5.0-windows\Syncfusion.Licensing.dll
 C:\Users\badazhkov\Documents\GitHub\GraphicsEditor\GraphicsEditor\bin\Debug\net5.0-windows\Syncfusion.Shared.WPF.dll
 C:\Users\badazhkov\Documents\GitHub\GraphicsEditor\GraphicsEditor\obj\Debug\net5.0-windows\Workspace.g.cs
-C:\Users\badazhkov\Documents\GitHub\GraphicsEditor\GraphicsEditor\obj\Debug\net5.0-windows\GeneratedInternalTypeHelper.g.cs
 C:\Users\badazhkov\Documents\GitHub\GraphicsEditor\GraphicsEditor\obj\Debug\net5.0-windows\Workspace.baml
+C:\Users\badazhkov\Documents\GitHub\GraphicsEditor\GraphicsEditor\bin\Debug\net5.0-windows\Newtonsoft.Json.dll

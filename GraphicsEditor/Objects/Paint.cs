@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -29,6 +30,11 @@ namespace GraphicsEditor
         //создать фигуру
         public void CreateFigure(string nameFigure)
         {
+            if(figure != null)
+            {
+                figure.DeselectShape();
+            }
+
             figure = null;
             startingObject = true;
             changesAllowed = true;
@@ -53,6 +59,36 @@ namespace GraphicsEditor
             figure.FindPositionMouse += Figure_FindPositionMouse;
         }
 
+        //удалить фигуру
+        public void DeleteFigure()
+        {
+            if (figure != null)
+            {
+                List<UIElement> uIElements = figure.GetAllUIElements();
+                int i = 0;
+                while (i < canvas.Children.Count)
+                {
+                    bool uIElementsFound = false;
+                    foreach (UIElement uIFigure in uIElements)
+                    {
+                        if (canvas.Children[i] == uIFigure)
+                        {
+                            canvas.Children.Remove(canvas.Children[i]);
+                            uIElementsFound = true;
+                            break;
+                        }
+                    }
+                    
+                    if (uIElementsFound)
+                    {
+                        i = 0;
+                    }
+                    else
+                        i++;
+                }
+            }
+            figure = null;
+        }
 
         public void Change(Point point)
         {
@@ -62,14 +98,21 @@ namespace GraphicsEditor
 
         public void DeselectAnObject()
         {
-            figure.DeselectShape();
-            figure = null;
+            if(figure != null)
+            {
+                figure.DeselectShape();
+                changesAllowed = false;
+                figure = null;
+            }
         }
 
         public void ClickMouseDown(Point point)
         {
-            Starting(point);
-            SendMousePosition(point);
+            if(figure != null)
+            {
+                Starting(point);
+                SendMousePosition(point);
+            }
         }
 
         private void Starting(Point point)
@@ -133,11 +176,12 @@ namespace GraphicsEditor
 
         private void Figure_SelectObject(IFigure figure)
         {
-            if (this.figure != figure)
+            changesAllowed = true;
+            if (this.figure != figure && this.figure != null)
             {
                 this.figure.DeselectShape();
-                this.figure = figure;
             }
+            this.figure = figure;
             if (!canvas.Children.Contains((UIElement)figure.Figure()))
                 canvas.Children.Add((UIElement)figure.Figure());
         }

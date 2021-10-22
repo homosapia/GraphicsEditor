@@ -1,6 +1,9 @@
-﻿using System;
+﻿
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Printing;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -65,6 +68,25 @@ namespace GraphicsEditor
         private void slider_MouseDown(object sender, MouseButtonEventArgs e)
         {
             paint.SetThickness(slider.Value);
+        }
+
+        private void del_Click(object sender, RoutedEventArgs e)
+        {
+            paint.DeleteFigure();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            string fn = "C:/Users/badazhkov/Desktop/хз.pdf";
+            var proc = new System.Diagnostics.Process();
+            proc.StartInfo.FileName = fn;
+            proc.StartInfo.UseShellExecute = true;
+            proc.Start();
         }
     }
 }

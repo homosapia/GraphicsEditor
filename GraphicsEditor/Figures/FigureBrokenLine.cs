@@ -8,6 +8,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Text.Json;
+using Newtonsoft.Json;
 
 namespace GraphicsEditor
 {
@@ -26,6 +28,19 @@ namespace GraphicsEditor
         List<UIElement> markers = new();
         UIElement marker = new();
         bool СellMarker = true;
+
+        public List<object> Save()
+        {
+            List<object> objecs = new();
+
+
+            return objecs;
+        }
+
+        public void Load(List<object> objects)
+        {
+            throw new NotImplementedException();
+        }
 
         private void Marker_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -171,6 +186,16 @@ namespace GraphicsEditor
         public void CurrentPositionMouseOnCanvas(Point point)
         {
 
+        }
+
+        public List<UIElement> GetAllUIElements()
+        {
+            List<UIElement> uIElements = new();
+
+            uIElements.AddRange(brokenLine.GetLines());
+            uIElements.AddRange(markers);
+
+            return uIElements;
         }
     }
 }
