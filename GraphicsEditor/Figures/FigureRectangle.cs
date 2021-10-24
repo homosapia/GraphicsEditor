@@ -22,9 +22,9 @@ namespace GraphicsEditor
         public event EventRemoveUiElemrnt RemoveUiElemrnt;
         public event EventFindPositionMouse FindPositionMouse;
 
-        private square square = new();
+        public square rectangle = new();
         
-        Point [] points = new Point[2];
+        public Point StartObject = new Point();
 
         double distanceX;
         double distanceY;
@@ -37,21 +37,55 @@ namespace GraphicsEditor
         public FigureRectangle()
         {
             transform = true;
-            square.Rectangle.MouseLeftButtonDown += Rectangle_MouseLeftButtonDown;
-            square.Rectangle.MouseLeave += Rectangle_MouseLeave;
+            rectangle.Rectangle.MouseLeftButtonDown += Rectangle_MouseLeftButtonDown;
+            rectangle.Rectangle.MouseLeave += Rectangle_MouseLeave;
 
-            square.Marker.MouseLeftButtonDown += Marker_MouseLeftButtonDown;
-            square.Marker.MouseLeftButtonUp += Marker_MouseLeftButtonUp;
+            rectangle.Marker.MouseLeftButtonDown += Marker_MouseLeftButtonDown;
+            rectangle.Marker.MouseLeftButtonUp += Marker_MouseLeftButtonUp;
         }
 
-        public List<object> Save()
+        public string DeserializeFigurs()
         {
-            throw new NotImplementedException();
+            List<object> objects = new();
+
+            object f = rectangle.CopyElements();
+            rectangle = (square)f;
+
+            objects.Add(JsonConvert.SerializeObject(rectangle.CopyElements()));
+
+            objects.Add(StartObject);
+
+            string se = JsonConvert.SerializeObject(objects);
+            objects = JsonConvert.DeserializeObject<List<object>>(se);
+            string g = (string)objects[0];
+            rectangle = JsonConvert.DeserializeObject<square>(g);
+
+            return JsonConvert.SerializeObject(objects);
         }
 
-        public void Load(List<object> objects)
+        public void InsertElements(List<object> objects)
         {
-            throw new NotImplementedException();
+            rectangle = (square)objects[0];
+            StartObject = (Point)objects[1];
+        }
+
+        public IFigure GetCopyIFigure()
+        {
+            FigureRectangle figureRectangle = new();
+            
+            return figureRectangle;
+        }
+
+        public void TuneElements()
+        {
+            rectangle.CreateObject();
+            rectangle.SetPosition(StartObject);
+
+            rectangle.Rectangle.MouseLeftButtonDown += Rectangle_MouseLeftButtonDown;
+            rectangle.Rectangle.MouseLeave += Rectangle_MouseLeave;
+
+            rectangle.Marker.MouseLeftButtonDown += Marker_MouseLeftButtonDown;
+            rectangle.Marker.MouseLeftButtonUp += Marker_MouseLeftButtonUp;
         }
 
         private void Rectangle_MouseLeave(object sender, MouseEventArgs e)
@@ -71,7 +105,7 @@ namespace GraphicsEditor
             turn = false;
             transform = false;
 
-            square.ShowMarker();
+            rectangle.ShowMarker();
 
             Transform(true);
 
@@ -98,43 +132,43 @@ namespace GraphicsEditor
 
         public object Figure()
         {
-            return square.Substrate;
+            return rectangle.Substrate;
         }
 
         public void ChangePosition(Point point)
         {
             if (transform)
             {
-                Point pointSubstrate = Mouse.GetPosition(square.Substrate);
-                square.resize(pointSubstrate);
+                Point pointSubstrate = Mouse.GetPosition(rectangle.Substrate);
+                rectangle.resize(pointSubstrate);
             }
             if(turn)
             {
-                square.HideMarker();
+                rectangle.HideMarker();
                 double rotat =  point.Y - pointY;
-                square.ChangeTurn(rotat);
+                rectangle.ChangeTurn(rotat);
             }
             if(move)
             {
-                points[0].X = point.X - distanceX;
-                points[0].Y = point.Y - distanceY;
-                square.SetPosition(points[0]);
+                StartObject.X = point.X - distanceX;
+                StartObject.Y = point.Y - distanceY;
+                rectangle.SetPosition(StartObject);
             }
         }
 
         public void ChangeColor(Color color)
         {
-            square.ChangeColor(color);
+            rectangle.ChangeColor(color);
         }
 
         public void ChangeThickness(double thick)
         {
-            square.ChangeThickness(thick);
+            rectangle.ChangeThickness(thick);
         }
 
         public void DeselectShape()
         {
-            square.HideMarker();
+            rectangle.HideMarker();
             transform = false;
             move = false;
             turn = false;
@@ -142,15 +176,16 @@ namespace GraphicsEditor
 
         public void StartingPoint(Point point)
         {
-            points[0] = point;
-            square.SetPosition(point);
+            StartObject = point;
+            rectangle.CreateObject();
+            rectangle.SetPosition(point);
             SelectObject(this);
         }
 
         public void CurrentPositionMouseOnCanvas(Point point)
         {
-            distanceX = point.X - points[0].X;
-            distanceY = point.Y - points[0].Y;
+            distanceX = point.X - StartObject.X;
+            distanceY = point.Y - StartObject.Y;
 
             pointY = point.Y;
         }
@@ -158,7 +193,7 @@ namespace GraphicsEditor
         public List<UIElement> GetAllUIElements()
         {
             List<UIElement> uIElements = new();
-            uIElements.Add(square.Substrate);
+            uIElements.Add(rectangle.Substrate);
             return uIElements;
         }
     }

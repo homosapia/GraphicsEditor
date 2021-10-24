@@ -13,6 +13,7 @@ namespace GraphicsEditor
 {
     class Paint
     {
+        List<IFigure> figures = new();
         IFigure figure;
         Canvas canvas;
 
@@ -51,12 +52,23 @@ namespace GraphicsEditor
 
             figure.ChangeColor(color);
             figure.ChangeThickness(thick);
+            SubscribeToEvents(figure);
+        }
+
+        public void SubscribeToEvents(IFigure figure)
+        {
             figure.Transform += Figure_Transform;
             figure.SelectObject += Figure_SelectObject;
             figure.ClickMarker += Figure_ClickMarker;
             figure.UIElement += Figure_UIElement;
             figure.RemoveUiElemrnt += Figure_RemoveUiElemrnt;
             figure.FindPositionMouse += Figure_FindPositionMouse;
+        }
+
+        //получить копию
+        public List<IFigure> GetCopyArrayFigures()
+        {
+            return figures;
         }
 
         //удалить фигуру
@@ -88,6 +100,17 @@ namespace GraphicsEditor
                 }
             }
             figure = null;
+        }
+
+        public void MoveEverything(Point point)
+        {
+            if(figure == null)
+            {
+                foreach (IFigure figure in figures)
+                {
+                    figure.ChangePosition(point);
+                }
+            }
         }
 
         public void Change(Point point)
@@ -176,6 +199,15 @@ namespace GraphicsEditor
 
         private void Figure_SelectObject(IFigure figure)
         {
+            bool AddToArray = true;
+            foreach(IFigure figure1 in figures)
+            {
+                if (figure1 == figure)
+                    AddToArray = false;
+            }
+            if (AddToArray)
+                figures.Add(figure);
+
             changesAllowed = true;
             if (this.figure != figure && this.figure != null)
             {

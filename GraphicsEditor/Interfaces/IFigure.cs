@@ -28,8 +28,12 @@ namespace GraphicsEditor
 
         public List<UIElement> GetAllUIElements();
 
-        public List<object> Save();
+        public string DeserializeFigurs();
 
-        public void Load(List<object> objects);
+        public void InsertElements(List<object> objects);
+
+        public void TuneElements();
+
+        public IFigure GetCopyIFigure();
     }
 }

@@ -1,4 +1,4 @@
-﻿using GraphicsEditor.Abstracts;
+﻿using GraphicsEditor.Abstractions;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -8,65 +8,61 @@ using System.Windows.Shapes;
 
 namespace GraphicsEditor.Objects
 {
-    class square : SaveOrLoad
+    class square
     {
         public Rectangle Rectangle = new();
         public Rectangle Marker = new();
         public Canvas Substrate = new();
         private RotateTransform rotateTransform = new();
 
-        public square()
+        public square CopyElements()
         {
-            Marker.Width = 10;
-            Marker.Height = 10;
+            square objects = new();
 
-            Substrate.Children.Add(Rectangle);
-            Substrate.Children.Add(Marker);
-            Substrate.RenderTransform = rotateTransform;
-        }
-
-        public override List<object> Save()
-        {
-            List<object> uIElements = new();
             Rectangle rectangle = new();
             rectangle.Fill = Rectangle.Fill;
             rectangle.Width = Rectangle.Width;
             rectangle.Height = Rectangle.Height;
-            rectangle.StrokeThickness = Rectangle.StrokeThickness;
+
+            objects.Rectangle = rectangle;
 
             Canvas substrate = new();
             substrate.Width = Substrate.Width;
             substrate.Height = Substrate.Height;
+            substrate.RenderTransform = Substrate.RenderTransform;
+
+            objects.Substrate = substrate;
 
             RotateTransform rotateTransform = new();
             rotateTransform.Angle = this.rotateTransform.Angle;
             rotateTransform.CenterX = this.rotateTransform.CenterX;
             rotateTransform.CenterY = this.rotateTransform.CenterY;
 
-            uIElements.Add(rectangle);
-            uIElements.Add(substrate);
-            uIElements.Add(rotateTransform);
-            return uIElements;
+            objects.rotateTransform = rotateTransform;
+
+            return objects;
         }
 
-        public override void Losd(List<object> objects)
+        public void InsertElements(List<object> objects)
         {
             Rectangle = (Rectangle)objects[0];
-            Substrate = (Canvas)objects[1];
-            this.rotateTransform = (RotateTransform)objects[2];
-
-
-            Rectangle Marker = new();
-            Marker.Width = 10;
-            Marker.Height = 10;
+            
             Thickness thickness = new();
             thickness.Left = Rectangle.Width - 5;
             thickness.Top = Rectangle.Height - 5;
             Marker.Margin = thickness;
-            this.Marker = Marker;
+
+            Substrate = (Canvas)objects[1];
+            rotateTransform = (RotateTransform)objects[2];
+        }
+
+        public void CreateObject()
+        {
+            Marker.Width = 10;
+            Marker.Height = 10;
 
             Substrate.Children.Add(Rectangle);
-            Substrate.Children.Add(this.Marker);
+            Substrate.Children.Add(Marker);
             Substrate.RenderTransform = rotateTransform;
         }
 

@@ -22,24 +22,34 @@ namespace GraphicsEditor
         public event EventRemoveUiElemrnt RemoveUiElemrnt;
         public event EventFindPositionMouse FindPositionMouse;
 
-        BrokenLine brokenLine = new();
-
+        public BrokenLine brokenLine = new();
 
         List<UIElement> markers = new();
         UIElement marker = new();
         bool СellMarker = true;
 
-        public List<object> Save()
+        public string DeserializeFigurs()
         {
-            List<object> objecs = new();
+            List<object> objects = new();
 
+            objects.Add(brokenLine.CopyElements());
 
-            return objecs;
+            return JsonConvert.SerializeObject(objects);
         }
 
-        public void Load(List<object> objects)
+        public void InsertElements(List<object> objects)
         {
-            throw new NotImplementedException();
+            brokenLine = (BrokenLine)objects[0];
+        }
+        public void TuneElements()
+        {
+            SignLinesToEvents();
+        }
+
+        public IFigure GetCopyIFigure()
+        {
+            FigureBrokenLine brokenLine = new();
+            return brokenLine;
         }
 
         private void Marker_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GraphicsEditor.Abstractions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,6 +23,46 @@ namespace GraphicsEditor.Objects
         public Color color = Color.FromArgb(255,0,0,0);
         public double thick;
 
+        public BrokenLine CopyElements()
+        {
+            BrokenLine objects = new();
+
+            List<Line> lines = new();
+            foreach (Line line in this.lines)
+            {
+                Line line1 = new();
+                line1.X1 = line.X1;
+                line1.Y1 = line.Y1;
+                line1.X2 = line.X2;
+                line1.Y2 = line.Y2;
+
+                line1.Stroke = line.Stroke;
+                line1.StrokeThickness = line.StrokeThickness;
+
+                lines.Add(line1);
+            }
+
+            objects.lines = lines;
+
+            objects.idPointLine = idPointLine;
+
+            objects.color = color;
+
+            objects.thick = thick;
+
+            return objects;
+        }
+
+        public void InsertElements(List<object> objects)
+        {
+            lines = (List<Line>)objects[0];
+
+            idPointLine = (List<byte>)objects[1];
+
+            color = (Color)objects[2];
+
+            thick = lines[0].StrokeThickness;
+        }
 
         public void FindThePointsOfTheLinesInTheRadius(Point point, byte Radius)
         {

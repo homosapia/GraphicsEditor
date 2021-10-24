@@ -24,6 +24,7 @@ namespace GraphicsEditor
     public partial class MainWindow : Window
     {
         Paint paint;
+        
         public MainWindow()
         {
             InitializeComponent();
@@ -42,6 +43,7 @@ namespace GraphicsEditor
             if(e.LeftButton == MouseButtonState.Pressed)
             {
                 paint.Change(e.GetPosition(canvas));
+                paint.MoveEverything(e.GetPosition(canvas));
             }
         }
 
@@ -77,16 +79,14 @@ namespace GraphicsEditor
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-
+            ControllerSave save = new(paint.GetCopyArrayFigures());
+            save.Save();
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            string fn = "C:/Users/badazhkov/Desktop/хз.pdf";
-            var proc = new System.Diagnostics.Process();
-            proc.StartInfo.FileName = fn;
-            proc.StartInfo.UseShellExecute = true;
-            proc.Start();
+            ControllerSave save = new();
+            save.Loud();
         }
     }
 }
