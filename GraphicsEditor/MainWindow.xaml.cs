@@ -54,7 +54,23 @@ namespace GraphicsEditor
 
         private void rictangle_Click(object sender, RoutedEventArgs e)
         {
+<<<<<<< Updated upstream
             paint.CreateFigure("Прямоугольник");
+=======
+            foreach (Rectangle marker in markers)
+            {
+                canvas.Children.Remove(marker);
+            }
+            transform = false;
+            marker = false;
+            peint = true;
+            figure = new Square(canvas);
+            figure.Transform += Figure_Transform;
+            figure.SelectObject += СurrentFigure;
+            figure.ClickMarker += ClickMarker;
+            figure.RemoveMarker += Figure_RemoveMarker;
+            figure.SetMarker += Figure_SetMarker;
+>>>>>>> Stashed changes
         }
 
         private void palette_SelectedBrushChanged(object sender, Syncfusion.Windows.Tools.Controls.SelectedBrushChangedEventArgs e)
