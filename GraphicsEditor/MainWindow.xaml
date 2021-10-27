@@ -8,23 +8,25 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="400" Width="750" Loaded="Window_Loaded">
     <Grid x:Name="grid1">
-        <DockPanel>
-            <StackPanel x:Name="StackPanal" DockPanel.Dock="Left" Orientation="Vertical">
-                <Button x:Name="segment" Height="30" Click="segment_Click">отрезок</Button>
-                <Button x:Name="rictangle" Height="30" Click="rictangle_Click">прямоугольник</Button>
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Цвет :"/>
-                    <syncfusion:ColorPickerPalette x:Name="palette" Color="Black" Height="30" Width="77" SelectedBrushChanged="palette_SelectedBrushChanged"/>
-                </StackPanel>
-                <Slider x:Name="slider" Width="120" Minimum="1" MouseDown="slider_MouseDown"/>
-                <Button x:Name="del" Content="Удалить" Click="del_Click"/>
-                <Button Content="Загрузить" Click="Button_Click_1"/>
-                <Button Content="Сохранить" Click="Button_Click"/>
-
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="120"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="1">
+            <Canvas x:Name="canvas" Background="Beige"  MouseMove="canvas_MouseMove" MouseLeftButtonDown="canvas_MouseLeftButtonDown"/>
+        </Grid>
+        <StackPanel x:Name="StackPanal" Grid.Column="0" Orientation="Vertical" Background="White">
+            <Button x:Name="segment" Height="30" Click="segment_Click">отрезок</Button>
+            <Button x:Name="rictangle" Height="30" Click="rictangle_Click">прямоугольник</Button>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Цвет :"/>
+                <syncfusion:ColorPickerPalette x:Name="palette" Color="Black" Height="30" Width="77" SelectedBrushChanged="palette_SelectedBrushChanged"/>
             </StackPanel>
-            <Grid DockPanel.Dock="Right">
-                <Canvas x:Name="canvas" Background="Beige"  MouseMove="canvas_MouseMove" MouseLeftButtonDown="canvas_MouseLeftButtonDown"/>
-            </Grid>
-        </DockPanel>
+            <Slider x:Name="slider" Width="120" Minimum="1" ValueChanged="slider_ValueChanged"/>
+            <Button x:Name="del" Content="Удалить" Click="del_Click"/>
+            <Button x:Name="Save" Content="Сохранить" Click="Save_Click"/>
+            <Button x:Name="download" Content="Загрузить" Click="download_Click"/>
+
+        </StackPanel>
     </Grid>
 </Window>

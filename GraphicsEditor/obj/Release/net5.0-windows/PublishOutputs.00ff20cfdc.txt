@@ -1,0 +1,8 @@
+C:\Users\badazhkov\Desktop\GE\GraphicsEditor.exe
+C:\Users\badazhkov\Desktop\GE\GraphicsEditor.dll
+C:\Users\badazhkov\Desktop\GE\GraphicsEditor.deps.json
+C:\Users\badazhkov\Desktop\GE\GraphicsEditor.runtimeconfig.json
+C:\Users\badazhkov\Desktop\GE\GraphicsEditor.pdb
+C:\Users\badazhkov\Desktop\GE\Newtonsoft.Json.dll
+C:\Users\badazhkov\Desktop\GE\Syncfusion.Licensing.dll
+C:\Users\badazhkov\Desktop\GE\Syncfusion.Shared.WPF.dll

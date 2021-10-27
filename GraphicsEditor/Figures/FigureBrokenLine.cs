@@ -1,56 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using GraphicsEditor.Objects;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using System.Text.Json;
-using Newtonsoft.Json;
+using GraphicsEditor.Data;
 
 namespace GraphicsEditor
 {
-    class FigureBrokenLine : IFigure
+    public class FigureBrokenLine : IFigure
     {
         public event EventSelectFigure SelectObject;
-        public event EventTransform Transform;
-        public event EventClickMarker ClickMarker;
-        public event EventSetUIElement UIElement;
-        public event EventRemoveUiElemrnt RemoveUiElemrnt;
+        public event EventRemoveUiElemrnt RemoveUIElemrnt;
         public event EventFindPositionMouse FindPositionMouse;
 
-        public BrokenLine brokenLine = new();
+        private BrokenLine brokenLine = new();
 
-        List<UIElement> markers = new();
-        UIElement marker = new();
-        bool СellMarker = true;
+        private List<UIElement> markers = new();
+        private UIElement marker = new();
+        private bool СellMarker = true;
 
-        public string SerializeFigure()
+        public ListOfDataToSave SerializeFigure()
         {
-            List<string> objects = new();
+            ListOfDataToSave data = new();
 
-            objects.Add(JsonConvert.SerializeObject(brokenLine.CopyElements()));
+            data.Objects = brokenLine.DataToSave();
 
-            return JsonConvert.SerializeObject(objects);
+            return data;
         }
 
-        public void DeserializeFigure(List<string> objects)
+        public void DeserializeFigure(ListOfDataToSave data)
         {
-            brokenLine.InsertElements(JsonConvert.DeserializeObject<List<object>>(objects[0]));
-        }
-
-        public void TuneElements()
-        {
+            brokenLine.LoadData(data.Objects);
+            
             SignLinesToEvents();
-        }
-
-        public IFigure GetCopyIFigure()
-        {
-            FigureBrokenLine brokenLine = new();
-            return brokenLine;
         }
 
         private void Marker_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -66,16 +49,36 @@ namespace GraphicsEditor
             Point point = new(Canvas.GetLeft(marker) + 5, Canvas.GetTop(marker) + 5);
             if (e.ClickCount == 1)
             {
-                brokenLine.FindThePointsOfTheLinesInTheRadius(point, 0);
+                brokenLine.FindThePointsOfTheLinesInTheRadius(point, 5);
             }
 
             if (e.ClickCount == 2)
             {
+                СellMarker = false;
                 RemoveLine();
                 brokenLine.FindThePointsOfTheLinesInTheRadius(point, 5);
                 brokenLine.ChangeLinePointPosition(point);
                 SetMarkers();
             }
+            SelectObject(this);
+        }
+
+        private void Line_MouseLeftDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            e.Handled = true;
+            СellMarker = false;
+
+            if (e.ClickCount == 2)
+            {
+                СellMarker = false;
+                Line line = (Line)sender;
+                Point point = e.GetPosition(line);
+
+                brokenLine.SplitTheLine(line, point);
+                SignLinesToEvents();
+            }
+            SetMarkers();
+            SelectObject(this);
         }
 
         private void SetMarkers()
@@ -89,7 +92,6 @@ namespace GraphicsEditor
             {
                 markers.Add(CreateMarker(points[i]));
             }
-            UIElement(markers);
         }
 
         private void RemoveLine()
@@ -100,23 +102,17 @@ namespace GraphicsEditor
             {
                 del.Add(ui);
             }
-            RemoveUiElemrnt(del);
+            RemoveUIElemrnt(del);
         }
 
-        public void ChangePosition(Point point)
+        public void Change(Point point)
         {
             if (СellMarker)
             {
                 brokenLine.ChangeLinePointPosition(point);
-                SignLinesToEvents();
                 Canvas.SetLeft(marker, point.X - 5);
                 Canvas.SetTop(marker, point.Y - 5);
             }
-        }
-
-        public void CreateFigure()
-        {
-            SelectObject(this);
         }
 
         private void SignLinesToEvents()
@@ -126,26 +122,6 @@ namespace GraphicsEditor
             {
                 line.MouseLeftButtonDown += Line_MouseLeftDown;
             }
-        }
-
-        private void Line_MouseLeftDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            e.Handled = true;
-            if (e.ClickCount == 1)
-            {
-                Transform(true);
-            }
-
-            if (e.ClickCount == 2)
-            {
-                Line line = (Line)sender;
-                Point point = e.GetPosition(line);
-
-                brokenLine.SplitTheLine(line, point);
-                SignLinesToEvents();
-            }
-            SetMarkers();
-            SelectObject(this);
         }
 
 
@@ -168,11 +144,6 @@ namespace GraphicsEditor
             return marker;
         }
 
-        public object Figure()
-        {
-            return brokenLine.GetLines().Last();
-        }
-
         public void ChangeColor(Color color)
         {
             brokenLine.ChangeColor(color);
@@ -185,12 +156,13 @@ namespace GraphicsEditor
 
         public void DeselectShape()
         {
-            RemoveUiElemrnt(markers);
+            RemoveUIElemrnt(markers);
         }
 
         public void StartingPoint(Point point)
         {
             brokenLine.SetLine(point, point);
+            SignLinesToEvents();
             SelectObject(this);
         }
 
@@ -211,7 +183,11 @@ namespace GraphicsEditor
 
         public void MoveFigure(Point point)
         {
-            brokenLine.MoveLine(point);
+            try
+            {
+                brokenLine.MoveLines(point);
+            }
+            catch { }
         }
     }
 }

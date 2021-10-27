@@ -1,0 +1,75 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v5.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v5.0": {
+      "GraphicsEditor/1.0.0": {
+        "dependencies": {
+          "Newtonsoft.Json": "13.0.1",
+          "Syncfusion.Shared.WPF": "19.3.0.46"
+        },
+        "runtime": {
+          "GraphicsEditor.dll": {}
+        }
+      },
+      "Newtonsoft.Json/13.0.1": {
+        "runtime": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {
+            "assemblyVersion": "13.0.0.0",
+            "fileVersion": "13.0.1.25517"
+          }
+        }
+      },
+      "Syncfusion.Licensing/19.3.0.46": {
+        "runtime": {
+          "lib/net5.0/Syncfusion.Licensing.dll": {
+            "assemblyVersion": "19.3.0.46",
+            "fileVersion": "19.3.0.46"
+          }
+        }
+      },
+      "Syncfusion.Shared.WPF/19.3.0.46": {
+        "dependencies": {
+          "Syncfusion.Licensing": "19.3.0.46"
+        },
+        "runtime": {
+          "lib/net5.0-windows7.0/Syncfusion.Shared.WPF.dll": {
+            "assemblyVersion": "19.3500.0.46",
+            "fileVersion": "19.3500.0.46"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "GraphicsEditor/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Newtonsoft.Json/13.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ppPFpBcvxdsfUonNcvITKqLl3bqxWbDCZIzDWHzjpdAHRFfZe0Dw9HmA0+za13IdyrgJwpkDTDA9fHaxOrt20A==",
+      "path": "newtonsoft.json/13.0.1",
+      "hashPath": "newtonsoft.json.13.0.1.nupkg.sha512"
+    },
+    "Syncfusion.Licensing/19.3.0.46": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-vpTRtWEEarcUeb3HjSZLe4nb+cJ6TOeSW1QiQiitAf8b3pp4YdYLtNBFdMLEgeun4Y1+nHZbYNq+alV32wbP2w==",
+      "path": "syncfusion.licensing/19.3.0.46",
+      "hashPath": "syncfusion.licensing.19.3.0.46.nupkg.sha512"
+    },
+    "Syncfusion.Shared.WPF/19.3.0.46": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-KQr4rwPOTeVumB/h8TMNsPQD/yyIEdXW+cTMTqOn5xzcIjEuODVGQxbxo6aB+pBLMQnAtlOkvPOzT4qsmMjenQ==",
+      "path": "syncfusion.shared.wpf/19.3.0.46",
+      "hashPath": "syncfusion.shared.wpf.19.3.0.46.nupkg.sha512"
+    }
+  }
+}

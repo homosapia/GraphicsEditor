@@ -1,20 +1,13 @@
-﻿using System;
+﻿using GraphicsEditor.Data;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Shapes;
 
 namespace GraphicsEditor
 {
-    public interface IFigure : IEvents
+    public interface IFigure : IEventsFigure
     {
-        public object Figure();
-
-        public void ChangePosition(Point point);
+        public void Change(Point point);
 
         public void ChangeColor(Color color);
 
@@ -28,13 +21,9 @@ namespace GraphicsEditor
 
         public List<UIElement> GetAllUIElements();
 
-        public string SerializeFigure();
+        public ListOfDataToSave SerializeFigure();
 
-        public void DeserializeFigure(List<string> objects);
-
-        public void TuneElements();
-
-        public IFigure GetCopyIFigure();
+        public void DeserializeFigure(ListOfDataToSave data);
 
         public void MoveFigure(Point point);
     }

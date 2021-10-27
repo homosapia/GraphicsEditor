@@ -164,11 +164,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\badazhkov\\Desktop\\GraphicsEditor\\GraphicsEditor.csproj",
+      "projectUniqueName": "C:\\Users\\badazhkov\\Documents\\GitHub\\GraphicsEditor\\GraphicsEditor\\GraphicsEditor.csproj",
       "projectName": "GraphicsEditor",
-      "projectPath": "C:\\Users\\badazhkov\\Desktop\\GraphicsEditor\\GraphicsEditor.csproj",
+      "projectPath": "C:\\Users\\badazhkov\\Documents\\GitHub\\GraphicsEditor\\GraphicsEditor\\GraphicsEditor.csproj",
       "packagesPath": "C:\\Users\\badazhkov\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\badazhkov\\Desktop\\GraphicsEditor\\obj\\",
+      "outputPath": "C:\\Users\\badazhkov\\Documents\\GitHub\\GraphicsEditor\\GraphicsEditor\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\badazhkov\\AppData\\Roaming\\NuGet\\NuGet.Config",

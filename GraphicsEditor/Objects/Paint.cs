@@ -1,9 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -20,7 +16,7 @@ namespace GraphicsEditor
         double thick = 1;
         Color color = Color.FromArgb(255,0,0,0);
 
-        bool changesAllowed;
+        bool changesFigureAllowed;
         bool startingObject;
 
         public Paint(Canvas canvas)
@@ -28,8 +24,8 @@ namespace GraphicsEditor
             this.canvas = canvas;
         }
 
-        //создать фигуру
-        public void CreateFigure(string nameFigure)
+
+        public void CreateFigure(IFigure figureFactory)
         {
             if(figure != null)
             {
@@ -38,56 +34,50 @@ namespace GraphicsEditor
 
             figure = null;
             startingObject = true;
-            changesAllowed = true;
+            changesFigureAllowed = true;
 
-            switch (nameFigure)
-            {
-                case "Линия":
-                    figure = new FigureBrokenLine();
-                    break;
-                case "Прямоугольник":
-                    figure = new FigureRectangle();
-                    break;
-            }
+            figure = figureFactory;
 
             figure.ChangeColor(color);
             figure.ChangeThickness(thick);
             SubscribeToEvents(figure);
+
+            figures.Add(figure);
         }
 
-        public void SubscribeToEvents(IFigure figure)
+        private void SubscribeToEvents(IFigure figure)
         {
-            figure.Transform += Figure_Transform;
             figure.SelectObject += Figure_SelectObject;
-            figure.ClickMarker += Figure_ClickMarker;
-            figure.UIElement += Figure_UIElement;
-            figure.RemoveUiElemrnt += Figure_RemoveUiElemrnt;
+            figure.RemoveUIElemrnt += Figure_RemoveUiElemrnt;
             figure.FindPositionMouse += Figure_FindPositionMouse;
         }
 
-        //получить копию
         public List<IFigure> GetArrayFigures()
         {
-            return figures;
+            return figures.ToList();
         }
 
-        //установить вигуры
         public void UploadNewFigures(List<IFigure> figures)
         {
+            int i = 0;
+            while(i != canvas.Children.Count)
+            {
+                canvas.Children.RemoveAt(i);
+            }
+            this.figures = new();
+
             foreach (IFigure figure in figures)
             {
-                figure.TuneElements();
                 SubscribeToEvents(figure);
                 List<UIElement> uIs = figure.GetAllUIElements();
                 foreach(UIElement uI in uIs)
                 {
                     canvas.Children.Add(uI);
                 }
+                this.figures.Add(figure);
             }
         }
 
-
-        //удалить фигуру
         public void DeleteFigure()
         {
             if (figure != null)
@@ -115,24 +105,26 @@ namespace GraphicsEditor
                         i++;
                 }
             }
+            figures.Remove(figure);
             figure = null;
+            changesFigureAllowed = false;
         }
 
-        public void MoveEverything(Point point)
+        public void MoveEverything()
         {
             if(figure == null)
             {
                 foreach (IFigure figure in figures)
                 {
-                    figure.MoveFigure(point);
+                    figure.MoveFigure(Mouse.GetPosition(canvas));
                 }
             }
         }
 
-        public void Change(Point point)
+        public void ChangeFigure()
         {
-            if(changesAllowed)
-                figure.ChangePosition(point);
+            if(changesFigureAllowed)
+                figure.Change(Mouse.GetPosition(canvas));
         }
 
         public void DeselectAnObject()
@@ -140,28 +132,19 @@ namespace GraphicsEditor
             if(figure != null)
             {
                 figure.DeselectShape();
-                changesAllowed = false;
+                changesFigureAllowed = false;
                 figure = null;
             }
         }
 
-        public void ClickMouseDown(Point point)
-        {
-            Starting(point);
-            SendMousePosition(point);
-        }
-
-        private void Starting(Point point)
+        public void SetInitialValues(Point point)
         {
             if (startingObject)
             {
                 figure.StartingPoint(point);
                 startingObject = false;
             }
-        }
 
-        public void SendMousePosition(Point point)
-        {
             foreach (IFigure figure in figures)
             {
                 figure.CurrentPositionMouseOnCanvas(point);
@@ -170,6 +153,7 @@ namespace GraphicsEditor
 
         public void SetColor(Color color)
         {
+            this.color = color;
             if (figure != null)
             {
                 figure.ChangeColor(color);
@@ -185,13 +169,13 @@ namespace GraphicsEditor
             }
         }
 
-        //события
+
         private void Figure_FindPositionMouse()
         {
             figure.CurrentPositionMouseOnCanvas(Mouse.GetPosition(canvas));
         }
 
-        private void Figure_RemoveUiElemrnt(List<System.Windows.UIElement> uIElements)
+        private void Figure_RemoveUiElemrnt(List<UIElement> uIElements)
         {
             foreach (UIElement uI in uIElements)
             {
@@ -199,42 +183,27 @@ namespace GraphicsEditor
             }
         }
 
-        private void Figure_UIElement(List<UIElement> uIElements)
-        {
-            foreach (UIElement ui in uIElements)
-            {
-                canvas.Children.Add(ui);
-            }
-        }
-
-        private void Figure_ClickMarker(bool click)
-        {
-            changesAllowed = click;
-        }
-
         private void Figure_SelectObject(IFigure figure)
         {
-            bool AddToArray = true;
-            foreach(IFigure figure1 in figures)
-            {
-                if (figure1 == figure)
-                    AddToArray = false;
-            }
-            if (AddToArray)
-                figures.Add(figure);
-
-            changesAllowed = true;
+            changesFigureAllowed = true;
             if (this.figure != figure && this.figure != null)
             {
                 this.figure.DeselectShape();
             }
             this.figure = figure;
-            if (!canvas.Children.Contains((UIElement)figure.Figure()))
-                canvas.Children.Add((UIElement)figure.Figure());
-        }
 
-        private void Figure_Transform(bool click)
-        {
+            List<UIElement> uIs = this.figure.GetAllUIElements();
+            for (int i = canvas.Children.Count - 1; i >= 0; i--)
+            {
+                Canvas.SetZIndex(canvas.Children[i], -i);
+            }
+
+            foreach (UIElement uI in uIs)
+            {
+                Canvas.SetZIndex(uI, 1);
+                if(!canvas.Children.Contains(uI))
+                    canvas.Children.Add(uI);
+            }
         }
     }
 }

@@ -1,12 +1,8 @@
-﻿using GraphicsEditor.Abstractions;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -18,15 +14,15 @@ namespace GraphicsEditor.Objects
         private const byte idLastPointLine = 2;
         private const byte idUnselectedPoint = 3;
 
-        public List<Line> lines = new();
-        public List<byte> idPointLine = new();
+        private List<Line> lines = new();
+        private List<byte> idPointLine = new();
 
-        public Color color = Color.FromArgb(255,0,0,0);
-        public double thick;
+        private Color color = Color.FromArgb(255,0,0,0);
+        private double thick;
 
         private double[,,,] distance;
 
-        public List<object> CopyElements()
+        public List<object> DataToSave()
         {
             List<object> objects = new();
 
@@ -62,7 +58,7 @@ namespace GraphicsEditor.Objects
             return objects;
         }
 
-        public void InsertElements(List<object> objects)
+        public void LoadData(List<object> objects)
         {
             color.A = Byte.Parse(objects[1].ToString());
             color.R = Byte.Parse(objects[2].ToString());
@@ -129,8 +125,8 @@ namespace GraphicsEditor.Objects
             return lines.ToList();
         }
 
-        public void ChangeLinePointPosition(Point point)
-        {
+        public void ChangeLinePointPosition(Point point, byte radius = 1)
+        {   
             for (int i = 0; i < lines.Count; i++)
             {
                 if (idPointLine[i] == 1)
@@ -146,7 +142,7 @@ namespace GraphicsEditor.Objects
             }
         }
 
-        public void MoveLine(Point move)
+        public void MoveLines(Point move)
         {
             for (int li = 0; li < lines.Count; li++)
             {
