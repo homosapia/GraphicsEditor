@@ -1,38 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace GraphicsEditor
 {
-    /// <summary>
-    /// Логика взаимодействия для Workspace.xaml
-    /// </summary>
     public partial class Workspace : UserControl
     {
+        public Paint paint;
         public Workspace()
         {
             InitializeComponent();
         }
 
-        private void canvas_MouseDown(object sender, MouseButtonEventArgs e)
+        private void Сanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-
+            paint.SetInitialValues(e.GetPosition(canvas));
         }
 
-        private void canvas_MouseMove(object sender, MouseEventArgs e)
+        private void Сanvas_MouseMove(object sender, MouseEventArgs e)
         {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                paint.ChangeFigure();
+            }
+            if (e.RightButton == MouseButtonState.Pressed)
+            {
+                paint.MoveEverything();
+            }
+        }
 
+        private void Canvas_Loaded(object sender, RoutedEventArgs e)
+        {
+            paint = new(canvas);
+        }
+
+        private void canvas_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            paint.DeselectAnObject();
         }
     }
 }

@@ -8,13 +8,13 @@ using GraphicsEditor.Data;
 
 namespace GraphicsEditor
 {
-    public class FigureQuadrilateral : IFigure
+    public class FigurePaddedRectangle : IFigure
     {
         public event EventSelectFigure SelectObject;
         public event EventRemoveUiElemrnt RemoveUIElemrnt;
         public event EventFindPositionMouse FindPositionMouse;
 
-        private Quadrilateral rectangle = new();
+        private PaddedRectangle paddedRectangle = new();
 
         private Point startObject = new Point();
 
@@ -23,24 +23,23 @@ namespace GraphicsEditor
         double pointY;
 
         bool transform;
-        bool turn;
         bool move;
 
-        public FigureQuadrilateral()
+        public FigurePaddedRectangle()
         {
             transform = true;
-            rectangle.RectangleMouseDown += Rectangle_MouseLeftButtonDown;
-            rectangle.RectangleMouseUp += Rectangle_MouseLeftButtonUp;
+            paddedRectangle.RectangleMouseDown += Rectangle_MouseLeftButtonDown;
+            paddedRectangle.RectangleMouseUp += Rectangle_MouseLeftButtonUp;
 
-            rectangle.MarkerMouseDown += Marker_MouseLeftButtonDown;
-            rectangle.MarkerMouseUp += Marker_MouseLeftButtonUp;
+            paddedRectangle.MarkerMouseDown += Marker_MouseLeftButtonDown;
+            paddedRectangle.MarkerMouseUp += Marker_MouseLeftButtonUp;
         }
 
         public ListOfDataToSave SerializeFigure()
         {
             ListOfDataToSave data = new();
 
-            data.Objects = rectangle.DataToSave();
+            data.Objects = paddedRectangle.DataToSave();
             data.point = startObject;
 
             return data;
@@ -48,23 +47,22 @@ namespace GraphicsEditor
 
         public void DeserializeFigure(ListOfDataToSave data)
         {
-            rectangle.LoadData(data.Objects);
+            paddedRectangle.LoadData(data.Objects);
 
             startObject = data.point;
 
-            rectangle.ConfigureAnObject();
-            rectangle.SetPosition(startObject);
+            paddedRectangle.ConfigureAnObject();
+            paddedRectangle.SetPosition(startObject);
 
-            rectangle.RectangleMouseDown += Rectangle_MouseLeftButtonDown;
-            rectangle.RectangleMouseUp += Rectangle_MouseLeftButtonUp;
+            paddedRectangle.RectangleMouseDown += Rectangle_MouseLeftButtonDown;
+            paddedRectangle.RectangleMouseUp += Rectangle_MouseLeftButtonUp;
 
-            rectangle.MarkerMouseDown += Marker_MouseLeftButtonDown;
-            rectangle.MarkerMouseUp += Marker_MouseLeftButtonUp;
+            paddedRectangle.MarkerMouseDown += Marker_MouseLeftButtonDown;
+            paddedRectangle.MarkerMouseUp += Marker_MouseLeftButtonUp;
         }
 
         private void Rectangle_MouseLeftButtonUp()
         {
-            turn = false;
             transform = false;
             move = false;
         }
@@ -72,10 +70,9 @@ namespace GraphicsEditor
         private void Rectangle_MouseLeftButtonDown()
         {
             move = true;
-            turn = false;
             transform = false;
 
-            rectangle.ShowMarker();
+            paddedRectangle.ShowMarker();
 
             SelectObject(this);
             FindPositionMouse();
@@ -85,24 +82,22 @@ namespace GraphicsEditor
         {
             transform = false;
             move = false;
-            turn = false;
         }
 
         private void Marker_MouseLeftButtonDown()
         {
             transform = true;
             move = false;
-            turn = false;
         }
 
         public void Change(Point point)
         {
             if (transform)
             {
-                Point positionMouseOnSubstrate = Mouse.GetPosition(rectangle.GetRectangle());
+                Point positionMouseOnSubstrate = Mouse.GetPosition(paddedRectangle.GetRectangle());
                 if (positionMouseOnSubstrate.X > 0 && positionMouseOnSubstrate.Y > 0)
                 {
-                    rectangle.Resize(Math.Abs(positionMouseOnSubstrate.X), Math.Abs(positionMouseOnSubstrate.Y));
+                    paddedRectangle.Resize(Math.Abs(positionMouseOnSubstrate.X), Math.Abs(positionMouseOnSubstrate.Y));
                 }
             }
             if(move)
@@ -111,39 +106,38 @@ namespace GraphicsEditor
             }
             if (!transform && !move)
             {
-                rectangle.HideMarker();
+                paddedRectangle.HideMarker();
                 double rotat = point.Y - pointY;
-                rectangle.ChangeTurn(rotat);
+                paddedRectangle.ChangeTurn(rotat);
             }
         }
 
         public void ChangeColor(Color color)
         {
-            rectangle.ChangeColor(color);
+            paddedRectangle.ChangeColor(color);
         }
 
         public void ChangeThickness(double thick)
         {
-            rectangle.ChangeThickness(thick);
+            paddedRectangle.ChangeThickness(thick);
         }
 
         public void DeselectShape()
         {
-            rectangle.HideMarker();
+            paddedRectangle.HideMarker();
             transform = false;
             move = false;
-            turn = false;
         }
 
         public void StartingPoint(Point point)
         {
             startObject = point;
-            rectangle.ConfigureAnObject ();
-            rectangle.SetPosition(point);
+            paddedRectangle.ConfigureAnObject ();
+            paddedRectangle.SetPosition(point);
             SelectObject(this);
         }
 
-        public void CurrentPositionMouseOnCanvas(Point point)
+        public void MousePositionOnCanvas(Point point)
         {
             distanceX = point.X - startObject.X;
             distanceY = point.Y - startObject.Y;
@@ -154,7 +148,7 @@ namespace GraphicsEditor
         public List<UIElement> GetAllUIElements()
         {
             List<UIElement> uIElements = new();
-            uIElements.Add(rectangle.GetRectangle());
+            uIElements.Add(paddedRectangle.GetRectangle());
             return uIElements;
         }
 
@@ -162,7 +156,7 @@ namespace GraphicsEditor
         {
             startObject.X = point.X - distanceX;
             startObject.Y = point.Y - distanceY;
-            rectangle.SetPosition(startObject);
+            paddedRectangle.SetPosition(startObject);
         }
     }
 }

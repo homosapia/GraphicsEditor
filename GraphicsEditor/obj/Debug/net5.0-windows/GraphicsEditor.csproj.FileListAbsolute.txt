@@ -124,3 +124,4 @@ C:\Users\badazhkov\Desktop\GraphicsEditor\obj\Debug\net5.0-windows\GraphicsEdito
 C:\Users\badazhkov\Desktop\GraphicsEditor\obj\Debug\net5.0-windows\ref\GraphicsEditor.dll
 C:\Users\badazhkov\Desktop\GraphicsEditor\obj\Debug\net5.0-windows\GraphicsEditor.pdb
 C:\Users\badazhkov\Desktop\GraphicsEditor\obj\Debug\net5.0-windows\GraphicsEditor.genruntimeconfig.cache
+C:\Users\badazhkov\Documents\GitHub\GraphicsEditor\GraphicsEditor\obj\Debug\net5.0-windows\GeneratedInternalTypeHelper.g.cs

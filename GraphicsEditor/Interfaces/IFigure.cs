@@ -17,7 +17,7 @@ namespace GraphicsEditor
 
         public void StartingPoint(Point point);
 
-        public void CurrentPositionMouseOnCanvas(Point point);
+        public void MousePositionOnCanvas(Point point);
 
         public List<UIElement> GetAllUIElements();
 

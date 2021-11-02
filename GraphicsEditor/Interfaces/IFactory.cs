@@ -5,6 +5,6 @@ namespace GraphicsEditor.Interfaces
     {
         public FigureBrokenLine GetFigureBrokenLine();
 
-        public FigureQuadrilateral GetFigureQuadrilateral();
+        public FigurePaddedRectangle GetFigureQuadrilateral();
     }
 }

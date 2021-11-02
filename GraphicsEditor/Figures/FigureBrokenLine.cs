@@ -39,6 +39,12 @@ namespace GraphicsEditor
         private void Marker_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             СellMarker = false;
+            marker = (Ellipse)sender;
+            Point point = new(Canvas.GetLeft(marker) + 5, Canvas.GetTop(marker) + 5);
+            
+            RemoveUIElemrnt(brokenLine.GetLinesLess(5));
+            SetMarkers();
+            SelectObject(this);
         }
 
         private void Marker_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -49,16 +55,7 @@ namespace GraphicsEditor
             Point point = new(Canvas.GetLeft(marker) + 5, Canvas.GetTop(marker) + 5);
             if (e.ClickCount == 1)
             {
-                brokenLine.FindThePointsOfTheLinesInTheRadius(point, 5);
-            }
-
-            if (e.ClickCount == 2)
-            {
-                СellMarker = false;
-                RemoveLine();
-                brokenLine.FindThePointsOfTheLinesInTheRadius(point, 5);
-                brokenLine.ChangeLinePointPosition(point);
-                SetMarkers();
+                brokenLine.PointInRadius(point, 0);
             }
             SelectObject(this);
         }
@@ -66,10 +63,10 @@ namespace GraphicsEditor
         private void Line_MouseLeftDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             e.Handled = true;
-            СellMarker = false;
 
             if (e.ClickCount == 2)
             {
+                marker = null;
                 СellMarker = false;
                 Line line = (Line)sender;
                 Point point = e.GetPosition(line);
@@ -92,17 +89,6 @@ namespace GraphicsEditor
             {
                 markers.Add(CreateMarker(points[i]));
             }
-        }
-
-        private void RemoveLine()
-        {
-            List<Line> lines = brokenLine.GetLinesLess(5);
-            List<UIElement> del = new();
-            foreach (UIElement ui in lines)
-            {
-                del.Add(ui);
-            }
-            RemoveUIElemrnt(del);
         }
 
         public void Change(Point point)
@@ -166,9 +152,9 @@ namespace GraphicsEditor
             SelectObject(this);
         }
 
-        public void CurrentPositionMouseOnCanvas(Point point)
+        public void MousePositionOnCanvas(Point point)
         {
-            brokenLine.CalculateDistanceBetweenLinePointAndClick(point);
+            brokenLine.DistanceFromLinePointToClick(point);
         }
 
         public List<UIElement> GetAllUIElements()

@@ -74,7 +74,7 @@ namespace GraphicsEditor.Objects
             }
         }
 
-        public void FindThePointsOfTheLinesInTheRadius(Point point, byte Radius)
+        public void PointInRadius(Point point, byte Radius)
         {
             idPointLine = new();
             foreach (Line line in lines)
@@ -125,7 +125,7 @@ namespace GraphicsEditor.Objects
             return lines.ToList();
         }
 
-        public void ChangeLinePointPosition(Point point, byte radius = 1)
+        public void ChangeLinePointPosition(Point point)
         {   
             for (int i = 0; i < lines.Count; i++)
             {
@@ -154,7 +154,7 @@ namespace GraphicsEditor.Objects
             }
         }
 
-        public void CalculateDistanceBetweenLinePointAndClick(Point click)
+        public void DistanceFromLinePointToClick(Point click)
         {
             distance = new double[lines.Count, 2, 2, 1];
 
@@ -201,17 +201,27 @@ namespace GraphicsEditor.Objects
             line.Y2 = point.Y;
 
             SetLine(point, point1, idUnselectedPoint);
+
+            int index = lines.IndexOf(line);
+            lines.Insert(index+1, lines.Last());
+            lines.RemoveAt(lines.Count-1);
         }
 
-        public List<Line> GetLinesLess(int length)
+        public List<UIElement> GetLinesLess(int length)
         {
-            List<Line> lines = new();
+            List<UIElement> lines = new();
             int i = 0;
             while (i < this.lines.Count)
             {
                 if (Math.Abs(this.lines[i].X1 - this.lines[i].X2) <= length && Math.Abs(this.lines[i].Y1 - this.lines[i].Y2) <= length)
                 {
                     lines.Add(this.lines[i]);
+
+                    if((i-1) >= 0 && (i+1) <= this.lines.Count - 1)
+                    {
+                        this.lines[i - 1].X2 = this.lines[i + 1].X1;
+                        this.lines[i - 1].Y2 = this.lines[i + 1].Y1;
+                    }
                     this.lines.Remove(this.lines[i]);
                     i = 0;
                 }

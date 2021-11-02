@@ -1,5 +1,6 @@
 ﻿
 using GraphicsEditor.Data;
+using GraphicsEditor.Objects;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using System.Collections.Generic;
@@ -10,10 +11,6 @@ namespace GraphicsEditor
 {
     class SaveLoad
     {
-        private const string Brkenline = "FigureBrokenLine$";
-        private const string square = "FigureRectangle$";
-
-
         List<IFigure> figures;
 
         public SaveLoad(){}
@@ -33,25 +30,7 @@ namespace GraphicsEditor
                 {
                     foreach (IFigure figure in figures)
                     {
-                        if (figure.ToString() == "GraphicsEditor.FigureQuadrilateral")
-                        {
-                            string json = square;
-
-                            ListOfDataToSave data = figure.SerializeFigure();
-                            json += JsonConvert.SerializeObject(data);
-
-                            sw.WriteLine(json);
-                        }
-
-                        if (figure.ToString() == "GraphicsEditor.FigureBrokenLine")
-                        {
-                            string json = Brkenline;
-
-                            ListOfDataToSave data = figure.SerializeFigure();
-                            json += JsonConvert.SerializeObject(data);
-
-                            sw.WriteLine(json);
-                        }
+                        sw.WriteLine(Factory.Serialize(figure));
                     }
                 }
             }
@@ -72,22 +51,7 @@ namespace GraphicsEditor
                     string line;
                     while ((line = sr.ReadLine()) != null)
                     {
-                        if (line.Contains(Brkenline))
-                        {
-                            string FBL = line.Remove(0, Brkenline.IndexOf("$") + 1);
-                            ListOfDataToSave data = JsonConvert.DeserializeObject<ListOfDataToSave>(FBL);
-                            FigureBrokenLine brokenLine = new();
-                            brokenLine.DeserializeFigure(data);
-                            figures.Add(brokenLine);
-                        }
-                        if (line.Contains(square))
-                        {
-                            string FR = line.Remove(0, square.IndexOf("$") + 1);
-                            ListOfDataToSave data = JsonConvert.DeserializeObject<ListOfDataToSave>(FR);
-                            FigureQuadrilateral figureRectangle = new();
-                            figureRectangle.DeserializeFigure(data);
-                            figures.Add(figureRectangle);
-                        }
+                        figures.Add(Factory.Deserialize(line));
                     }
                 }
             }

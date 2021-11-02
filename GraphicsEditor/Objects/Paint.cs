@@ -7,10 +7,10 @@ using System.Windows.Media;
 
 namespace GraphicsEditor
 {
-    class Paint
+    public class Paint
     {
-        List<IFigure> figures = new();
-        IFigure figure;
+        List<IFigure> figuresList = new();
+        IFigure currentFigure;
         Canvas canvas;
 
         double thick = 1;
@@ -24,25 +24,24 @@ namespace GraphicsEditor
             this.canvas = canvas;
         }
 
-
         public void CreateFigure(IFigure figureFactory)
         {
-            if(figure != null)
+            if(currentFigure != null)
             {
-                figure.DeselectShape();
+                currentFigure.DeselectShape();
             }
 
-            figure = null;
+            currentFigure = null;
             startingObject = true;
             changesFigureAllowed = true;
 
-            figure = figureFactory;
+            currentFigure = figureFactory;
 
-            figure.ChangeColor(color);
-            figure.ChangeThickness(thick);
-            SubscribeToEvents(figure);
+            currentFigure.ChangeColor(color);
+            currentFigure.ChangeThickness(thick);
+            SubscribeToEvents(currentFigure);
 
-            figures.Add(figure);
+            figuresList.Add(currentFigure);
         }
 
         private void SubscribeToEvents(IFigure figure)
@@ -54,7 +53,7 @@ namespace GraphicsEditor
 
         public List<IFigure> GetArrayFigures()
         {
-            return figures.ToList();
+            return figuresList.ToList();
         }
 
         public void UploadNewFigures(List<IFigure> figures)
@@ -64,7 +63,7 @@ namespace GraphicsEditor
             {
                 canvas.Children.RemoveAt(i);
             }
-            this.figures = new();
+            figuresList = new();
 
             foreach (IFigure figure in figures)
             {
@@ -74,15 +73,15 @@ namespace GraphicsEditor
                 {
                     canvas.Children.Add(uI);
                 }
-                this.figures.Add(figure);
+                figuresList.Add(figure);
             }
         }
 
         public void DeleteFigure()
         {
-            if (figure != null)
+            if (currentFigure != null)
             {
-                List<UIElement> uIElements = figure.GetAllUIElements();
+                List<UIElement> uIElements = currentFigure.GetAllUIElements();
                 int i = 0;
                 while (i < canvas.Children.Count)
                 {
@@ -105,16 +104,16 @@ namespace GraphicsEditor
                         i++;
                 }
             }
-            figures.Remove(figure);
-            figure = null;
+            figuresList.Remove(currentFigure);
+            currentFigure = null;
             changesFigureAllowed = false;
         }
 
         public void MoveEverything()
         {
-            if(figure == null)
+            if(currentFigure == null)
             {
-                foreach (IFigure figure in figures)
+                foreach (IFigure figure in figuresList)
                 {
                     figure.MoveFigure(Mouse.GetPosition(canvas));
                 }
@@ -124,55 +123,61 @@ namespace GraphicsEditor
         public void ChangeFigure()
         {
             if(changesFigureAllowed)
-                figure.Change(Mouse.GetPosition(canvas));
+                currentFigure.Change(Mouse.GetPosition(canvas));
         }
 
         public void DeselectAnObject()
         {
-            if(figure != null)
+            if(currentFigure != null)
             {
-                figure.DeselectShape();
+                currentFigure.DeselectShape();
                 changesFigureAllowed = false;
-                figure = null;
+                currentFigure = null;
             }
+        }
+
+        public void ShapeСhangeOff()
+        {
+            currentFigure.DeselectShape();
+            changesFigureAllowed = false;
         }
 
         public void SetInitialValues(Point point)
         {
             if (startingObject)
             {
-                figure.StartingPoint(point);
+                currentFigure.StartingPoint(point);
                 startingObject = false;
             }
 
-            foreach (IFigure figure in figures)
+            foreach (IFigure figure in figuresList)
             {
-                figure.CurrentPositionMouseOnCanvas(point);
+                figure.MousePositionOnCanvas(point);
             }
         }
 
-        public void SetColor(Color color)
+        public void SetColor(Color colorPalette)
         {
-            this.color = color;
-            if (figure != null)
+            color = colorPalette;
+            if (currentFigure != null)
             {
-                figure.ChangeColor(color);
+                currentFigure.ChangeColor(colorPalette);
             }
         }
 
-        public void SetThickness(double thick)
+        public void SetThickness(double Slider)
         {
-            this.thick = thick;
-            if (figure != null)
+            thick = Slider;
+            if (currentFigure != null)
             {
-                figure.ChangeThickness(this.thick);
+                currentFigure.ChangeThickness(thick);
             }
         }
 
 
         private void Figure_FindPositionMouse()
         {
-            figure.CurrentPositionMouseOnCanvas(Mouse.GetPosition(canvas));
+            currentFigure.MousePositionOnCanvas(Mouse.GetPosition(canvas));
         }
 
         private void Figure_RemoveUiElemrnt(List<UIElement> uIElements)
@@ -186,13 +191,13 @@ namespace GraphicsEditor
         private void Figure_SelectObject(IFigure figure)
         {
             changesFigureAllowed = true;
-            if (this.figure != figure && this.figure != null)
+            if (currentFigure != figure && currentFigure != null)
             {
-                this.figure.DeselectShape();
+                currentFigure.DeselectShape();
             }
-            this.figure = figure;
+            currentFigure = figure;
 
-            List<UIElement> uIs = this.figure.GetAllUIElements();
+            List<UIElement> uIs = currentFigure.GetAllUIElements();
             for (int i = canvas.Children.Count - 1; i >= 0; i--)
             {
                 Canvas.SetZIndex(canvas.Children[i], -i);

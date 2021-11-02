@@ -12,7 +12,7 @@ namespace GraphicsEditor.Objects
     public delegate void EventMarkerMouseDown();
     public delegate void EventMarkerMouseUp();
 
-    class Quadrilateral
+    class PaddedRectangle
     {
         public event EventRectangleMouseDown RectangleMouseDown;
         public event EventRectangleMouseUp RectangleMouseUp;
@@ -25,7 +25,7 @@ namespace GraphicsEditor.Objects
         private RotateTransform rotateTransform = new();
         private Color color;
 
-        public Quadrilateral()
+        public PaddedRectangle()
         {
             rectangle.MouseLeftButtonDown += Rectangle_MouseLeftButtonDown;
             rectangle.MouseLeftButtonUp += Rectangle_MouseLeftButtonUp;
