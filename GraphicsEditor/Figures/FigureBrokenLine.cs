@@ -18,7 +18,7 @@ namespace GraphicsEditor
 
         private List<UIElement> markers = new();
         private UIElement marker = new();
-        private bool СellMarker = true;
+        private bool СellMarker;
 
         public ListOfDataToSave SerializeFigure()
         {
@@ -147,6 +147,7 @@ namespace GraphicsEditor
 
         public void StartingPoint(Point point)
         {
+            СellMarker = true;
             brokenLine.SetLine(point, point);
             SignLinesToEvents();
             SelectObject(this);

@@ -20,14 +20,13 @@ namespace GraphicsEditor
         private void Сanvas_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
-            {
                 paint.ChangeFigure();
-            }
+
             if (e.RightButton == MouseButtonState.Pressed)
-            {
                 paint.MoveEverything();
-            }
         }
+
+
 
         private void Canvas_Loaded(object sender, RoutedEventArgs e)
         {
@@ -37,6 +36,12 @@ namespace GraphicsEditor
         private void canvas_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
             paint.DeselectAnObject();
+
+            paint.SetInitialValues(e.GetPosition(canvas));
+        }
+
+        private void canvas_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
         }
     }
 }
