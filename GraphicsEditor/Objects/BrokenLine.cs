@@ -76,17 +76,22 @@ namespace GraphicsEditor.Objects
 
         public void PointInRadius(Point point, byte Radius)
         {
+            bool local = true;
             idPointLine = new();
             foreach (Line line in lines)
             {
-                if (Math.Abs(point.X - line.X2) <= Radius && Math.Abs(point.Y - line.Y2) <= Radius)
+                if (local && Math.Abs(point.X - line.X2) <= Radius && Math.Abs(point.Y - line.Y2) <= Radius)
                 {
                     idPointLine.Add(idLastPointLine);
+                    idPointLine.Add(idFirstPointLine);
+                    local = false;
                     continue;
                 }
-                if (Math.Abs(point.X - line.X1) <= Radius && Math.Abs(point.Y - line.Y1) <= Radius)
+                if (local && Math.Abs(point.X - line.X1) <= Radius && Math.Abs(point.Y - line.Y1) <= Radius)
                 {
                     idPointLine.Add(idFirstPointLine);
+                    idPointLine.Add(idLastPointLine);
+                    local = false;
                     continue;
                 }
                 idPointLine.Add(idUnselectedPoint);

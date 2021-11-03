@@ -7,4 +7,4 @@ build_property.PublishSingleFile =
 build_property.IncludeAllContentForSelfExtract = 
 build_property._SupportedPlatformList = Android,iOS,Linux,macOS,Windows
 build_property.RootNamespace = GraphicsEditor
-build_property.ProjectDir = C:\Users\badazhkov\Desktop\GraphicsEditor-e8bd09b6355926a2c2263478b81c4026d33e99ba\GraphicsEditor\
+build_property.ProjectDir = C:\Users\badazhkov\Documents\GitHub\GraphicsEditor\GraphicsEditor\

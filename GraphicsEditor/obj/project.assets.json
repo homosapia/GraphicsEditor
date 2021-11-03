@@ -165,11 +165,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\badazhkov\\Desktop\\GraphicsEditor-e8bd09b6355926a2c2263478b81c4026d33e99ba\\GraphicsEditor\\GraphicsEditor.csproj",
+      "projectUniqueName": "C:\\Users\\badazhkov\\Documents\\GitHub\\GraphicsEditor\\GraphicsEditor\\GraphicsEditor.csproj",
       "projectName": "GraphicsEditor",
-      "projectPath": "C:\\Users\\badazhkov\\Desktop\\GraphicsEditor-e8bd09b6355926a2c2263478b81c4026d33e99ba\\GraphicsEditor\\GraphicsEditor.csproj",
+      "projectPath": "C:\\Users\\badazhkov\\Documents\\GitHub\\GraphicsEditor\\GraphicsEditor\\GraphicsEditor.csproj",
       "packagesPath": "C:\\Users\\badazhkov\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\badazhkov\\Desktop\\GraphicsEditor-e8bd09b6355926a2c2263478b81c4026d33e99ba\\GraphicsEditor\\obj\\",
+      "outputPath": "C:\\Users\\badazhkov\\Documents\\GitHub\\GraphicsEditor\\GraphicsEditor\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

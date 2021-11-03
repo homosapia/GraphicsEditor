@@ -39,12 +39,16 @@ namespace GraphicsEditor
         private void Marker_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             СellMarker = false;
-            marker = (Ellipse)sender;
-            Point point = new(Canvas.GetLeft(marker) + 5, Canvas.GetTop(marker) + 5);
-            
-            RemoveUIElemrnt(brokenLine.GetLinesLess(5));
-            SetMarkers();
-            SelectObject(this);
+            List<UIElement> lines = brokenLine.GetLinesLess(5);
+            if (lines.Count > 0)
+            {
+                marker = (Ellipse)sender;
+                Point point = new(Canvas.GetLeft(marker) + 5, Canvas.GetTop(marker) + 5);
+
+                RemoveUIElemrnt(lines);
+                SetMarkers();
+                SelectObject(this);
+            }
         }
 
         private void Marker_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
