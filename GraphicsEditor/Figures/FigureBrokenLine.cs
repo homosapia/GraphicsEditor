@@ -63,18 +63,21 @@ namespace GraphicsEditor
         private void Line_MouseLeftDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             e.Handled = true;
-
+            SetMarkers();
+            СellMarker = false;
             if (e.ClickCount == 2)
             {
-                marker = null;
-                СellMarker = false;
                 Line line = (Line)sender;
                 Point point = e.GetPosition(line);
 
                 brokenLine.SplitTheLine(line, point);
                 SignLinesToEvents();
+                brokenLine.PointInRadius(point, 0);
+
+                marker = CreateMarker(point);
+                markers.Add(marker);
+                СellMarker = true;
             }
-            SetMarkers();
             SelectObject(this);
         }
 
