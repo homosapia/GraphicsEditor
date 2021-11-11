@@ -1,12 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "dqPGrBpSRdcFbaPsIb4EZWsQFb9O8BlGcmPxXsmUrfBf4UBzykGBzDoEmjq2M9SuBdrb+QRUgeWGstMI8bixhA==",
+  "dgSpecHash": "IQUS+9rJnHh1Z3yO5Q2dHlS2fRrz3Z9BLu7wAS2gqyA+s4WBp3RPIMqfrS31+x7tBGGTmMVbCYoCWqwSePpp6g==",
   "success": true,
   "projectFilePath": "C:\\Users\\badazhkov\\Documents\\GitHub\\GraphicsEditor\\GraphicsEditor\\GraphicsEditor.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\badazhkov\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512",
     "C:\\Users\\badazhkov\\.nuget\\packages\\syncfusion.licensing\\19.3.0.46\\syncfusion.licensing.19.3.0.46.nupkg.sha512",
-    "C:\\Users\\badazhkov\\.nuget\\packages\\syncfusion.shared.wpf\\19.3.0.46\\syncfusion.shared.wpf.19.3.0.46.nupkg.sha512"
+    "C:\\Users\\badazhkov\\.nuget\\packages\\syncfusion.shared.wpf\\19.3.0.46\\syncfusion.shared.wpf.19.3.0.46.nupkg.sha512",
+    "C:\\Users\\badazhkov\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\5.0.12\\microsoft.netcore.app.host.win-x64.5.0.12.nupkg.sha512"
   ],
   "logs": []
 }
