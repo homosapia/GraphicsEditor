@@ -20,45 +20,44 @@ namespace GraphicsEditor
 
         private void Segment_Click(object sender, RoutedEventArgs e)
         {
-            workspace.paint.CreateFigure(Factory.GetFigureBrokenLine());
+            workspace.SetCurrentFigure(Factory.GetFigureBrokenLine());
         }
 
         private void Rictangle_Click(object sender, RoutedEventArgs e)
         {
-            workspace.paint.CreateFigure(Factory.GetFigureQuadrilateral());
+            workspace.SetCurrentFigure(Factory.GetFigureQuadrilateral());
         }
 
         private void Palette_SelectedBrushChanged(object sender, Syncfusion.Windows.Tools.Controls.SelectedBrushChangedEventArgs e)
         {
-            workspace.paint.SetColor(palette.Color);
+            workspace.SetColor(palette.Color);
         }
 
         private void Del_Click(object sender, RoutedEventArgs e)
         {
-            workspace.paint.DeleteFigure();
+            workspace.DeleteFigure();
         }
 
         private void Download_Click(object sender, RoutedEventArgs e)
         {
             SaveLoad save = new();
-            workspace.paint.UploadNewFigures(save.Load());
+            workspace.UploadNewFigures(save.Load());
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            SaveLoad save = new(workspace.paint.GetArrayFigures());
+            SaveLoad save = new(workspace.GetArrayFigures());
             save.Save();
         }
 
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if(workspace.paint != null)
-                workspace.paint.SetThickness(slider.Value);
+             workspace.SetThickness(slider.Value);
         }
 
         private void palette_RequestBringIntoView(object sender, RequestBringIntoViewEventArgs e)
         {
-            workspace.paint.ShapeСhangeOff();
+            workspace.ShapeHangeOff();
         }
     }
 }

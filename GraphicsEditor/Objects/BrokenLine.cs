@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Xml.Linq;
 
 namespace GraphicsEditor.Objects
 {
@@ -19,8 +20,7 @@ namespace GraphicsEditor.Objects
 
         private Color color = Color.FromArgb(255,0,0,0);
         private double thick;
-
-        private double[,,,] distance;
+        private Point InitialClick;
 
         public List<object> DataToSave()
         {
@@ -70,28 +70,32 @@ namespace GraphicsEditor.Objects
             Point[,,] points = JsonConvert.DeserializeObject<Point[,,]>(objects[0].ToString());
             for (int i = 0; i < Int32.Parse(objects[6].ToString()); i++)
             {
-                SetLine(points[i,0,0], points[i,1,0]);
+                Line line = new();
+                line.X1 = points[i, 0, 0].X;
+                line.Y1 = points[i, 0, 0].Y;
+                line.X2 = points[i, 1, 0].Y;
+                line.Y2 = points[i, 1, 0].Y;
+
+                line.Stroke = new SolidColorBrush(color);
+                line.StrokeThickness = thick;
+                
+                SetLine(line);
             }
         }
 
         public void PointInRadius(Point point, byte Radius)
         {
-            bool local = true;
             idPointLine = new();
             foreach (Line line in lines)
             {
-                if (local && Math.Abs(point.X - line.X2) <= Radius && Math.Abs(point.Y - line.Y2) <= Radius)
+                if (Math.Abs(point.X - line.X2) <= Radius && Math.Abs(point.Y - line.Y2) <= Radius)
                 {
                     idPointLine.Add(idLastPointLine);
-                    idPointLine.Add(idFirstPointLine);
-                    local = false;
                     continue;
                 }
-                if (local && Math.Abs(point.X - line.X1) <= Radius && Math.Abs(point.Y - line.Y1) <= Radius)
+                if (Math.Abs(point.X - line.X1) <= Radius && Math.Abs(point.Y - line.Y1) <= Radius)
                 {
                     idPointLine.Add(idFirstPointLine);
-                    idPointLine.Add(idLastPointLine);
-                    local = false;
                     continue;
                 }
                 idPointLine.Add(idUnselectedPoint);
@@ -109,18 +113,8 @@ namespace GraphicsEditor.Objects
             return points.Distinct().ToList();
         }
 
-        public void SetLine(Point start, Point end, byte idPoint = idLastPointLine)
+        public void SetLine(Line line, byte idPoint = idLastPointLine)
         {
-            Line line = new();
-            line.Stroke = new SolidColorBrush(color);
-            line.StrokeThickness = thick;
-
-            line.X1 = start.X;
-            line.Y1 = start.Y;
-
-            line.X2 = end.X;
-            line.Y2 = end.Y;
-
             idPointLine.Add(idPoint);
             lines.Add(line);
         }
@@ -151,51 +145,19 @@ namespace GraphicsEditor.Objects
         {
             for (int li = 0; li < lines.Count; li++)
             {
-                lines[li].X1 = move.X + -distance[li, 0, 0, 0];
-                lines[li].Y1 = move.Y + -distance[li, 0, 1, 0];
+                lines[li].X1 = move.X + -(InitialClick.X - lines[li].X1);
+                lines[li].Y1 = move.Y + -(InitialClick.Y - lines[li].Y1);
 
-                lines[li].X2 = move.X + -distance[li, 1, 0, 0];
-                lines[li].Y2 = move.Y + -distance[li, 1, 1, 0];
+                lines[li].X2 = move.X + -(InitialClick.X - lines[li].X2);
+                lines[li].Y2 = move.Y + -(InitialClick.Y - lines[li].Y2);
             }
+
+            InitialClick = move;
         }
 
-        public void DistanceFromLinePointToClick(Point click)
+        public void SetСlickPoint(Point click)
         {
-            distance = new double[lines.Count, 2, 2, 1];
-
-            for (int li = 0; li < lines.Count; li++)
-            {
-                for (int po = 0; po < 2; po++)
-                {
-                    for (int XY = 0; XY < 2; XY++)
-                    {
-                        if(po == 0)
-                        {
-                            if (XY == 0)
-                            {
-                                distance[li, po, XY, 0] = click.X - lines[li].X1;
-                            }
-                            if(XY == 1)
-                            {
-                                distance[li, po, XY, 0] = click.Y - lines[li].Y1;
-                            }
-                        }
-                        if(po == 1)
-                        {
-                            if (XY == 0)
-                            {
-                                distance[li, po, XY, 0] = click.X - lines[li].X2;
-                            }
-                            if (XY == 1)
-                            {
-                                distance[li, po, XY, 0] = click.Y - lines[li].Y2;
-                            }
-                        }
-                    }
-                }
-            }
-
-
+            InitialClick = click;
         }
 
         public void SplitTheLine(Line line, Point point)
@@ -205,7 +167,16 @@ namespace GraphicsEditor.Objects
             line.X2 = point.X;
             line.Y2 = point.Y;
 
-            SetLine(point, point1, idUnselectedPoint);
+            Line newLine = new();
+            newLine.X1 = point.X;
+            newLine.Y1 = point.Y;
+            newLine.X2 = point.X;
+            newLine.Y2 = point.Y;
+            line.Stroke = new SolidColorBrush(color);
+            line.StrokeThickness = thick;
+
+
+            SetLine(newLine, idUnselectedPoint);
 
             int index = lines.IndexOf(line);
             lines.Insert(index+1, lines.Last());

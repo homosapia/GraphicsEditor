@@ -1,19 +1,16 @@
-﻿
-using GraphicsEditor.Data;
-using GraphicsEditor.Objects;
+﻿using System;
 using Microsoft.Win32;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace GraphicsEditor
+namespace GraphicsEditor.Objects
 {
     class SaveLoad
     {
-        List<IFigure> figures;
+        private List<IFigure> figures;
 
-        public SaveLoad(){}
+        public SaveLoad() { }
 
         public SaveLoad(List<IFigure> figures)
         {
@@ -44,15 +41,13 @@ namespace GraphicsEditor
             OpenFileDialog openFileDialog = new();
             openFileDialog.ShowDialog();
 
+            StreamReader sr = new StreamReader(openFileDialog.FileName, Encoding.Default);
             try
             {
-                using (StreamReader sr = new StreamReader(openFileDialog.FileName, Encoding.Default))
+                string line;
+                while ((line = sr.ReadLine()) != null)
                 {
-                    string line;
-                    while ((line = sr.ReadLine()) != null)
-                    {
-                        figures.Add(Factory.Deserialize(line));
-                    }
+                    figures.Add(Factory.Deserialize(line));
                 }
             }
             catch { }

@@ -11,8 +11,7 @@ namespace GraphicsEditor
     public class FigurePaddedRectangle : IFigure
     {
         public event EventSelectFigure SelectObject;
-        public event EventRemoveUiElemrnt RemoveUIElemrnt;
-        public event EventFindPositionMouse FindPositionMouse;
+        public event EventRemoveUiElement RemoveUIElement;
 
         private PaddedRectangle paddedRectangle = new();
 
@@ -75,7 +74,6 @@ namespace GraphicsEditor
             paddedRectangle.ShowMarker();
 
             SelectObject(this);
-            FindPositionMouse();
         }
 
         private void Marker_MouseLeftButtonUp()

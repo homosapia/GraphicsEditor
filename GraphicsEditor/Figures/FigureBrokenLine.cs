@@ -11,14 +11,15 @@ namespace GraphicsEditor
     public class FigureBrokenLine : IFigure
     {
         public event EventSelectFigure SelectObject;
-        public event EventRemoveUiElemrnt RemoveUIElemrnt;
-        public event EventFindPositionMouse FindPositionMouse;
+        public event EventRemoveUiElement RemoveUIElement;
 
-        private BrokenLine brokenLine = new();
+        private readonly BrokenLine brokenLine = new();
 
         private List<UIElement> markers = new();
         private UIElement marker = new();
-        private bool СellMarker;
+        private bool markerSelected;
+        private Color color = Color.FromArgb(255, 0, 0, 0);
+        private double thick;
 
         public ListOfDataToSave SerializeFigure()
         {
@@ -38,14 +39,14 @@ namespace GraphicsEditor
 
         private void Marker_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            СellMarker = false;
+            markerSelected = false;
             List<UIElement> lines = brokenLine.GetLinesLess(5);
             if (lines.Count > 0)
             {
                 marker = (Ellipse)sender;
                 Point point = new(Canvas.GetLeft(marker) + 5, Canvas.GetTop(marker) + 5);
 
-                RemoveUIElemrnt(lines);
+                RemoveUIElement(lines);
                 SetMarkers();
                 SelectObject(this);
             }
@@ -55,7 +56,7 @@ namespace GraphicsEditor
         {
             e.Handled = true;
             marker = (Ellipse)sender;
-            СellMarker = true;
+            markerSelected = true;
             Point point = new(Canvas.GetLeft(marker) + 5, Canvas.GetTop(marker) + 5);
             if (e.ClickCount == 1)
             {
@@ -68,7 +69,7 @@ namespace GraphicsEditor
         {
             e.Handled = true;
             SetMarkers();
-            СellMarker = false;
+            markerSelected = false;
             if (e.ClickCount == 2)
             {
                 Line line = (Line)sender;
@@ -80,7 +81,7 @@ namespace GraphicsEditor
 
                 marker = CreateMarker(point);
                 markers.Add(marker);
-                СellMarker = true;
+                markerSelected = true;
             }
             SelectObject(this);
         }
@@ -100,7 +101,7 @@ namespace GraphicsEditor
 
         public void Change(Point point)
         {
-            if (СellMarker)
+            if (markerSelected)
             {
                 brokenLine.ChangeLinePointPosition(point);
                 Canvas.SetLeft(marker, point.X - 5);
@@ -139,30 +140,48 @@ namespace GraphicsEditor
 
         public void ChangeColor(Color color)
         {
+            this.color = color;
             brokenLine.ChangeColor(color);
         }
 
         public void ChangeThickness(double thick)
         {
+            this.thick = thick;
             brokenLine.ChangeThickness(thick);
         }
 
         public void DeselectShape()
         {
-            RemoveUIElemrnt(markers);
+            RemoveUIElement(markers);
         }
 
         public void StartingPoint(Point point)
         {
-            СellMarker = true;
-            brokenLine.SetLine(point, point);
+            markerSelected = true;
+
+            Line line = new();
+            line.Stroke = new SolidColorBrush(color);
+            line.StrokeThickness = thick;
+
+            line.X1 = point.X;
+            line.Y1 = point.Y;
+
+            line.X2 = point.X;
+            line.Y2 = point.Y;
+            
+            brokenLine.SetLine(line);
+            
             SignLinesToEvents();
+            
+            markers.Add(CreateMarker(point));
+            markers.Add(marker = CreateMarker(point));
+
             SelectObject(this);
         }
 
         public void MousePositionOnCanvas(Point point)
         {
-            brokenLine.DistanceFromLinePointToClick(point);
+            brokenLine.SetСlickPoint(point);
         }
 
         public List<UIElement> GetAllUIElements()

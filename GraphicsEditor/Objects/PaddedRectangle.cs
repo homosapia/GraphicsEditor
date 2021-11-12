@@ -21,7 +21,7 @@ namespace GraphicsEditor.Objects
 
         private Rectangle rectangle = new();
         private Rectangle marker = new();
-        private Canvas substrate = new();
+        private Canvas padded = new();
         private RotateTransform rotateTransform = new();
         private Color color;
 
@@ -83,8 +83,8 @@ namespace GraphicsEditor.Objects
             rectangle.Width = Double.Parse(objects[4].ToString());
             rectangle.Height = Double.Parse(objects[5].ToString());
 
-            substrate.Width = rectangle.Width + 10;
-            substrate.Height = rectangle.Height + 10;
+            padded.Width = rectangle.Width + 10;
+            padded.Height = rectangle.Height + 10;
 
             rotateTransform.Angle = Double.Parse(objects[6].ToString()); ;
             rotateTransform.CenterX = rectangle.Width / 2;
@@ -103,9 +103,9 @@ namespace GraphicsEditor.Objects
             marker.Width = 10;
             marker.Height = 10;
 
-            substrate.Children.Add(rectangle);
-            substrate.Children.Add(marker);
-            substrate.RenderTransform = rotateTransform;
+            padded.Children.Add(rectangle);
+            padded.Children.Add(marker);
+            padded.RenderTransform = rotateTransform;
         }
 
         public void Resize(double Widith, double Height)
@@ -118,8 +118,8 @@ namespace GraphicsEditor.Objects
             thickness.Top = Height - 5;
             marker.Margin = thickness;
 
-            substrate.Width = Widith;
-            substrate.Height = Height;
+            padded.Width = Widith;
+            padded.Height = Height;
         }
 
         public void ChangeTurn(double rotat)
@@ -131,8 +131,8 @@ namespace GraphicsEditor.Objects
 
         public void SetPosition(Point point)
         {
-            Canvas.SetLeft(substrate, point.X);
-            Canvas.SetTop(substrate, point.Y);
+            Canvas.SetLeft(padded, point.X);
+            Canvas.SetTop(padded, point.Y);
         }
 
         public void ChangeColor(Color color)
@@ -158,7 +158,7 @@ namespace GraphicsEditor.Objects
 
         public Canvas GetRectangle()
         {
-            return substrate;
+            return padded;
         }
     }
 }
