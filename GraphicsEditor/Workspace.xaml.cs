@@ -5,6 +5,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using GraphicsEditor.Abstracts;
+using GraphicsEditor.Data;
+using GraphicsEditor.Objects;
+using Newtonsoft.Json;
 
 namespace GraphicsEditor
 {
@@ -29,13 +33,13 @@ namespace GraphicsEditor
         {
             if (drawingMode)
             {
-                currentFigure.StartingPoint(e.GetPosition(canvas));
+                currentFigure.StartDrawing(e.GetPosition(canvas));
                 drawingMode = false;
             }
 
             foreach (IFigure figure in figures)
             {
-                figure.MousePositionOnCanvas(e.GetPosition(canvas));
+                figure.StartMoving(e.GetPosition(canvas));
             }
         }
 
@@ -67,11 +71,11 @@ namespace GraphicsEditor
 
             foreach (IFigure figure in figures)
             {
-                figure.MousePositionOnCanvas(e.GetPosition(canvas));
+                figure.StartMoving(e.GetPosition(canvas));
             }
         }
 
-        public void SetCurrentFigure(IFigure figure)
+        public void SetCurrentFigure(string key)
         {
             if(currentFigure != null) 
                 currentFigure.DeselectShape();
@@ -80,41 +84,61 @@ namespace GraphicsEditor
             drawingMode = true;
             figureSelected = true;
 
-            currentFigure = figure;
+            currentFigure = Factory.CreateFigure(key);
 
             currentFigure.ChangeColor(color);
             currentFigure.ChangeThickness(figureThickness);
-            SubscribeToEvents(currentFigure);
+            Sign(currentFigure);
             figures.Add(currentFigure);
         }
 
-        public List<IFigure> GetArrayFigures()
+        public List<IFigure> Get()
         {
             return figures.ToList();
         }
 
-        private void SubscribeToEvents(IFigure figure)
+        public WorkspaceDataToSave GetDataToSave()
         {
-            figure.SelectObject += Figure_SelectObject;
-            figure.RemoveUIElement += FigureRemoveUiElement;
-        }
-
-        public void UploadNewFigures(List<IFigure> figures)
-        {
-            canvas.Children.Clear();
-
-            this.figures = new();
-
+            WorkspaceDataToSave workspaceData = new();
             foreach (IFigure figure in figures)
             {
-                SubscribeToEvents(figure);
+                FigureDataToSave figureData = figure.GetDataToSave();
+
+                workspaceData.Figures.Add(figureData);
+            }
+            return workspaceData;
+        }
+
+        public void UploadNewFigures(WorkspaceDataToSave workspaceData)
+        {
+            canvas.Children.Clear();
+            figures.Clear();
+            foreach (FigureDataToSave figureData in workspaceData.Figures)
+            {
+                IFigure figure = Factory.CreateFromData(figureData);
+                figures.Add(figure);
+                Sign(figure);
+            }
+
+            DisplayFigurs(figures);
+        }
+
+        private void DisplayFigurs(List<IFigure> figures)
+        {
+            foreach (IFigure figure in figures)
+            {
                 List<UIElement> uIs = figure.GetAllUIElements();
                 foreach (UIElement uI in uIs)
                 {
                     canvas.Children.Add(uI);
                 }
-                this.figures.Add(figure);
             }
+        }
+
+        private void Sign(IFigure figure)
+        {
+            figure.FigureGive += Figure_SelectObject;
+            figure.RemoveUIElement += FigureRemoveUiElement;
         }
 
         public void SetColor(Color colorPalette)
@@ -162,7 +186,7 @@ namespace GraphicsEditor
 
         private void Figure_FindPositionMouse()
         {
-            currentFigure.MousePositionOnCanvas(Mouse.GetPosition(canvas));
+            currentFigure.StartMoving(Mouse.GetPosition(canvas));
         }
 
         private void FigureRemoveUiElement(List<UIElement> uIElements)
@@ -184,7 +208,7 @@ namespace GraphicsEditor
 
             foreach (var VARIABLE in figures)
             {
-                VARIABLE.MousePositionOnCanvas(Mouse.GetPosition(canvas));
+                VARIABLE.StartMoving(Mouse.GetPosition(canvas));
             }
 
             for (int i = canvas.Children.Count - 1; i >= 0; i--)

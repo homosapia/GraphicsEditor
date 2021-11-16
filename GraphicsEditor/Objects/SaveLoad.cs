@@ -3,21 +3,15 @@ using Microsoft.Win32;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using GraphicsEditor.Data;
+using Newtonsoft.Json;
 
 namespace GraphicsEditor.Objects
 {
     class SaveLoad
     {
-        private List<IFigure> figures;
 
-        public SaveLoad() { }
-
-        public SaveLoad(List<IFigure> figures)
-        {
-            this.figures = figures;
-        }
-
-        public void Save()
+        public void Save(WorkspaceDataToSave workspaceData)
         {
             SaveFileDialog saveFileDialog = new();
             saveFileDialog.ShowDialog();
@@ -25,18 +19,15 @@ namespace GraphicsEditor.Objects
             {
                 using (StreamWriter sw = new StreamWriter(saveFileDialog.FileName, false, Encoding.Default))
                 {
-                    foreach (IFigure figure in figures)
-                    {
-                        sw.WriteLine(Factory.Serialize(figure));
-                    }
+                    sw.WriteLine(JsonConvert.SerializeObject(workspaceData));
                 }
             }
             catch { }
         }
 
-        public List<IFigure> Load()
+        public WorkspaceDataToSave Load()
         {
-            List<IFigure> figures = new();
+            WorkspaceDataToSave workspace = new();
 
             OpenFileDialog openFileDialog = new();
             openFileDialog.ShowDialog();
@@ -47,12 +38,12 @@ namespace GraphicsEditor.Objects
                 string line;
                 while ((line = sr.ReadLine()) != null)
                 {
-                    figures.Add(Factory.Deserialize(line));
+                    workspace = JsonConvert.DeserializeObject<WorkspaceDataToSave>(line);
                 }
             }
             catch { }
 
-            return figures;
+            return workspace;
         }
     }
 }

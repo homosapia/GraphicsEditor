@@ -4,6 +4,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using GraphicsEditor.Abstracts;
+using GraphicsEditor.Data;
 
 namespace GraphicsEditor.Objects
 {
@@ -56,37 +58,37 @@ namespace GraphicsEditor.Objects
             RectangleMouseDown();
         }
 
-        public List<object> DataToSave()
+        public RectangleDataToSave DataToSave()
         {
-            List<object> objects = new();
+            RectangleDataToSave rectangleData = new RectangleDataToSave();
 
-            objects.Add(color.A);
-            objects.Add(color.R);
-            objects.Add(color.G);
-            objects.Add(color.B);
+            rectangleData.colorA = color.A;
+            rectangleData.colorR = color.R;
+            rectangleData.colorG = color.G;
+            rectangleData.colorB = color.B;
 
-            objects.Add(rectangle.Width);
-            objects.Add(rectangle.Height);
+            rectangleData.Width = rectangle.Width;
+            rectangleData.Height = rectangle.Height;
 
-            objects.Add(rotateTransform.Angle);
+            rectangleData.Rotate = rotateTransform.Angle;
 
-            return objects;
+            return rectangleData;
         }
 
-        public void LoadData(List<object> objects)
+        public void FillWithData(RectangleDataToSave rectangleData)
         {
-            color.A = Byte.Parse(objects[0].ToString());
-            color.R = Byte.Parse(objects[1].ToString());
-            color.G = Byte.Parse(objects[2].ToString());
-            color.B = Byte.Parse(objects[3].ToString());
+            color.A = rectangleData.colorA;
+            color.R = rectangleData.colorR;
+            color.G = rectangleData.colorG;
+            color.B = rectangleData.colorB;
 
-            rectangle.Width = Double.Parse(objects[4].ToString());
-            rectangle.Height = Double.Parse(objects[5].ToString());
+            rectangle.Width = rectangleData.Width;
+            rectangle.Height = rectangleData.Height;
 
             padded.Width = rectangle.Width + 10;
             padded.Height = rectangle.Height + 10;
 
-            rotateTransform.Angle = Double.Parse(objects[6].ToString()); ;
+            rotateTransform.Angle = rectangleData.Rotate;
             rotateTransform.CenterX = rectangle.Width / 2;
             rotateTransform.CenterY = rectangle.Height / 2;
 
@@ -122,7 +124,7 @@ namespace GraphicsEditor.Objects
             padded.Height = Height;
         }
 
-        public void ChangeTurn(double rotat)
+        public void Rotate(double rotat)
         {
             rotateTransform.CenterX = rectangle.Width / 2;
             rotateTransform.CenterY = rectangle.Height / 2;

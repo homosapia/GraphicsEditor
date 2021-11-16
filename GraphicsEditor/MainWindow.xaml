@@ -15,7 +15,7 @@
         </Grid.ColumnDefinitions>
         <local:Workspace x:Name="workspace" Grid.Column="2"/>
         <StackPanel x:Name="stackPanal" Grid.Column="0" Orientation="Vertical" Background="White" Grid.ColumnSpan="2">
-            <Button x:Name="segment" Height="30" Click="Segment_Click">отрезок</Button>
+            <Button x:Name="segment" Height="30" Click="BrokenLine_Click">отрезок</Button>
             <Button x:Name="rictangle" Height="30" Click="Rictangle_Click">прямоугольник</Button>
             <StackPanel Orientation="Horizontal">
                 <Label Content="Цвет :"/>

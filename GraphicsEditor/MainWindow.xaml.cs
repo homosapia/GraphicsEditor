@@ -13,19 +13,21 @@ namespace GraphicsEditor
     /// </summary>
     public partial class MainWindow : Window
     {
+        private const string RectangleFigureType = "RectangleFigure";
+        private const string BrokenLineFigureType = "BrokenLineFigure";
         public MainWindow()
         {
             InitializeComponent();
         }
 
-        private void Segment_Click(object sender, RoutedEventArgs e)
+        private void BrokenLine_Click(object sender, RoutedEventArgs e)
         {
-            workspace.SetCurrentFigure(Factory.GetFigureBrokenLine());
+            workspace.SetCurrentFigure(BrokenLineFigureType);
         }
 
         private void Rictangle_Click(object sender, RoutedEventArgs e)
         {
-            workspace.SetCurrentFigure(Factory.GetFigureQuadrilateral());
+            workspace.SetCurrentFigure(RectangleFigureType);
         }
 
         private void Palette_SelectedBrushChanged(object sender, Syncfusion.Windows.Tools.Controls.SelectedBrushChangedEventArgs e)
@@ -46,8 +48,8 @@ namespace GraphicsEditor
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            SaveLoad save = new(workspace.GetArrayFigures());
-            save.Save();
+            SaveLoad save = new();
+            save.Save(workspace.GetDataToSave());
         }
 
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

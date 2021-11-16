@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using GraphicsEditor.Abstracts;
+using GraphicsEditor.Data;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,66 +21,70 @@ namespace GraphicsEditor.Objects
         private List<byte> idPointLine = new();
 
         private Color color = Color.FromArgb(255,0,0,0);
-        private double thick;
-        private Point InitialClick;
+        private double thickness;
+        private Point previousMouse;
 
-        public List<object> DataToSave()
+        public BrokenLineDataToSave DataToSave()
         {
-            List<object> objects = new();
-
-            Point[,,] points = new Point[lines.Count,2,1];
+            Point[,] points = new Point[lines.Count, 2];
             for (int i = 0; i < lines.Count; i++)
             {
-                for(int l = 0; l < 2; l++)
+                for (int l = 0; l < 2; l++)
                 {
                     if (l == 0)
                     {
                         Point point = new(lines[i].X1, lines[i].Y1);
-                        points[i, l, 0] = point;
+                        points[i, l] = point;
                     }
-                    if(l == 1)
+                    if (l == 1)
                     {
                         Point point = new(lines[i].X2, lines[i].Y2);
-                        points[i, l, 0] = point;
+                        points[i, l] = point;
                     }
                 }
             }
 
-            objects.Add(JsonConvert.SerializeObject(points));
+            BrokenLineDataToSave brokenLineData = new BrokenLineDataToSave();
 
-            objects.Add(color.A);
-            objects.Add(color.R);
-            objects.Add(color.G);
-            objects.Add(color.B);
+            brokenLineData.points = points;
 
-            objects.Add(thick);
+            brokenLineData.colorA = color.A;
+            brokenLineData.colorR = color.R;
+            brokenLineData.colorG = color.G;
+            brokenLineData.colorB = color.B;
 
-            objects.Add(lines.Count);
+            brokenLineData.thick = thickness;
+            brokenLineData.LineCount = lines.Count;
 
-            return objects;
+            return brokenLineData;
         }
 
-        public void LoadData(List<object> objects)
+        public void FillWithData(BrokenLineDataToSave brokenLineData)
         {
-            color.A = Byte.Parse(objects[1].ToString());
-            color.R = Byte.Parse(objects[2].ToString());
-            color.G = Byte.Parse(objects[3].ToString());
-            color.B = Byte.Parse(objects[4].ToString());
+            color.A = brokenLineData.colorA;
+            color.R = brokenLineData.colorR;
+            color.G = brokenLineData.colorG;
+            color.B = brokenLineData.colorB;
 
-            thick = Double.Parse(objects[5].ToString());
+            thickness = brokenLineData.thick;
 
-            Point[,,] points = JsonConvert.DeserializeObject<Point[,,]>(objects[0].ToString());
-            for (int i = 0; i < Int32.Parse(objects[6].ToString()); i++)
+            Point[,] points = brokenLineData.points;
+
+            for (int i = 0; i < brokenLineData.LineCount; i++)
             {
                 Line line = new();
-                line.X1 = points[i, 0, 0].X;
-                line.Y1 = points[i, 0, 0].Y;
-                line.X2 = points[i, 1, 0].Y;
-                line.Y2 = points[i, 1, 0].Y;
 
-                line.Stroke = new SolidColorBrush(color);
-                line.StrokeThickness = thick;
-                
+                for (int j = 0; j < 2; j++)
+                {
+                    line.X1 = points[i, j].X;
+                    line.Y1 = points[i, j].Y;
+                    line.X2 = points[i, j].Y;
+                    line.Y2 = points[i, j].Y;
+
+                    line.Stroke = new SolidColorBrush(color);
+                    line.StrokeThickness = thickness;
+                }
+
                 SetLine(line);
             }
         }
@@ -143,21 +149,21 @@ namespace GraphicsEditor.Objects
 
         public void MoveLines(Point move)
         {
-            for (int li = 0; li < lines.Count; li++)
+            foreach (Line line in lines)
             {
-                lines[li].X1 = move.X + -(InitialClick.X - lines[li].X1);
-                lines[li].Y1 = move.Y + -(InitialClick.Y - lines[li].Y1);
+                line.X1 += move.X - previousMouse.X;
+                line.Y1 += move.Y - previousMouse.Y;
 
-                lines[li].X2 = move.X + -(InitialClick.X - lines[li].X2);
-                lines[li].Y2 = move.Y + -(InitialClick.Y - lines[li].Y2);
+                line.X2 += move.X - previousMouse.X;
+                line.Y2 += move.Y - previousMouse.Y;
             }
 
-            InitialClick = move;
+            previousMouse = move;
         }
 
         public void SetСlickPoint(Point click)
         {
-            InitialClick = click;
+            previousMouse = click;
         }
 
         public void SplitTheLine(Line line, Point point)
@@ -173,7 +179,7 @@ namespace GraphicsEditor.Objects
             newLine.X2 = point.X;
             newLine.Y2 = point.Y;
             line.Stroke = new SolidColorBrush(color);
-            line.StrokeThickness = thick;
+            line.StrokeThickness = thickness;
 
 
             SetLine(newLine, idUnselectedPoint);
@@ -219,10 +225,10 @@ namespace GraphicsEditor.Objects
 
         public void ChangeThickness(double thick)
         {
-            this.thick = thick;
+            this.thickness = thick;
             foreach (Line line in lines)
             {
-                line.StrokeThickness = this.thick;
+                line.StrokeThickness = this.thickness;
             }
         }
     }

@@ -1,21 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using GraphicsEditor.Objects;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using GraphicsEditor.Abstracts;
 using GraphicsEditor.Data;
+using Newtonsoft.Json;
 
 namespace GraphicsEditor
 {
-    public class FigurePaddedRectangle : IFigure
+    public class RectangleFigure : IFigure
     {
-        public event EventSelectFigure SelectObject;
+        private const string figureType = "RectangleFigure";
+
+        public event EventFigureGive FigureGive;
         public event EventRemoveUiElement RemoveUIElement;
 
         private PaddedRectangle paddedRectangle = new();
 
-        private Point startObject = new Point();
+        private Point previousMouse = new Point();
 
         double distanceX;
         double distanceY;
@@ -24,7 +29,7 @@ namespace GraphicsEditor
         bool transform;
         bool move;
 
-        public FigurePaddedRectangle()
+        public RectangleFigure()
         {
             transform = true;
             paddedRectangle.RectangleMouseDown += Rectangle_MouseLeftButtonDown;
@@ -34,24 +39,27 @@ namespace GraphicsEditor
             paddedRectangle.MarkerMouseUp += Marker_MouseLeftButtonUp;
         }
 
-        public ListOfDataToSave SerializeFigure()
+        public FigureDataToSave GetDataToSave()
         {
-            ListOfDataToSave data = new();
+            FigureDataToSave figureData = new();
 
-            data.Objects = paddedRectangle.DataToSave();
-            data.point = startObject;
-
-            return data;
+            RectangleDataToSave rectangleData = paddedRectangle.DataToSave();
+            rectangleData.position = previousMouse;
+            
+            figureData.FigureJson = JsonConvert.SerializeObject(rectangleData);
+            figureData.FigureType = figureType;
+            return figureData;
         }
 
-        public void DeserializeFigure(ListOfDataToSave data)
+        public void FillWithData(FigureDataToSave data)
         {
-            paddedRectangle.LoadData(data.Objects);
+            RectangleDataToSave rectangleData = JsonConvert.DeserializeObject<RectangleDataToSave>(data.FigureJson);
+            paddedRectangle.FillWithData(rectangleData);
 
-            startObject = data.point;
+            previousMouse = rectangleData.position;
 
             paddedRectangle.ConfigureAnObject();
-            paddedRectangle.SetPosition(startObject);
+            paddedRectangle.SetPosition(previousMouse);
 
             paddedRectangle.RectangleMouseDown += Rectangle_MouseLeftButtonDown;
             paddedRectangle.RectangleMouseUp += Rectangle_MouseLeftButtonUp;
@@ -73,7 +81,7 @@ namespace GraphicsEditor
 
             paddedRectangle.ShowMarker();
 
-            SelectObject(this);
+            FigureGive(this);
         }
 
         private void Marker_MouseLeftButtonUp()
@@ -98,15 +106,15 @@ namespace GraphicsEditor
                     paddedRectangle.Resize(Math.Abs(positionMouseOnSubstrate.X), Math.Abs(positionMouseOnSubstrate.Y));
                 }
             }
-            if(move)
+            else if(move)
             {
                 MoveFigure(point);
             }
-            if (!transform && !move)
+            else
             {
                 paddedRectangle.HideMarker();
                 double rotat = point.Y - pointY;
-                paddedRectangle.ChangeTurn(rotat);
+                paddedRectangle.Rotate(rotat);
             }
         }
 
@@ -127,18 +135,18 @@ namespace GraphicsEditor
             move = false;
         }
 
-        public void StartingPoint(Point point)
+        public void StartDrawing(Point point)
         {
-            startObject = point;
+            previousMouse = point;
             paddedRectangle.ConfigureAnObject ();
             paddedRectangle.SetPosition(point);
-            SelectObject(this);
+            FigureGive(this);
         }
 
-        public void MousePositionOnCanvas(Point point)
+        public void StartMoving(Point point)
         {
-            distanceX = point.X - startObject.X;
-            distanceY = point.Y - startObject.Y;
+            distanceX = point.X - previousMouse.X;
+            distanceY = point.Y - previousMouse.Y;
 
             pointY = point.Y;
         }
@@ -152,9 +160,9 @@ namespace GraphicsEditor
 
         public void MoveFigure(Point point)
         {
-            startObject.X = point.X - distanceX;
-            startObject.Y = point.Y - distanceY;
-            paddedRectangle.SetPosition(startObject);
+            previousMouse.X = point.X - distanceX;
+            previousMouse.Y = point.Y - distanceY;
+            paddedRectangle.SetPosition(previousMouse);
         }
     }
 }

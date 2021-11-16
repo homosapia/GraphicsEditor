@@ -3,8 +3,8 @@ namespace GraphicsEditor.Interfaces
 {
     public interface IFactory
     {
-        public FigureBrokenLine GetFigureBrokenLine();
+        public BrokenLineFigure GetFigureBrokenLine();
 
-        public FigurePaddedRectangle GetFigureQuadrilateral();
+        public RectangleFigure GetFigureQuadrilateral();
     }
 }

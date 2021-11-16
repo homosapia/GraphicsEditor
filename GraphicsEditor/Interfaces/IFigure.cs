@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
+using GraphicsEditor.Abstracts;
 
 namespace GraphicsEditor
 {
@@ -15,15 +16,15 @@ namespace GraphicsEditor
 
         public void DeselectShape();
 
-        public void StartingPoint(Point point);
+        public void StartDrawing(Point point);
 
-        public void MousePositionOnCanvas(Point point);
+        public void StartMoving(Point point);
 
         public List<UIElement> GetAllUIElements();
 
-        public ListOfDataToSave SerializeFigure();
+        public FigureDataToSave GetDataToSave();
 
-        public void DeserializeFigure(ListOfDataToSave data);
+        public void FillWithData(FigureDataToSave json);
 
         public void MoveFigure(Point point);
     }

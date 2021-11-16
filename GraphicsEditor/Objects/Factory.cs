@@ -1,4 +1,5 @@
-﻿using GraphicsEditor.Data;
+﻿using GraphicsEditor.Abstracts;
+using GraphicsEditor.Data;
 using GraphicsEditor.Interfaces;
 using Newtonsoft.Json;
 using System;
@@ -7,56 +8,49 @@ namespace GraphicsEditor.Objects
 {
     class Factory
     {
-        public static FigureBrokenLine GetFigureBrokenLine()
+        private static BrokenLineFigure CreateBrokenLineFigure()
         {
-            FigureBrokenLine brokenLine = new();
+            BrokenLineFigure brokenLine = new();
             return brokenLine;
         }
 
-        public static FigurePaddedRectangle GetFigureQuadrilateral()
+        private static RectangleFigure CreateRectangleFigure()
         {
-            FigurePaddedRectangle quadrilateral = new();
+            RectangleFigure quadrilateral = new();
             return quadrilateral;
         }
 
-        public static string Serialize(IFigure figure)
+        public static IFigure CreateFromData(FigureDataToSave figureData)
         {
-            try
+            if (figureData.FigureType == "BrokenLineFigure")
             {
-                ListOfDataToSave data = figure.SerializeFigure();
-                string json = JsonConvert.SerializeObject(data);
-                return json;
+                BrokenLineFigure brokenLine = CreateBrokenLineFigure();
+                brokenLine.FillWithData(figureData);
+                return brokenLine;
             }
-            catch { }
 
-            throw new Exception("Unable to serialize");
+            if (figureData.FigureType == "RectangleFigure")
+            {
+                RectangleFigure rectangleFigure = CreateRectangleFigure();
+                rectangleFigure.FillWithData(figureData);
+                return rectangleFigure;
+            }
+
+            throw new Exception("there is no such figure");
         }
 
-        public static IFigure Deserialize(string line)
+        public static IFigure CreateFigure(string key)
         {
-            try
+            switch (key)
             {
-                ListOfDataToSave data = JsonConvert.DeserializeObject<ListOfDataToSave>(line);
+                case "BrokenLineFigure":
+                    return CreateBrokenLineFigure();
 
-                try
-                {
-                    FigureBrokenLine brokenLine = new();
-                    brokenLine.DeserializeFigure(data);
-                    return brokenLine;
-                }
-                catch { }
-
-                try
-                {
-                    FigurePaddedRectangle figureRectangle = new();
-                    figureRectangle.DeserializeFigure(data);
-                    return figureRectangle;
-                }
-                catch { }
+                case "RectangleFigure":
+                    return CreateRectangleFigure();
             }
-            catch { }
 
-            throw new Exception("Unable to Deserialize");
+            throw new Exception("there is no such figure");
         }
     }
 }

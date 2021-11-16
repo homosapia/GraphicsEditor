@@ -4,13 +4,17 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using GraphicsEditor.Abstracts;
 using GraphicsEditor.Data;
+using Newtonsoft.Json;
 
 namespace GraphicsEditor
 {
-    public class FigureBrokenLine : IFigure
+    public class BrokenLineFigure : IFigure
     {
-        public event EventSelectFigure SelectObject;
+        private const string figureType = "BrokenLineFigure";
+
+        public event EventFigureGive FigureGive;
         public event EventRemoveUiElement RemoveUIElement;
 
         private readonly BrokenLine brokenLine = new();
@@ -21,18 +25,17 @@ namespace GraphicsEditor
         private Color color = Color.FromArgb(255, 0, 0, 0);
         private double thick;
 
-        public ListOfDataToSave SerializeFigure()
+        public FigureDataToSave GetDataToSave()
         {
-            ListOfDataToSave data = new();
-
-            data.Objects = brokenLine.DataToSave();
-
-            return data;
+            FigureDataToSave figureData = new();
+            figureData.FigureJson = JsonConvert.SerializeObject(brokenLine.DataToSave());
+            figureData.FigureType = figureType;
+            return figureData;
         }
 
-        public void DeserializeFigure(ListOfDataToSave data)
+        public void FillWithData(FigureDataToSave data)
         {
-            brokenLine.LoadData(data.Objects);
+            brokenLine.FillWithData(JsonConvert.DeserializeObject<BrokenLineDataToSave>(data.FigureJson));
             
             SignLinesToEvents();
         }
@@ -48,7 +51,7 @@ namespace GraphicsEditor
 
                 RemoveUIElement(lines);
                 SetMarkers();
-                SelectObject(this);
+                FigureGive(this);
             }
         }
 
@@ -62,7 +65,7 @@ namespace GraphicsEditor
             {
                 brokenLine.PointInRadius(point, 0);
             }
-            SelectObject(this);
+            FigureGive(this);
         }
 
         private void Line_MouseLeftDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -83,7 +86,7 @@ namespace GraphicsEditor
                 markers.Add(marker);
                 markerSelected = true;
             }
-            SelectObject(this);
+            FigureGive(this);
         }
 
         private void SetMarkers()
@@ -155,7 +158,7 @@ namespace GraphicsEditor
             RemoveUIElement(markers);
         }
 
-        public void StartingPoint(Point point)
+        public void StartDrawing(Point point)
         {
             markerSelected = true;
 
@@ -176,10 +179,10 @@ namespace GraphicsEditor
             markers.Add(CreateMarker(point));
             markers.Add(marker = CreateMarker(point));
 
-            SelectObject(this);
+            FigureGive(this);
         }
 
-        public void MousePositionOnCanvas(Point point)
+        public void StartMoving(Point point)
         {
             brokenLine.SetСlickPoint(point);
         }
