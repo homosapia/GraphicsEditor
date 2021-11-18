@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Xml.Linq;
@@ -13,48 +14,38 @@ namespace GraphicsEditor.Objects
 {
     class BrokenLine
     {
-        private const byte idFirstPointLine = 1;
-        private const byte idLastPointLine = 2;
-        private const byte idUnselectedPoint = 3;
+        private readonly List<Line> lines = new();
 
-        private List<Line> lines = new();
-        private List<byte> idPointLine = new();
+        private Line changeStart = new();
+        private Line changeTheEnd = new();
 
         private Color color = Color.FromArgb(255,0,0,0);
         private double thickness;
-        private Point previousMouse;
 
         public BrokenLineDataToSave DataToSave()
         {
             Point[,] points = new Point[lines.Count, 2];
             for (int i = 0; i < lines.Count; i++)
             {
-                for (int l = 0; l < 2; l++)
-                {
-                    if (l == 0)
-                    {
-                        Point point = new(lines[i].X1, lines[i].Y1);
-                        points[i, l] = point;
-                    }
-                    if (l == 1)
-                    {
-                        Point point = new(lines[i].X2, lines[i].Y2);
-                        points[i, l] = point;
-                    }
-                }
+                Point point = new(lines[i].X1, lines[i].Y1);
+                points[i, 0] = point;
+
+                point = new(lines[i].X2, lines[i].Y2);
+                points[i, 1] = point;
             }
 
-            BrokenLineDataToSave brokenLineData = new BrokenLineDataToSave();
+            BrokenLineDataToSave brokenLineData = new()
+            {
+                points = points,
 
-            brokenLineData.points = points;
+                colorA = color.A,
+                colorR = color.R,
+                colorG = color.G,
+                colorB = color.B,
 
-            brokenLineData.colorA = color.A;
-            brokenLineData.colorR = color.R;
-            brokenLineData.colorG = color.G;
-            brokenLineData.colorB = color.B;
-
-            brokenLineData.thick = thickness;
-            brokenLineData.LineCount = lines.Count;
+                thick = thickness,
+                LineCount = lines.Count
+            };
 
             return brokenLineData;
         }
@@ -72,39 +63,26 @@ namespace GraphicsEditor.Objects
 
             for (int i = 0; i < brokenLineData.LineCount; i++)
             {
-                Line line = new();
-
-                for (int j = 0; j < 2; j++)
-                {
-                    line.X1 = points[i, j].X;
-                    line.Y1 = points[i, j].Y;
-                    line.X2 = points[i, j].Y;
-                    line.Y2 = points[i, j].Y;
-
-                    line.Stroke = new SolidColorBrush(color);
-                    line.StrokeThickness = thickness;
-                }
-
-                SetLine(line);
+                SetLine(points[i, 0], points[i, 1]);
             }
         }
 
         public void PointInRadius(Point point, byte Radius)
         {
-            idPointLine = new();
+            changeTheEnd = null;
+            changeStart = null;
             foreach (Line line in lines)
             {
                 if (Math.Abs(point.X - line.X2) <= Radius && Math.Abs(point.Y - line.Y2) <= Radius)
                 {
-                    idPointLine.Add(idLastPointLine);
+                    changeTheEnd = line;
                     continue;
                 }
                 if (Math.Abs(point.X - line.X1) <= Radius && Math.Abs(point.Y - line.Y1) <= Radius)
                 {
-                    idPointLine.Add(idFirstPointLine);
+                    changeStart = line;
                     continue;
                 }
-                idPointLine.Add(idUnselectedPoint);
             }
         }
 
@@ -119,9 +97,20 @@ namespace GraphicsEditor.Objects
             return points.Distinct().ToList();
         }
 
-        public void SetLine(Line line, byte idPoint = idLastPointLine)
+        public void SetLine(Point start, Point end)
         {
-            idPointLine.Add(idPoint);
+            Line line = new();
+
+            line.Stroke = new SolidColorBrush(color);
+            line.StrokeThickness = thickness;
+
+            line.X1 = start.X;
+            line.Y1 = start.Y;
+
+            line.X2 = end.X;
+            line.Y2 = end.Y;
+
+            changeTheEnd = line;
             lines.Add(line);
         }
 
@@ -131,39 +120,30 @@ namespace GraphicsEditor.Objects
         }
 
         public void ChangeLinePointPosition(Point point)
-        {   
-            for (int i = 0; i < lines.Count; i++)
+        {
+            if (changeStart != null)
             {
-                if (idPointLine[i] == 1)
-                {
-                    lines[i].X1 = point.X;
-                    lines[i].Y1 = point.Y;
-                }
-                if (idPointLine[i] == 2)
-                {
-                    lines[i].X2 = point.X;
-                    lines[i].Y2 = point.Y;
-                }
+                changeStart.X1 = point.X;
+                changeStart.Y1 = point.Y;
+            }
+
+            if (changeTheEnd != null)
+            {
+                changeTheEnd.X2 = point.X;
+                changeTheEnd.Y2 = point.Y;
             }
         }
 
-        public void MoveLines(Point move)
+        public void MoveLines(double deltaX, double deltaY)
         {
             foreach (Line line in lines)
             {
-                line.X1 += move.X - previousMouse.X;
-                line.Y1 += move.Y - previousMouse.Y;
+                line.X1 += deltaX;
+                line.Y1 += deltaY;
 
-                line.X2 += move.X - previousMouse.X;
-                line.Y2 += move.Y - previousMouse.Y;
+                line.X2 += deltaX;
+                line.Y2 += deltaY;
             }
-
-            previousMouse = move;
-        }
-
-        public void SetСlickPoint(Point click)
-        {
-            previousMouse = click;
         }
 
         public void SplitTheLine(Line line, Point point)
@@ -176,13 +156,15 @@ namespace GraphicsEditor.Objects
             Line newLine = new();
             newLine.X1 = point.X;
             newLine.Y1 = point.Y;
-            newLine.X2 = point.X;
-            newLine.Y2 = point.Y;
-            line.Stroke = new SolidColorBrush(color);
-            line.StrokeThickness = thickness;
+            newLine.X2 = point1.X;
+            newLine.Y2 = point1.Y;
+            newLine.Stroke = new SolidColorBrush(color);
+            newLine.StrokeThickness = thickness;
+            
+            changeTheEnd = line;
+            changeStart = newLine;
 
-
-            SetLine(newLine, idUnselectedPoint);
+            lines.Add(newLine);
 
             int index = lines.IndexOf(line);
             lines.Insert(index+1, lines.Last());
@@ -214,7 +196,7 @@ namespace GraphicsEditor.Objects
             return lines;
         }
 
-        public void ChangeColor(Color color)
+        public void SetColor(Color color)
         {
             this.color = color;
             foreach (Line line in lines)
@@ -223,7 +205,7 @@ namespace GraphicsEditor.Objects
             }
         }
 
-        public void ChangeThickness(double thick)
+        public void SetThickness(double thick)
         {
             this.thickness = thick;
             foreach (Line line in lines)

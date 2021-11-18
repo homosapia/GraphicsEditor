@@ -1,24 +1,30 @@
-﻿using GraphicsEditor.Data;
+﻿using GraphicsEditor.Abstracts;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
-using GraphicsEditor.Abstracts;
 
 namespace GraphicsEditor
 {
-    public interface IFigure : IEventsFigure
+    public delegate void EventSelectFigure(IFigure figure);
+    public delegate void EventRemoveUiElement(List<UIElement> uIElements);
+    public interface IFigure
     {
-        public void Change(Point point);
+        public event EventSelectFigure SelectFigure;
+        public event EventRemoveUiElement RemoveUiElement;
 
-        public void ChangeColor(Color color);
+        public void ChangeToDelta(double deltaX, double deltaY);
 
-        public void ChangeThickness(double thick);
+        public void SetColor(Color color);
 
-        public void DeselectShape();
+        public void SetThickness(double thick);
+
+        public void RemoveSelection();
 
         public void StartDrawing(Point point);
 
-        public void StartMoving(Point point);
+        public void CanvasMouseLeftButtonDown();
+
+        public void CanvasMouseLeftButtonUp();
 
         public List<UIElement> GetAllUIElements();
 
@@ -26,6 +32,6 @@ namespace GraphicsEditor
 
         public void FillWithData(FigureDataToSave json);
 
-        public void MoveFigure(Point point);
+        public void MoveDistance(double deltaX, double deltaY);
     }
 }

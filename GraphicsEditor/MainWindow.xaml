@@ -16,10 +16,10 @@
         <local:Workspace x:Name="workspace" Grid.Column="2"/>
         <StackPanel x:Name="stackPanal" Grid.Column="0" Orientation="Vertical" Background="White" Grid.ColumnSpan="2">
             <Button x:Name="segment" Height="30" Click="BrokenLine_Click">отрезок</Button>
-            <Button x:Name="rictangle" Height="30" Click="Rictangle_Click">прямоугольник</Button>
+            <Button x:Name="rictangle" Height="30" Click="Rectangle_Click">прямоугольник</Button>
             <StackPanel Orientation="Horizontal">
                 <Label Content="Цвет :"/>
-                <syncfusion:ColorPickerPalette x:Name="palette" Color="Black" Height="30" Width="77" SelectedBrushChanged="Palette_SelectedBrushChanged" RequestBringIntoView="palette_RequestBringIntoView" MoreColorOptionVisibility="Visible" IsTabStop="False"/>
+                <syncfusion:ColorPickerPalette x:Name="palette" Color="Black" Height="30" Width="77" SelectedBrushChanged="Palette_SelectedBrushChanged" MoreColorOptionVisibility="Visible" IsTabStop="False"/>
             </StackPanel>
             <Slider x:Name="slider" Width="120" Minimum="1" ValueChanged="Slider_ValueChanged"/>
             <Button x:Name="del" Content="Удалить" Click="Del_Click"/>

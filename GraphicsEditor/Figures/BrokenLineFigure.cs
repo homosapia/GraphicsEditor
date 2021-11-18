@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using GraphicsEditor.Objects;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using GraphicsEditor.Abstracts;
@@ -14,16 +16,14 @@ namespace GraphicsEditor
     {
         private const string figureType = "BrokenLineFigure";
 
-        public event EventFigureGive FigureGive;
-        public event EventRemoveUiElement RemoveUIElement;
+        public event EventSelectFigure SelectFigure;
+        public event EventRemoveUiElement RemoveUiElement;
 
         private readonly BrokenLine brokenLine = new();
 
-        private List<UIElement> markers = new();
-        private UIElement marker = new();
+        private List<Ellipse> markers = new();
+        private Ellipse marker = new();
         private bool markerSelected;
-        private Color color = Color.FromArgb(255, 0, 0, 0);
-        private double thick;
 
         public FigureDataToSave GetDataToSave()
         {
@@ -49,9 +49,10 @@ namespace GraphicsEditor
                 marker = (Ellipse)sender;
                 Point point = new(Canvas.GetLeft(marker) + 5, Canvas.GetTop(marker) + 5);
 
-                RemoveUIElement(lines);
+                RemoveUiElement(lines);
+
                 SetMarkers();
-                FigureGive(this);
+                SelectFigure(this);
             }
         }
 
@@ -65,7 +66,7 @@ namespace GraphicsEditor
             {
                 brokenLine.PointInRadius(point, 0);
             }
-            FigureGive(this);
+            SelectFigure(this);
         }
 
         private void Line_MouseLeftDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -86,14 +87,14 @@ namespace GraphicsEditor
                 markers.Add(marker);
                 markerSelected = true;
             }
-            FigureGive(this);
+            SelectFigure(this);
         }
 
         private void SetMarkers()
         {
             List<Point> points = brokenLine.GetConnectionPointsOfLines();
 
-            DeselectShape();
+            RemoveSelection();
 
             markers = new();
             for (int i = 0; i < points.Count; i++)
@@ -102,13 +103,17 @@ namespace GraphicsEditor
             }
         }
 
-        public void Change(Point point)
+        public void ChangeToDelta(double deltaX, double deltaY)
         {
             if (markerSelected)
             {
-                brokenLine.ChangeLinePointPosition(point);
-                Canvas.SetLeft(marker, point.X - 5);
-                Canvas.SetTop(marker, point.Y - 5);
+                Point positionMarker = new(Canvas.GetLeft(marker) + deltaX, Canvas.GetTop(marker) + deltaY);
+                Point positionLine = new(positionMarker.X + 5, positionMarker.Y + 5);
+                
+                brokenLine.ChangeLinePointPosition(positionLine);
+                
+                Canvas.SetLeft(marker, positionMarker.X);
+                Canvas.SetTop(marker, positionMarker.Y);
             }
         }
 
@@ -141,50 +146,38 @@ namespace GraphicsEditor
             return marker;
         }
 
-        public void ChangeColor(Color color)
+        public void SetColor(Color color)
         {
-            this.color = color;
-            brokenLine.ChangeColor(color);
+            brokenLine.SetColor(color);
         }
 
-        public void ChangeThickness(double thick)
+        public void SetThickness(double thick)
         {
-            this.thick = thick;
-            brokenLine.ChangeThickness(thick);
+            brokenLine.SetThickness(thick);
         }
 
-        public void DeselectShape()
+        public void RemoveSelection()
         {
-            RemoveUIElement(markers);
+            RemoveUiElement?.Invoke(new List<UIElement>(markers));
         }
 
         public void StartDrawing(Point point)
         {
             markerSelected = true;
-
-            Line line = new();
-            line.Stroke = new SolidColorBrush(color);
-            line.StrokeThickness = thick;
-
-            line.X1 = point.X;
-            line.Y1 = point.Y;
-
-            line.X2 = point.X;
-            line.Y2 = point.Y;
             
-            brokenLine.SetLine(line);
+            
+            brokenLine.SetLine(point, point);
             
             SignLinesToEvents();
             
             markers.Add(CreateMarker(point));
             markers.Add(marker = CreateMarker(point));
 
-            FigureGive(this);
+            SelectFigure(this);
         }
 
-        public void StartMoving(Point point)
+        public void CanvasMouseLeftButtonDown()
         {
-            brokenLine.SetСlickPoint(point);
         }
 
         public List<UIElement> GetAllUIElements()
@@ -197,13 +190,13 @@ namespace GraphicsEditor
             return uIElements;
         }
 
-        public void MoveFigure(Point point)
+        public void MoveDistance(double deltaX, double deltaY)
         {
-            try
-            {
-                brokenLine.MoveLines(point);
-            }
-            catch { }
+            brokenLine.MoveLines(deltaX, deltaY);
+        }
+
+        public void CanvasMouseLeftButtonUp()
+        {
         }
     }
 }

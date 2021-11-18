@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using GraphicsEditor.Abstracts;
@@ -21,10 +22,10 @@ namespace GraphicsEditor.Objects
         public event EventMarkerMouseDown MarkerMouseDown;
         public event EventMarkerMouseUp MarkerMouseUp;
 
-        private Rectangle rectangle = new();
-        private Rectangle marker = new();
-        private Canvas padded = new();
-        private RotateTransform rotateTransform = new();
+        private readonly Rectangle rectangle = new();
+        private readonly Rectangle marker = new();
+        private readonly Canvas padded = new();
+        private readonly RotateTransform rotateTransform = new();
         private Color color;
 
         public PaddedRectangle()
@@ -36,23 +37,23 @@ namespace GraphicsEditor.Objects
             marker.MouseLeftButtonUp += Marker_MouseLeftButtonUp;
         }
 
-        private void Marker_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void Marker_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             MarkerMouseUp();
         }
 
-        private void Marker_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void Marker_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
             MarkerMouseDown();
         }
 
-        private void Rectangle_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void Rectangle_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             RectangleMouseUp();
         }
 
-        private void Rectangle_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void Rectangle_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
             RectangleMouseDown();
@@ -60,17 +61,18 @@ namespace GraphicsEditor.Objects
 
         public RectangleDataToSave DataToSave()
         {
-            RectangleDataToSave rectangleData = new RectangleDataToSave();
+            RectangleDataToSave rectangleData = new()
+            {
+                colorA = color.A,
+                colorR = color.R,
+                colorG = color.G,
+                colorB = color.B,
 
-            rectangleData.colorA = color.A;
-            rectangleData.colorR = color.R;
-            rectangleData.colorG = color.G;
-            rectangleData.colorB = color.B;
+                Width = rectangle.Width,
+                Height = rectangle.Height,
 
-            rectangleData.Width = rectangle.Width;
-            rectangleData.Height = rectangle.Height;
-
-            rectangleData.Rotate = rotateTransform.Angle;
+                Rotate = rotateTransform.Angle
+            };
 
             return rectangleData;
         }
@@ -100,7 +102,7 @@ namespace GraphicsEditor.Objects
             marker.Margin = thickness;
         }
 
-        public void ConfigureAnObject()
+        public void ConfigureAnRectangle()
         {
             marker.Width = 10;
             marker.Height = 10;
@@ -124,11 +126,11 @@ namespace GraphicsEditor.Objects
             padded.Height = Height;
         }
 
-        public void Rotate(double rotat)
+        public void Rotate(double rotate)
         {
             rotateTransform.CenterX = rectangle.Width / 2;
             rotateTransform.CenterY = rectangle.Height / 2;
-            rotateTransform.Angle = rotat;
+            rotateTransform.Angle += rotate;
         }
 
         public void SetPosition(Point point)
@@ -137,15 +139,26 @@ namespace GraphicsEditor.Objects
             Canvas.SetTop(padded, point.Y);
         }
 
-        public void ChangeColor(Color color)
+        public void MoveDistance(double deltaX, double deltaY)
+        {
+            Point positionPadded = new(Canvas.GetLeft(padded), Canvas.GetTop(padded));
+
+            positionPadded.X += deltaX;
+            positionPadded.Y += deltaY;
+
+            Canvas.SetLeft(padded, positionPadded.X);
+            Canvas.SetTop(padded, positionPadded.Y);
+        }
+
+        public void SetColor(Color color)
         {
             this.color = color;
             rectangle.Fill = new SolidColorBrush(color);
         }
 
-        public void ChangeThickness(double thick)
+        public void SetThickness(double thickness)
         {
-            rectangle.StrokeThickness = thick;
+            rectangle.StrokeThickness = thickness;
         }
 
         public void HideMarker()

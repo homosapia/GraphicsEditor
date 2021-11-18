@@ -13,6 +13,7 @@ namespace GraphicsEditor
     /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly IWorkspaceStorage Storage = new WorkspaceStorage();
         private const string RectangleFigureType = "RectangleFigure";
         private const string BrokenLineFigureType = "BrokenLineFigure";
         public MainWindow()
@@ -25,7 +26,7 @@ namespace GraphicsEditor
             workspace.SetCurrentFigure(BrokenLineFigureType);
         }
 
-        private void Rictangle_Click(object sender, RoutedEventArgs e)
+        private void Rectangle_Click(object sender, RoutedEventArgs e)
         {
             workspace.SetCurrentFigure(RectangleFigureType);
         }
@@ -42,24 +43,17 @@ namespace GraphicsEditor
 
         private void Download_Click(object sender, RoutedEventArgs e)
         {
-            SaveLoad save = new();
-            workspace.UploadNewFigures(save.Load());
+            workspace.SetWorkspaceData(Storage.Load());
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            SaveLoad save = new();
-            save.Save(workspace.GetDataToSave());
+            Storage.Save(workspace.GetDataToSave());
         }
 
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
              workspace.SetThickness(slider.Value);
-        }
-
-        private void palette_RequestBringIntoView(object sender, RequestBringIntoViewEventArgs e)
-        {
-            workspace.ShapeHangeOff();
         }
     }
 }

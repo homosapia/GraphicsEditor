@@ -15,19 +15,16 @@ namespace GraphicsEditor
     {
         private const string figureType = "RectangleFigure";
 
-        public event EventFigureGive FigureGive;
-        public event EventRemoveUiElement RemoveUIElement;
+        public event EventSelectFigure SelectFigure;
+        public event EventRemoveUiElement RemoveUiElement;
 
-        private PaddedRectangle paddedRectangle = new();
+        private readonly PaddedRectangle paddedRectangle = new();
 
-        private Point previousMouse = new Point();
+        private Point previousMouse = new();
 
-        double distanceX;
-        double distanceY;
-        double pointY;
-
-        bool transform;
-        bool move;
+        private bool transform;
+        private bool move;
+        private bool rotate;
 
         public RectangleFigure()
         {
@@ -58,7 +55,7 @@ namespace GraphicsEditor
 
             previousMouse = rectangleData.position;
 
-            paddedRectangle.ConfigureAnObject();
+            paddedRectangle.ConfigureAnRectangle();
             paddedRectangle.SetPosition(previousMouse);
 
             paddedRectangle.RectangleMouseDown += Rectangle_MouseLeftButtonDown;
@@ -78,10 +75,12 @@ namespace GraphicsEditor
         {
             move = true;
             transform = false;
+            rotate = false;
+            
 
             paddedRectangle.ShowMarker();
 
-            FigureGive(this);
+            SelectFigure(this);
         }
 
         private void Marker_MouseLeftButtonUp()
@@ -94,9 +93,10 @@ namespace GraphicsEditor
         {
             transform = true;
             move = false;
+            rotate = false;
         }
 
-        public void Change(Point point)
+        public void ChangeToDelta(double deltaX, double deltaY)
         {
             if (transform)
             {
@@ -108,27 +108,26 @@ namespace GraphicsEditor
             }
             else if(move)
             {
-                MoveFigure(point);
+                MoveDistance(deltaX, deltaY);
             }
-            else
+            else if(rotate)
             {
                 paddedRectangle.HideMarker();
-                double rotat = point.Y - pointY;
-                paddedRectangle.Rotate(rotat);
+                paddedRectangle.Rotate(deltaY);
             }
         }
 
-        public void ChangeColor(Color color)
+        public void SetColor(Color color)
         {
-            paddedRectangle.ChangeColor(color);
+            paddedRectangle.SetColor(color);
         }
 
-        public void ChangeThickness(double thick)
+        public void SetThickness(double thick)
         {
-            paddedRectangle.ChangeThickness(thick);
+            paddedRectangle.SetThickness(thick);
         }
 
-        public void DeselectShape()
+        public void RemoveSelection()
         {
             paddedRectangle.HideMarker();
             transform = false;
@@ -138,17 +137,14 @@ namespace GraphicsEditor
         public void StartDrawing(Point point)
         {
             previousMouse = point;
-            paddedRectangle.ConfigureAnObject ();
+            paddedRectangle.ConfigureAnRectangle();
             paddedRectangle.SetPosition(point);
-            FigureGive(this);
+            SelectFigure(this);
         }
 
-        public void StartMoving(Point point)
+        public void CanvasMouseLeftButtonDown()
         {
-            distanceX = point.X - previousMouse.X;
-            distanceY = point.Y - previousMouse.Y;
-
-            pointY = point.Y;
+            rotate = true;
         }
 
         public List<UIElement> GetAllUIElements()
@@ -158,11 +154,16 @@ namespace GraphicsEditor
             return uIElements;
         }
 
-        public void MoveFigure(Point point)
+        public void MoveDistance(double deltaX, double deltaY)
         {
-            previousMouse.X = point.X - distanceX;
-            previousMouse.Y = point.Y - distanceY;
-            paddedRectangle.SetPosition(previousMouse);
+            paddedRectangle.MoveDistance(deltaX, deltaY);
+        }
+
+        public void CanvasMouseLeftButtonUp()
+        {
+            transform = false;
+            rotate = false;
+            move = false;
         }
     }
 }
