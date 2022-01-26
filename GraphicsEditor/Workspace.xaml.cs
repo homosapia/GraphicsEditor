@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using GraphicsEditor.Interfaces;
 
 namespace GraphicsEditor
 {
@@ -14,6 +15,7 @@ namespace GraphicsEditor
 
         private readonly List<IFigure> figures = new();
         private IFigure currentFigure;
+        private IFactory factory = new Factory();
 
         private Point firstClickPosition = new();
 
@@ -88,7 +90,7 @@ namespace GraphicsEditor
             placingMode = true;
             figureSelected = true;
 
-            currentFigure = Factory.CreateFigure(key);
+            currentFigure = factory.CreateFigure(key);
 
             currentFigure.SetColor(color);
             currentFigure.SetThickness(figureThickness);
@@ -114,7 +116,7 @@ namespace GraphicsEditor
             figures.Clear();
             foreach (FigureDataToSave figureData in workspaceData.Figures)
             {
-                IFigure figure = Factory.CreateFromData(figureData);
+                IFigure figure = factory.CreateFromData(figureData);
                 figures.Add(figure);
                 Sign(figure);
             }

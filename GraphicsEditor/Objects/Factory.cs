@@ -3,10 +3,11 @@ using GraphicsEditor.Data;
 using GraphicsEditor.Interfaces;
 using Newtonsoft.Json;
 using System;
+using GraphicsEditor.Resources;
 
 namespace GraphicsEditor.Objects
 {
-    class Factory
+    class Factory : IFactory
     {
         private static BrokenLineFigure CreateBrokenLineFigure()
         {
@@ -20,16 +21,16 @@ namespace GraphicsEditor.Objects
             return quadrilateral;
         }
 
-        public static IFigure CreateFromData(FigureDataToSave figureData)
+        public IFigure CreateFromData(FigureDataToSave figureData)
         {
-            if (figureData.FigureType == "BrokenLineFigure")
+            if (figureData.FigureType == DataResources.BrokenLine)
             {
                 BrokenLineFigure brokenLine = CreateBrokenLineFigure();
                 brokenLine.FillWithData(figureData);
                 return brokenLine;
             }
 
-            if (figureData.FigureType == "RectangleFigure")
+            if (figureData.FigureType == DataResources.RectangleFigure)
             {
                 RectangleFigure rectangleFigure = CreateRectangleFigure();
                 rectangleFigure.FillWithData(figureData);
@@ -39,15 +40,15 @@ namespace GraphicsEditor.Objects
             throw new Exception("there is no such figure");
         }
 
-        public static IFigure CreateFigure(string key)
+        public IFigure CreateFigure(string key)
         {
-            switch (key)
+            if (key == DataResources.BrokenLine)
             {
-                case "BrokenLineFigure":
-                    return CreateBrokenLineFigure();
-
-                case "RectangleFigure":
-                    return CreateRectangleFigure();
+                return CreateBrokenLineFigure();
+            }
+            else if(key == DataResources.RectangleFigure)
+            {
+                return CreateRectangleFigure();
             }
 
             throw new Exception("there is no such figure");

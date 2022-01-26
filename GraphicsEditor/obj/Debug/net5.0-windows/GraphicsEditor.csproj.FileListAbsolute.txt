@@ -153,3 +153,6 @@ C:\Users\badazhkov\Desktop\GraphicsEditor-e8bd09b6355926a2c2263478b81c4026d33e99
 C:\Users\badazhkov\Desktop\GraphicsEditor-e8bd09b6355926a2c2263478b81c4026d33e99ba\GraphicsEditor\obj\Debug\net5.0-windows\ref\GraphicsEditor.dll
 C:\Users\badazhkov\Desktop\GraphicsEditor-e8bd09b6355926a2c2263478b81c4026d33e99ba\GraphicsEditor\obj\Debug\net5.0-windows\GraphicsEditor.pdb
 C:\Users\badazhkov\Desktop\GraphicsEditor-e8bd09b6355926a2c2263478b81c4026d33e99ba\GraphicsEditor\obj\Debug\net5.0-windows\GraphicsEditor.genruntimeconfig.cache
+C:\Users\badazhkov\Documents\GitHub\GraphicsEditor\GraphicsEditor\obj\Debug\net5.0-windows\GraphicsEditor.Properties.Resources.resources
+C:\Users\badazhkov\Documents\GitHub\GraphicsEditor\GraphicsEditor\obj\Debug\net5.0-windows\GraphicsEditor.Resources.DataResources.resources
+C:\Users\badazhkov\Documents\GitHub\GraphicsEditor\GraphicsEditor\obj\Debug\net5.0-windows\GraphicsEditor.csproj.GenerateResource.cache

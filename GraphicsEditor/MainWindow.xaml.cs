@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System;
 using System.Windows;
 using System.Windows.Input;
+using GraphicsEditor.Resources;
 
 namespace GraphicsEditor
 {
@@ -14,8 +15,6 @@ namespace GraphicsEditor
     public partial class MainWindow : Window
     {
         private readonly IWorkspaceStorage Storage = new WorkspaceStorage();
-        private const string RectangleFigureType = "RectangleFigure";
-        private const string BrokenLineFigureType = "BrokenLineFigure";
         public MainWindow()
         {
             InitializeComponent();
@@ -23,12 +22,12 @@ namespace GraphicsEditor
 
         private void BrokenLine_Click(object sender, RoutedEventArgs e)
         {
-            workspace.SetCurrentFigure(BrokenLineFigureType);
+            workspace.SetCurrentFigure(DataResources.BrokenLine);
         }
 
         private void Rectangle_Click(object sender, RoutedEventArgs e)
         {
-            workspace.SetCurrentFigure(RectangleFigureType);
+            workspace.SetCurrentFigure(DataResources.RectangleFigure);
         }
 
         private void Palette_SelectedBrushChanged(object sender, Syncfusion.Windows.Tools.Controls.SelectedBrushChangedEventArgs e)

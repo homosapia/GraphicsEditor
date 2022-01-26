@@ -8,13 +8,12 @@ using System.Windows.Media;
 using GraphicsEditor.Abstracts;
 using GraphicsEditor.Data;
 using Newtonsoft.Json;
+using GraphicsEditor.Resources;
 
 namespace GraphicsEditor
 {
     public class RectangleFigure : IFigure
     {
-        private const string figureType = "RectangleFigure";
-
         public event EventSelectFigure SelectFigure;
         public event EventRemoveUiElement RemoveUiElement;
 
@@ -44,7 +43,7 @@ namespace GraphicsEditor
             rectangleData.position = previousMouse;
             
             figureData.FigureJson = JsonConvert.SerializeObject(rectangleData);
-            figureData.FigureType = figureType;
+            figureData.FigureType = DataResources.RectangleFigure;
             return figureData;
         }
 

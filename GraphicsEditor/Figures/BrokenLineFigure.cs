@@ -9,13 +9,12 @@ using System.Windows.Shapes;
 using GraphicsEditor.Abstracts;
 using GraphicsEditor.Data;
 using Newtonsoft.Json;
+using GraphicsEditor.Resources;
 
 namespace GraphicsEditor
 {
     public class BrokenLineFigure : IFigure
     {
-        private const string figureType = "BrokenLineFigure";
-
         public event EventSelectFigure SelectFigure;
         public event EventRemoveUiElement RemoveUiElement;
 
@@ -29,7 +28,7 @@ namespace GraphicsEditor
         {
             FigureDataToSave figureData = new();
             figureData.FigureJson = JsonConvert.SerializeObject(brokenLine.DataToSave());
-            figureData.FigureType = figureType;
+            figureData.FigureType = DataResources.BrokenLine;
             return figureData;
         }
 
