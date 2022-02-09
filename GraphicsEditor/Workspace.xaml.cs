@@ -139,7 +139,16 @@ namespace GraphicsEditor
         private void Sign(IFigure figure)
         {
             figure.SelectFigure += SelectedFigure;
-            figure.RemoveUiElement += RemoveUiElement;
+            figure.RemoveUiElements += RemoveUiElements;
+            figure.AddUiElements += AddUiElements;
+        }
+
+        private void AddUiElements(List<UIElement> uIElements)
+        {
+            foreach (UIElement ui in uIElements)
+            {
+                canvas.Children.Add(ui);
+            }
         }
 
         public void SetColor(Color colorPalette)
@@ -181,7 +190,7 @@ namespace GraphicsEditor
             figureSelected = false;
         }
 
-        private void RemoveUiElement(List<UIElement> uIElements)
+        private void RemoveUiElements(List<UIElement> uIElements)
         {
             foreach (UIElement uI in uIElements)
             {
@@ -197,8 +206,8 @@ namespace GraphicsEditor
                 currentFigure?.RemoveSelection();
             }
             currentFigure = figure;
-
-            for (int i = canvas.Children.Count - 1; i >= 0; i--)
+            
+            for(int i = canvas.Children.Count - 1; i >= 0; i--)
             {
                 Canvas.SetZIndex(canvas.Children[i], -i);
             }

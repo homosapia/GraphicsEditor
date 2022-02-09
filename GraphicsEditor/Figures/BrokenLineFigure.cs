@@ -16,7 +16,8 @@ namespace GraphicsEditor
     public class BrokenLineFigure : IFigure
     {
         public event EventSelectFigure SelectFigure;
-        public event EventRemoveUiElement RemoveUiElement;
+        public event EventRemoveUiElements RemoveUiElements;
+        public event EventAddUiElements AddUiElements;
 
         private readonly BrokenLine brokenLine = new();
 
@@ -48,8 +49,8 @@ namespace GraphicsEditor
                 marker = (Ellipse)sender;
                 Point point = new(Canvas.GetLeft(marker) + 5, Canvas.GetTop(marker) + 5);
 
-                RemoveUiElement(lines);
-
+                RemoveUiElements(lines);
+                
                 SetMarkers();
                 SelectFigure(this);
             }
@@ -70,6 +71,8 @@ namespace GraphicsEditor
 
         private void Line_MouseLeftDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            RemoveUiElements?.Invoke(new List<UIElement>(brokenLine.GetPlaques()));
+
             e.Handled = true;
             SetMarkers();
             markerSelected = false;
@@ -93,7 +96,7 @@ namespace GraphicsEditor
         {
             List<Point> points = brokenLine.GetConnectionPointsOfLines();
 
-            RemoveSelection();
+            RemoveUiElements?.Invoke(new List<UIElement>(markers));
 
             markers = new();
             for (int i = 0; i < points.Count; i++)
@@ -157,7 +160,8 @@ namespace GraphicsEditor
 
         public void RemoveSelection()
         {
-            RemoveUiElement?.Invoke(new List<UIElement>(markers));
+            RemoveUiElements?.Invoke(new List<UIElement>(markers));
+            AddUiElements?.Invoke(new List<UIElement>(brokenLine.CreatePlaque()));
         }
 
         public void StartDrawing(Point point)
@@ -184,6 +188,7 @@ namespace GraphicsEditor
             List<UIElement> uIElements = new();
 
             uIElements.AddRange(brokenLine.GetLines());
+
             uIElements.AddRange(markers);
 
             return uIElements;

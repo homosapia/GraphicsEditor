@@ -6,11 +6,14 @@ using System.Windows.Media;
 namespace GraphicsEditor
 {
     public delegate void EventSelectFigure(IFigure figure);
-    public delegate void EventRemoveUiElement(List<UIElement> uIElements);
+    public delegate void EventRemoveUiElements(List<UIElement> uIElements);
+    public delegate void EventAddUiElements(List<UIElement> uIElements);
+
     public interface IFigure
     {
         public event EventSelectFigure SelectFigure;
-        public event EventRemoveUiElement RemoveUiElement;
+        public event EventRemoveUiElements RemoveUiElements;
+        public event EventAddUiElements AddUiElements;
 
         public void ChangeToDelta(double deltaX, double deltaY);
 

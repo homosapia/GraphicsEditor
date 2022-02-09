@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -15,6 +16,7 @@ namespace GraphicsEditor.Objects
     class BrokenLine
     {
         private readonly List<Line> lines = new();
+        private readonly List<Ellipse> plaques = new();
 
         private Line changeStart = new();
         private Line changeTheEnd = new();
@@ -144,6 +146,13 @@ namespace GraphicsEditor.Objects
                 line.X2 += deltaX;
                 line.Y2 += deltaY;
             }
+
+            List<Point> points = GetConnectionPointsOfLines();
+            for (int i = 0; i < plaques.Count; i++)
+            {
+                Canvas.SetLeft(plaques[i], points[i+1].X - (thickness / 2));
+                Canvas.SetTop(plaques[i], points[i+1].Y - (thickness / 2));
+            }
         }
 
         public void SplitTheLine(Line line, Point point)
@@ -212,6 +221,35 @@ namespace GraphicsEditor.Objects
             {
                 line.StrokeThickness = this.thickness;
             }
+        }
+
+        public List<Ellipse> CreatePlaque()
+        {
+            plaques.Clear();
+
+            List<Point> points = GetConnectionPointsOfLines();
+
+            for (int i = 1; i < points.Count-1; i++)
+            {
+                Ellipse plaque = new();
+
+                plaque.Fill = new SolidColorBrush(color);
+
+                plaque.Width = thickness;
+                plaque.Height = thickness;
+
+                Canvas.SetLeft(plaque, points[i].X - (thickness / 2));
+                Canvas.SetTop(plaque, points[i].Y - (thickness / 2));
+
+                this.plaques.Add(plaque);
+            }
+
+            return plaques;
+        }
+
+        public List<Ellipse> GetPlaques()
+        {
+            return plaques.ToList();
         }
     }
 }

@@ -15,7 +15,8 @@ namespace GraphicsEditor
     public class RectangleFigure : IFigure
     {
         public event EventSelectFigure SelectFigure;
-        public event EventRemoveUiElement RemoveUiElement;
+        public event EventRemoveUiElements RemoveUiElements;
+        public event EventAddUiElements AddUiElements;
 
         private readonly PaddedRectangle paddedRectangle = new();
 
