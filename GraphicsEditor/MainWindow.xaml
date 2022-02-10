@@ -7,32 +7,30 @@
         xmlns:local="clr-namespace:GraphicsEditor"
         mc:Ignorable="d"
         Title="MainWindow" Height="400" Width="750">
-    <Grid x:Name="grid1">
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0"/>
             <ColumnDefinition Width="120"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
 
-        <local:Workspace x:Name="workspace" Grid.Column="2" Grid.RowSpan="2"/>
+        <local:Workspace x:Name="workspace" Grid.Column="2"/>
 
-        <StackPanel x:Name="stackPanal" Grid.Row="0" Orientation="Vertical" Background="White" Grid.ColumnSpan="2">
-            <Button x:Name="segment" Click="BrokenLine_Click" Margin="0,0,0,5">отрезок</Button>
-            <Button x:Name="rictangle" Click="Rectangle_Click" Margin="0,0,0,10">прямоугольник</Button>
-            <StackPanel Orientation="Horizontal">
-                <Label Content="Цвет :"/>
-                <syncfusion:ColorPickerPalette x:Name="palette" Color="Black" Height="30" Width="77" SelectedBrushChanged="Palette_SelectedBrushChanged" MoreColorOptionVisibility="Visible" IsTabStop="False"/>
+        <Grid Grid.ColumnSpan="2" >
+            <StackPanel Orientation="Vertical" Background="White">
+                <Button x:Name="segment" Click="BrokenLine_Click" Margin="0,0,0,5">отрезок</Button>
+                <Button x:Name="rictangle" Click="Rectangle_Click" Margin="0,0,0,10">прямоугольник</Button>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Цвет :"/>
+                    <syncfusion:ColorPickerPalette x:Name="palette" Color="Black" Height="30" Width="77" SelectedBrushChanged="Palette_SelectedBrushChanged" MoreColorOptionVisibility="Visible" IsTabStop="False"/>
+                </StackPanel>
+                <Slider x:Name="slider" Minimum="1" ValueChanged="Slider_ValueChanged" Margin="0,0,0,10"/>
             </StackPanel>
-            <Slider x:Name="slider" Minimum="1" ValueChanged="Slider_ValueChanged" Margin="0,0,0,10"/>
-        </StackPanel>
-        <StackPanel VerticalAlignment="Bottom" x:Name="stackPanalBottom" Grid.Row="1" Orientation="Vertical" Background="White" Grid.ColumnSpan="2">
-            <Button x:Name="del" Content="Удалить" VerticalAlignment="Top" Click="Del_Click" Margin="0,0,0,5" Height="20"/>
-            <Button x:Name="save" Content="Сохранить" Click="Save_Click" Margin="0,0,0,5"/>
-            <Button x:Name="download" Content="Загрузить" Click="Download_Click" RenderTransformOrigin="0.5,1" Background="#FFDDDDDD" Height="20"/>
-        </StackPanel>
+            <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" Background="White">
+                <Button x:Name="del"  Content="Удалить" Click="Del_Click" Margin="0,0,0,5" Height="20"/>
+                <Button x:Name="save" Content="Сохранить" Click="Save_Click" Margin="0,0,0,5"/>
+                <Button x:Name="download" Content="Загрузить" Click="Download_Click" RenderTransformOrigin="0.5,1" Background="#FFDDDDDD" Height="20"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>

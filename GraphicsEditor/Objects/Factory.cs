@@ -25,14 +25,14 @@ namespace GraphicsEditor.Objects
         {
             if (figureData.FigureType == DataResources.BrokenLine)
             {
-                BrokenLineFigure brokenLine = CreateBrokenLineFigure();
+                IFigure brokenLine = CreateFigure(DataResources.BrokenLine);
                 brokenLine.FillWithData(figureData);
                 return brokenLine;
             }
 
             if (figureData.FigureType == DataResources.RectangleFigure)
             {
-                RectangleFigure rectangleFigure = CreateRectangleFigure();
+                IFigure rectangleFigure = CreateFigure(DataResources.RectangleFigure);
                 rectangleFigure.FillWithData(figureData);
                 return rectangleFigure;
             }
