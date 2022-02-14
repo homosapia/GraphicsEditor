@@ -10,7 +10,6 @@ namespace GraphicsEditor.Interfaces
     public interface IFactory
     {
         public IFigure CreateFromData(FigureDataToSave figureData);
-
         public IFigure CreateFigure(string key);
     }
 }

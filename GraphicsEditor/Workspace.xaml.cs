@@ -12,7 +12,6 @@ namespace GraphicsEditor
 {
     public partial class Workspace : UserControl
     {
-
         private readonly List<IFigure> figures = new();
         private IFigure currentFigure;
         private IFactory factory = new Factory();
@@ -91,10 +90,10 @@ namespace GraphicsEditor
             figureSelected = true;
 
             currentFigure = factory.CreateFigure(key);
+            Sign(currentFigure);
 
             currentFigure.SetColor(color);
             currentFigure.SetThickness(figureThickness);
-            Sign(currentFigure);
             figures.Add(currentFigure);
         }
 
@@ -139,15 +138,16 @@ namespace GraphicsEditor
         private void Sign(IFigure figure)
         {
             figure.SelectFigure += SelectedFigure;
-            figure.RemoveUiElements += RemoveUiElements;
-            figure.AddUiElements += AddUiElements;
+            WorkspaceDispatcher.RemoveUiElements += RemoveUiElements;
+            WorkspaceDispatcher.AddUiElements += AddUiElements;
         }
 
         private void AddUiElements(List<UIElement> uIElements)
         {
             foreach (UIElement ui in uIElements)
             {
-                canvas.Children.Add(ui);
+                if(!canvas.Children.Contains(ui)) 
+                    canvas.Children.Add(ui);
             }
         }
 

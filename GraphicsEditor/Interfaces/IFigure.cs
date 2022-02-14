@@ -2,18 +2,16 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
+using GraphicsEditor.Interfaces;
+using GraphicsEditor.Objects;
 
 namespace GraphicsEditor
 {
     public delegate void EventSelectFigure(IFigure figure);
-    public delegate void EventRemoveUiElements(List<UIElement> uIElements);
-    public delegate void EventAddUiElements(List<UIElement> uIElements);
 
     public interface IFigure
     {
         public event EventSelectFigure SelectFigure;
-        public event EventRemoveUiElements RemoveUiElements;
-        public event EventAddUiElements AddUiElements;
 
         public void ChangeToDelta(double deltaX, double deltaY);
 

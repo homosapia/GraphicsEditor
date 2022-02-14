@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using GraphicsEditor.Abstracts;
 using GraphicsEditor.Data;
+using GraphicsEditor.Interfaces;
 using Newtonsoft.Json;
 using GraphicsEditor.Resources;
 
@@ -17,8 +18,6 @@ namespace GraphicsEditor
     public class BrokenLineFigure : IFigure
     {
         public event EventSelectFigure SelectFigure;
-        public event EventRemoveUiElements RemoveUiElements;
-        public event EventAddUiElements AddUiElements;
 
         private readonly List<Line> lines = new();
         private Line changeStart = new();
@@ -88,16 +87,10 @@ namespace GraphicsEditor
         {
             markerSelected = false;
             List<UIElement> lines = GetLinesLess(5);
-            if (lines.Count > 0)
-            {
-                marker = (Ellipse)sender;
-                Point point = new(Canvas.GetLeft(marker) + 5, Canvas.GetTop(marker) + 5);
 
-                RemoveUiElements(lines);
-                
-                SetMarkers();
-                SelectFigure(this);
-            }
+            WorkspaceDispatcher.Remove(lines);
+            SetMarkers();
+            SelectFigure(this);
         }
 
         private List<UIElement> GetLinesLess(int length)
@@ -131,16 +124,14 @@ namespace GraphicsEditor
             marker = (Ellipse)sender;
             markerSelected = true;
             Point point = new(Canvas.GetLeft(marker) + 5, Canvas.GetTop(marker) + 5);
-            if (e.ClickCount == 1)
-            {
-                PointInRadius(point, 0);
-            }
+            PointInRadius(point, 0);
+
             SelectFigure(this);
         }
 
         private void Line_MouseLeftDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            RemoveUiElements?.Invoke(new List<UIElement>(markers));
+            WorkspaceDispatcher.Remove(new List<UIElement>(markers));
 
             e.Handled = true;
             SetMarkers();
@@ -205,25 +196,6 @@ namespace GraphicsEditor
             lines.RemoveAt(lines.Count - 1);
         }
 
-        private void MoveLines(double deltaX, double deltaY)
-        {
-            foreach (Line line in lines)
-            {
-                line.X1 += deltaX;
-                line.Y1 += deltaY;
-
-                line.X2 += deltaX;
-                line.Y2 += deltaY;
-            }
-
-            List<Point> points = GetConnectionPointsOfLines();
-            for (int i = 0; i < markers.Count; i++)
-            {
-                Canvas.SetLeft(markers[i], points[i + 1].X - (thickness / 2));
-                Canvas.SetTop(markers[i], points[i + 1].Y - (thickness / 2));
-            }
-        }
-
         private void SetLine(Point start, Point end)
         {
             Line line = new();
@@ -245,7 +217,7 @@ namespace GraphicsEditor
         {
             List<Point> points = GetConnectionPointsOfLines();
 
-            RemoveUiElements?.Invoke(new List<UIElement>(markers));
+            WorkspaceDispatcher.Remove(new List<UIElement>(markers));
 
             markers = new();
             for (int i = 0; i < points.Count; i++)
@@ -329,9 +301,8 @@ namespace GraphicsEditor
 
         public void RemoveSelection()
         {
-            RemoveUiElements?.Invoke(new List<UIElement>(markers));
-            AddUiElements?.Invoke(new List<UIElement>(CreatePlaque()));
-
+            WorkspaceDispatcher.Remove(new List<UIElement>(markers));
+            WorkspaceDispatcher.Add(new List<UIElement>(CreatePlaque()));
         }
         private List<Ellipse> CreatePlaque()
         {
@@ -372,7 +343,6 @@ namespace GraphicsEditor
         {
             markerSelected = true;
             
-            
             SetLine(point, point);
             
             SignLinesToEvents();
@@ -400,7 +370,21 @@ namespace GraphicsEditor
 
         public void MoveDistance(double deltaX, double deltaY)
         {
-            MoveLines(deltaX, deltaY);
+            foreach (Line line in lines)
+            {
+                line.X1 += deltaX;
+                line.Y1 += deltaY;
+
+                line.X2 += deltaX;
+                line.Y2 += deltaY;
+            }
+
+            List<Point> points = GetConnectionPointsOfLines();
+            for (int i = 0; i < markers.Count; i++)
+            {
+                Canvas.SetLeft(markers[i], points[i + 1].X - (thickness / 2));
+                Canvas.SetTop(markers[i], points[i + 1].Y - (thickness / 2));
+            }
         }
 
         public void CanvasMouseLeftButtonUp()

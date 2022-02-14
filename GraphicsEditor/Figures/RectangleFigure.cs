@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using GraphicsEditor.Abstracts;
 using GraphicsEditor.Data;
+using GraphicsEditor.Interfaces;
 using Newtonsoft.Json;
 using GraphicsEditor.Resources;
 
@@ -15,8 +16,6 @@ namespace GraphicsEditor
     public class RectangleFigure : IFigure
     {
         public event EventSelectFigure SelectFigure;
-        public event EventRemoveUiElements RemoveUiElements;
-        public event EventAddUiElements AddUiElements;
 
         private readonly PaddedRectangle paddedRectangle = new();
 
