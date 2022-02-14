@@ -18,6 +18,7 @@ namespace GraphicsEditor
         public event EventSelectFigure SelectFigure;
 
         private readonly PaddedRectangle paddedRectangle = new();
+        private ParentContainer parentContainer;
 
         private Point previousMouse = new();
 
@@ -33,6 +34,11 @@ namespace GraphicsEditor
 
             paddedRectangle.MarkerMouseDown += Marker_MouseLeftButtonDown;
             paddedRectangle.MarkerMouseUp += Marker_MouseLeftButtonUp;
+        }
+
+        public void SetParentContainer(ParentContainer parentContainer)
+        {
+            this.parentContainer = parentContainer;
         }
 
         public FigureDataToSave GetDataToSave()

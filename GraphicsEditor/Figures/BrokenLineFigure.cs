@@ -19,6 +19,8 @@ namespace GraphicsEditor
     {
         public event EventSelectFigure SelectFigure;
 
+        private ParentContainer parentContainer;
+
         private readonly List<Line> lines = new();
         private Line changeStart = new();
         private Line changeTheEnd = new();
@@ -29,6 +31,11 @@ namespace GraphicsEditor
 
         private Color color = Color.FromArgb(255, 0, 0, 0);
         private double thickness;
+
+        public void SetParentContainer(ParentContainer parentContainer)
+        {
+            this.parentContainer = parentContainer;
+        }
 
         public FigureDataToSave GetDataToSave()
         {
@@ -88,7 +95,7 @@ namespace GraphicsEditor
             markerSelected = false;
             List<UIElement> lines = GetLinesLess(5);
 
-            WorkspaceDispatcher.Remove(lines);
+            parentContainer.Remove(lines);
             SetMarkers();
             SelectFigure(this);
         }
@@ -131,7 +138,7 @@ namespace GraphicsEditor
 
         private void Line_MouseLeftDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            WorkspaceDispatcher.Remove(new List<UIElement>(markers));
+            parentContainer.Remove(new List<UIElement>(markers));
 
             e.Handled = true;
             SetMarkers();
@@ -217,7 +224,7 @@ namespace GraphicsEditor
         {
             List<Point> points = GetConnectionPointsOfLines();
 
-            WorkspaceDispatcher.Remove(new List<UIElement>(markers));
+            parentContainer.Remove(new List<UIElement>(markers));
 
             markers = new();
             for (int i = 0; i < points.Count; i++)
@@ -301,8 +308,8 @@ namespace GraphicsEditor
 
         public void RemoveSelection()
         {
-            WorkspaceDispatcher.Remove(new List<UIElement>(markers));
-            WorkspaceDispatcher.Add(new List<UIElement>(CreatePlaque()));
+            parentContainer.Remove(new List<UIElement>(markers));
+            parentContainer.Add(new List<UIElement>(CreatePlaque()));
         }
         private List<Ellipse> CreatePlaque()
         {

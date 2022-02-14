@@ -12,6 +12,7 @@ namespace GraphicsEditor
 {
     public partial class Workspace : UserControl
     {
+        private ParentContainer parentContainer;
         private readonly List<IFigure> figures = new();
         private IFigure currentFigure;
         private IFactory factory = new Factory();
@@ -27,6 +28,7 @@ namespace GraphicsEditor
         public Workspace()
         {
             InitializeComponent();
+            parentContainer = new ParentContainer(canvas);
         }
 
         private void Сanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -90,6 +92,7 @@ namespace GraphicsEditor
             figureSelected = true;
 
             currentFigure = factory.CreateFigure(key);
+            currentFigure.SetParentContainer(parentContainer);
             Sign(currentFigure);
 
             currentFigure.SetColor(color);
@@ -138,8 +141,6 @@ namespace GraphicsEditor
         private void Sign(IFigure figure)
         {
             figure.SelectFigure += SelectedFigure;
-            WorkspaceDispatcher.RemoveUiElements += RemoveUiElements;
-            WorkspaceDispatcher.AddUiElements += AddUiElements;
         }
 
         private void AddUiElements(List<UIElement> uIElements)
