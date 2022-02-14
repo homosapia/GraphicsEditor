@@ -18,12 +18,12 @@ namespace GraphicsEditor
     public class BrokenLineFigure : IFigure
     {
         public event EventSelectFigure SelectFigure;
-
-        private ParentContainer parentContainer;
+        
 
         private readonly List<Line> lines = new();
         private Line changeStart = new();
         private Line changeTheEnd = new();
+        private Canvas padded = new();
 
         private List<Ellipse> markers = new();
         private Ellipse marker = new();
@@ -31,11 +31,6 @@ namespace GraphicsEditor
 
         private Color color = Color.FromArgb(255, 0, 0, 0);
         private double thickness;
-
-        public void SetParentContainer(ParentContainer parentContainer)
-        {
-            this.parentContainer = parentContainer;
-        }
 
         public FigureDataToSave GetDataToSave()
         {
@@ -95,7 +90,13 @@ namespace GraphicsEditor
             markerSelected = false;
             List<UIElement> lines = GetLinesLess(5);
 
-            parentContainer.Remove(lines);
+            //parentContainer.Remove(lines);
+
+            foreach (var line in lines)
+            {
+                padded.Children.Remove(line);
+            }
+            
             SetMarkers();
             SelectFigure(this);
         }
@@ -138,7 +139,11 @@ namespace GraphicsEditor
 
         private void Line_MouseLeftDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            parentContainer.Remove(new List<UIElement>(markers));
+            foreach (var marker in markers)
+            {
+                padded.Children.Remove(marker);
+            }
+            //parentContainer.Remove(new List<UIElement>(markers));
 
             e.Handled = true;
             SetMarkers();
@@ -196,8 +201,8 @@ namespace GraphicsEditor
             changeTheEnd = line;
             changeStart = newLine;
 
+            padded.Children.Add(newLine);
             lines.Add(newLine);
-
             int index = lines.IndexOf(line);
             lines.Insert(index + 1, lines.Last());
             lines.RemoveAt(lines.Count - 1);
@@ -218,13 +223,18 @@ namespace GraphicsEditor
 
             changeTheEnd = line;
             lines.Add(line);
+            padded.Children.Add(line);
         }
 
         private void SetMarkers()
         {
             List<Point> points = GetConnectionPointsOfLines();
 
-            parentContainer.Remove(new List<UIElement>(markers));
+            foreach (var marker in markers)
+            {
+                padded.Children.Remove(marker);
+            }
+            //parentContainer.Remove(new List<UIElement>(markers));
 
             markers = new();
             for (int i = 0; i < points.Count; i++)
@@ -285,6 +295,7 @@ namespace GraphicsEditor
             Canvas.SetLeft(marker, point.X - 5);
             Canvas.SetTop(marker, point.Y - 5);
 
+            padded.Children.Add(marker);
             return marker;
         }
 
@@ -308,9 +319,19 @@ namespace GraphicsEditor
 
         public void RemoveSelection()
         {
-            parentContainer.Remove(new List<UIElement>(markers));
-            parentContainer.Add(new List<UIElement>(CreatePlaque()));
+            foreach (var marker in markers)
+            {
+                padded.Children.Remove(marker);
+            }
+
+            foreach (var plaque in CreatePlaque())
+            {
+                padded.Children.Add(plaque);
+            }
+            //parentContainer.Remove(new List<UIElement>(markers));
+            //parentContainer.Add(new List<UIElement>(CreatePlaque()));
         }
+
         private List<Ellipse> CreatePlaque()
         {
             markers.Clear();
@@ -368,9 +389,9 @@ namespace GraphicsEditor
         {
             List<UIElement> uIElements = new();
 
-            uIElements.AddRange(lines);
+            uIElements.Add(padded);
 
-            uIElements.AddRange(markers);
+            //uIElements.AddRange(markers);
 
             return uIElements;
         }

@@ -13,8 +13,6 @@ namespace GraphicsEditor
     {
         public event EventSelectFigure SelectFigure;
 
-        public void SetParentContainer(ParentContainer parentContainer);
-
         public void ChangeToDelta(double deltaX, double deltaY);
 
         public void SetColor(Color color);

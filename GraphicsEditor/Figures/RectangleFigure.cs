@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using GraphicsEditor.Objects;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using GraphicsEditor.Abstracts;
 using GraphicsEditor.Data;
 using GraphicsEditor.Interfaces;
@@ -17,10 +19,13 @@ namespace GraphicsEditor
     {
         public event EventSelectFigure SelectFigure;
 
-        private readonly PaddedRectangle paddedRectangle = new();
-        private ParentContainer parentContainer;
-
         private Point previousMouse = new();
+
+        private readonly Rectangle rectangle = new();
+        private readonly Rectangle marker = new();
+        private readonly Canvas padded = new();
+        private readonly RotateTransform rotateTransform = new();
+        private Color color;
 
         private bool transform;
         private bool move;
@@ -29,23 +34,31 @@ namespace GraphicsEditor
         public RectangleFigure()
         {
             transform = true;
-            paddedRectangle.RectangleMouseDown += Rectangle_MouseLeftButtonDown;
-            paddedRectangle.RectangleMouseUp += Rectangle_MouseLeftButtonUp;
+            rectangle.MouseLeftButtonDown += Rectangle_MouseLeftButtonDown;
+            rectangle.MouseLeftButtonUp += Rectangle_MouseLeftButtonUp;
 
-            paddedRectangle.MarkerMouseDown += Marker_MouseLeftButtonDown;
-            paddedRectangle.MarkerMouseUp += Marker_MouseLeftButtonUp;
-        }
-
-        public void SetParentContainer(ParentContainer parentContainer)
-        {
-            this.parentContainer = parentContainer;
+            marker.MouseLeftButtonDown += Marker_MouseLeftButtonDown;
+            marker.MouseLeftButtonUp += Marker_MouseLeftButtonUp;
         }
 
         public FigureDataToSave GetDataToSave()
         {
             FigureDataToSave figureData = new();
 
-            RectangleDataToSave rectangleData = paddedRectangle.DataToSave();
+
+            RectangleDataToSave rectangleData = new()
+            {
+                colorA = color.A,
+                colorR = color.R,
+                colorG = color.G,
+                colorB = color.B,
+
+                Width = rectangle.Width,
+                Height = rectangle.Height,
+
+                Rotate = rotateTransform.Angle
+            };
+
             rectangleData.position = previousMouse;
             
             figureData.FigureJson = JsonConvert.SerializeObject(rectangleData);
@@ -56,46 +69,80 @@ namespace GraphicsEditor
         public void FillWithData(FigureDataToSave data)
         {
             RectangleDataToSave rectangleData = JsonConvert.DeserializeObject<RectangleDataToSave>(data.FigureJson);
-            paddedRectangle.FillWithData(rectangleData);
+            
+            color.A = rectangleData.colorA;
+            color.R = rectangleData.colorR;
+            color.G = rectangleData.colorG;
+            color.B = rectangleData.colorB;
+
+            rectangle.Width = rectangleData.Width;
+            rectangle.Height = rectangleData.Height;
+
+            padded.Width = rectangle.Width + 10;
+            padded.Height = rectangle.Height + 10;
+
+            rotateTransform.Angle = rectangleData.Rotate;
+            rotateTransform.CenterX = rectangle.Width / 2;
+            rotateTransform.CenterY = rectangle.Height / 2;
+
+            rectangle.Fill = new SolidColorBrush(color);
+
+            Thickness thickness = new();
+            thickness.Left = rectangle.Width - 5;
+            thickness.Top = rectangle.Height - 5;
+            marker.Margin = thickness;
 
             previousMouse = rectangleData.position;
 
-            paddedRectangle.ConfigureAnRectangle();
-            paddedRectangle.SetPosition(previousMouse);
+            ConfigureAnRectangle();
+            SetPosition(previousMouse);
 
-            paddedRectangle.RectangleMouseDown += Rectangle_MouseLeftButtonDown;
-            paddedRectangle.RectangleMouseUp += Rectangle_MouseLeftButtonUp;
+            rectangle.MouseLeftButtonDown += Rectangle_MouseLeftButtonDown;
+            rectangle.MouseLeftButtonUp += Rectangle_MouseLeftButtonUp;
 
-            paddedRectangle.MarkerMouseDown += Marker_MouseLeftButtonDown;
-            paddedRectangle.MarkerMouseUp += Marker_MouseLeftButtonUp;
+            rectangle.MouseLeftButtonDown += Marker_MouseLeftButtonDown;
+            rectangle.MouseLeftButtonUp += Marker_MouseLeftButtonUp;
         }
 
-        private void Rectangle_MouseLeftButtonUp()
+        private void ConfigureAnRectangle()
+        {
+            marker.Width = 10;
+            marker.Height = 10;
+
+            padded.Children.Add(rectangle);
+            padded.Children.Add(marker);
+            padded.RenderTransform = rotateTransform;
+        }
+
+        private void Rectangle_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             transform = false;
             move = false;
         }
 
-        private void Rectangle_MouseLeftButtonDown()
+        private void Rectangle_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            e.Handled = true;
+
             move = true;
             transform = false;
             rotate = false;
             
-
-            paddedRectangle.ShowMarker();
+            marker.Fill = Brushes.Red;
 
             SelectFigure(this);
         }
 
-        private void Marker_MouseLeftButtonUp()
+        private void Marker_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             transform = false;
             move = false;
         }
 
-        private void Marker_MouseLeftButtonDown()
+        private void Marker_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            e.Handled = true;
+
             transform = true;
             move = false;
             rotate = false;
@@ -105,10 +152,10 @@ namespace GraphicsEditor
         {
             if (transform)
             {
-                Point positionMouseOnSubstrate = Mouse.GetPosition(paddedRectangle.GetRectangle());
+                Point positionMouseOnSubstrate = Mouse.GetPosition(padded);
                 if (positionMouseOnSubstrate.X > 0 && positionMouseOnSubstrate.Y > 0)
                 {
-                    paddedRectangle.Resize(Math.Abs(positionMouseOnSubstrate.X), Math.Abs(positionMouseOnSubstrate.Y));
+                    Resize(Math.Abs(positionMouseOnSubstrate.X), Math.Abs(positionMouseOnSubstrate.Y));
                 }
             }
             else if(move)
@@ -117,24 +164,32 @@ namespace GraphicsEditor
             }
             else if(rotate)
             {
-                paddedRectangle.HideMarker();
-                paddedRectangle.Rotate(deltaY);
+                HideMarker();
+                Rotate(deltaY);
             }
+        }
+
+        private void Rotate(double rotate)
+        {
+            rotateTransform.CenterX = rectangle.Width / 2;
+            rotateTransform.CenterY = rectangle.Height / 2;
+            rotateTransform.Angle += rotate;
         }
 
         public void SetColor(Color color)
         {
-            paddedRectangle.SetColor(color);
+            this.color = color;
+            rectangle.Fill = new SolidColorBrush(color);
         }
 
         public void SetThickness(double thick)
         {
-            paddedRectangle.SetThickness(thick);
+            rectangle.StrokeThickness = thick;
         }
 
         public void RemoveSelection()
         {
-            paddedRectangle.HideMarker();
+            HideMarker();
             transform = false;
             move = false;
         }
@@ -142,8 +197,8 @@ namespace GraphicsEditor
         public void StartDrawing(Point point)
         {
             previousMouse = point;
-            paddedRectangle.ConfigureAnRectangle();
-            paddedRectangle.SetPosition(point);
+            ConfigureAnRectangle();
+            SetPosition(point);
             SelectFigure(this);
         }
 
@@ -155,13 +210,19 @@ namespace GraphicsEditor
         public List<UIElement> GetAllUIElements()
         {
             List<UIElement> uIElements = new();
-            uIElements.Add(paddedRectangle.GetRectangle());
+            uIElements.Add(padded);
             return uIElements;
         }
 
         public void MoveDistance(double deltaX, double deltaY)
         {
-            paddedRectangle.MoveDistance(deltaX, deltaY);
+            Point positionPadded = new(Canvas.GetLeft(padded), Canvas.GetTop(padded));
+
+            positionPadded.X += deltaX;
+            positionPadded.Y += deltaY;
+
+            Canvas.SetLeft(padded, positionPadded.X);
+            Canvas.SetTop(padded, positionPadded.Y);
         }
 
         public void CanvasMouseLeftButtonUp()
@@ -169,6 +230,31 @@ namespace GraphicsEditor
             transform = false;
             rotate = false;
             move = false;
+        }
+
+        private void SetPosition(Point point)
+        {
+            Canvas.SetLeft(padded, point.X);
+            Canvas.SetTop(padded, point.Y);
+        }
+
+        private void HideMarker()
+        {
+            marker.Fill = null;
+        }
+
+        public void Resize(double Widith, double Height)
+        {
+            rectangle.Width = Widith;
+            rectangle.Height = Height;
+
+            Thickness thickness = new();
+            thickness.Left = Widith - 5;
+            thickness.Top = Height - 5;
+            marker.Margin = thickness;
+
+            padded.Width = Widith;
+            padded.Height = Height;
         }
     }
 }

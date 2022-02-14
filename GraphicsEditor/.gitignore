@@ -1,0 +1,15 @@
+obj
+bin
+debug
+release
+*.suo
+*.user
+elmah
+*.sdf
+*.pubxml
+.vs/
+/Library/packages
+/Core/packages
+packages
+node_modules
+dist

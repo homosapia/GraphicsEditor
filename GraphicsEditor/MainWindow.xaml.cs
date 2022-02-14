@@ -15,6 +15,7 @@ namespace GraphicsEditor
     public partial class MainWindow : Window
     {
         private readonly IWorkspaceStorage Storage = new WorkspaceStorage();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -22,12 +23,12 @@ namespace GraphicsEditor
 
         private void BrokenLine_Click(object sender, RoutedEventArgs e)
         {
-            workspace.SetCurrentFigure(DataResources.BrokenLine);
+            workspace.SetKeyFigure(DataResources.BrokenLine);
         }
 
         private void Rectangle_Click(object sender, RoutedEventArgs e)
         {
-            workspace.SetCurrentFigure(DataResources.RectangleFigure);
+            workspace.SetKeyFigure(DataResources.RectangleFigure);
         }
 
         private void Palette_SelectedBrushChanged(object sender, Syncfusion.Windows.Tools.Controls.SelectedBrushChangedEventArgs e)

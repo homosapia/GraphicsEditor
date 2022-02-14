@@ -14,6 +14,7 @@ namespace GraphicsEditor
     {
         private ParentContainer parentContainer;
         private readonly List<IFigure> figures = new();
+        private string key;
         private IFigure currentFigure;
         private IFactory factory = new Factory();
 
@@ -35,6 +36,7 @@ namespace GraphicsEditor
         {
             if (placingMode)
             {
+                SetCurrentFigure(key);
                 currentFigure.StartDrawing(e.GetPosition(canvas));
                 placingMode = false;
             }
@@ -82,17 +84,20 @@ namespace GraphicsEditor
             firstClickPosition = Mouse.GetPosition(canvas);
         }
 
-        public void SetCurrentFigure(string key)
+        public void SetKeyFigure(string key)
         {
-            if(currentFigure != null) 
+            if (currentFigure != null)
                 currentFigure.RemoveSelection();
-            
-            currentFigure = null;
+
             placingMode = true;
             figureSelected = true;
 
+            this.key = key;
+        }
+
+        public void SetCurrentFigure(string key)
+        {
             currentFigure = factory.CreateFigure(key);
-            currentFigure.SetParentContainer(parentContainer);
             Sign(currentFigure);
 
             currentFigure.SetColor(color);
@@ -143,15 +148,6 @@ namespace GraphicsEditor
             figure.SelectFigure += SelectedFigure;
         }
 
-        private void AddUiElements(List<UIElement> uIElements)
-        {
-            foreach (UIElement ui in uIElements)
-            {
-                if(!canvas.Children.Contains(ui)) 
-                    canvas.Children.Add(ui);
-            }
-        }
-
         public void SetColor(Color colorPalette)
         {
             color = colorPalette;
@@ -170,12 +166,6 @@ namespace GraphicsEditor
             }
         }
 
-        public void RemoveSelection()
-        {
-            currentFigure?.RemoveSelection();
-            figureSelected = false;
-        }
-
         public void DeleteFigure()
         {
             if (currentFigure != null)
@@ -189,14 +179,6 @@ namespace GraphicsEditor
             figures.Remove(currentFigure);
             currentFigure = null;
             figureSelected = false;
-        }
-
-        private void RemoveUiElements(List<UIElement> uIElements)
-        {
-            foreach (UIElement uI in uIElements)
-            {
-                canvas.Children.Remove(uI);
-            }
         }
 
         private void SelectedFigure(IFigure figure)
