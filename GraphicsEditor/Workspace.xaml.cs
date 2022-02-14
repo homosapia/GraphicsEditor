@@ -38,6 +38,7 @@ namespace GraphicsEditor
             {
                 SetCurrentFigure(key);
                 currentFigure.StartDrawing(e.GetPosition(canvas));
+                canvas.Children.Add(currentFigure.GetAllUIElements());
                 placingMode = false;
             }
 
@@ -84,7 +85,7 @@ namespace GraphicsEditor
             firstClickPosition = Mouse.GetPosition(canvas);
         }
 
-        public void SetFigureKey(string key)
+        public void SetDrawingMode(string key)
         {
             if (currentFigure != null)
                 currentFigure.RemoveSelection();
@@ -100,6 +101,7 @@ namespace GraphicsEditor
             currentFigure = factory.CreateFigure(key);
             Sign(currentFigure);
 
+            figures.Add(currentFigure);
             currentFigure.SetColor(color);
             currentFigure.SetThickness(figureThickness);
         }
@@ -176,19 +178,18 @@ namespace GraphicsEditor
 
         private void Selected(IFigure figure)
         {
+            if (currentFigure != figure && currentFigure != null)
+                currentFigure.RemoveSelection();
+
             figureSelected = true;
             currentFigure = figure;
 
-            UIElement element = figure.GetAllUIElements();
-            if (canvas.Children.Contains(element))
+            for (int i = canvas.Children.Count - 1; i >= 0; i--)
             {
-                Canvas.SetZIndex(element, 1);
-                return;
+                Canvas.SetZIndex(canvas.Children[i], -i);
             }
-            
-            figures.Add(currentFigure);
-            Canvas.SetZIndex(element, 1);
-            canvas.Children.Add(element);
+
+            Canvas.SetZIndex(figure.GetAllUIElements(), 1);
         }
     }
 }

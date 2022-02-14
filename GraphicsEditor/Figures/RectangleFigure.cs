@@ -199,7 +199,6 @@ namespace GraphicsEditor
             previousMouse = point;
             ConfigureAnRectangle();
             SetPosition(point);
-            Select(this);
         }
 
         public void CanvasMouseLeftButtonDown()

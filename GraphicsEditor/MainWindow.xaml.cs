@@ -23,12 +23,12 @@ namespace GraphicsEditor
 
         private void BrokenLine_Click(object sender, RoutedEventArgs e)
         {
-            workspace.SetFigureKey(DataResources.BrokenLine);
+            workspace.SetDrawingMode(DataResources.BrokenLine);
         }
 
         private void Rectangle_Click(object sender, RoutedEventArgs e)
         {
-            workspace.SetFigureKey(DataResources.RectangleFigure);
+            workspace.SetDrawingMode(DataResources.RectangleFigure);
         }
 
         private void Palette_SelectedBrushChanged(object sender, Syncfusion.Windows.Tools.Controls.SelectedBrushChangedEventArgs e)

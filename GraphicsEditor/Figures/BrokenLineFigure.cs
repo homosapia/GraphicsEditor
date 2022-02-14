@@ -89,8 +89,7 @@ namespace GraphicsEditor
         {
             markerSelected = false;
             List<UIElement> lines = GetLinesLess(5);
-
-            //parentContainer.Remove(lines);
+            
 
             foreach (var line in lines)
             {
@@ -143,7 +142,6 @@ namespace GraphicsEditor
             {
                 pad.Children.Remove(marker);
             }
-            //parentContainer.Remove(new List<UIElement>(markers));
 
             e.Handled = true;
             SetMarkers();
@@ -234,7 +232,6 @@ namespace GraphicsEditor
             {
                 pad.Children.Remove(marker);
             }
-            //parentContainer.Remove(new List<UIElement>(markers));
 
             markers = new();
             for (int i = 0; i < points.Count; i++)
@@ -328,8 +325,6 @@ namespace GraphicsEditor
             {
                 pad.Children.Add(plaque);
             }
-            //parentContainer.Remove(new List<UIElement>(markers));
-            //parentContainer.Add(new List<UIElement>(CreatePlaque()));
         }
 
         private List<Ellipse> CreatePlaque()
@@ -377,8 +372,6 @@ namespace GraphicsEditor
             
             markers.Add(CreateMarker(point));
             markers.Add(marker = CreateMarker(point));
-
-            Select(this);
         }
 
         public void CanvasMouseLeftButtonDown()
