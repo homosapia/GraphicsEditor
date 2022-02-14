@@ -17,13 +17,13 @@ namespace GraphicsEditor
 {
     public class RectangleFigure : IFigure
     {
-        public event EventSelectFigure SelectFigure;
+        public event EventSelectFigure Select;
 
         private Point previousMouse = new();
 
         private readonly Rectangle rectangle = new();
         private readonly Rectangle marker = new();
-        private readonly Canvas padded = new();
+        private readonly Canvas pad = new();
         private readonly RotateTransform rotateTransform = new();
         private Color color;
 
@@ -78,8 +78,8 @@ namespace GraphicsEditor
             rectangle.Width = rectangleData.Width;
             rectangle.Height = rectangleData.Height;
 
-            padded.Width = rectangle.Width + 10;
-            padded.Height = rectangle.Height + 10;
+            pad.Width = rectangle.Width + 10;
+            pad.Height = rectangle.Height + 10;
 
             rotateTransform.Angle = rectangleData.Rotate;
             rotateTransform.CenterX = rectangle.Width / 2;
@@ -109,9 +109,9 @@ namespace GraphicsEditor
             marker.Width = 10;
             marker.Height = 10;
 
-            padded.Children.Add(rectangle);
-            padded.Children.Add(marker);
-            padded.RenderTransform = rotateTransform;
+            pad.Children.Add(rectangle);
+            pad.Children.Add(marker);
+            pad.RenderTransform = rotateTransform;
         }
 
         private void Rectangle_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -130,7 +130,7 @@ namespace GraphicsEditor
             
             marker.Fill = Brushes.Red;
 
-            SelectFigure(this);
+            Select(this);
         }
 
         private void Marker_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -152,7 +152,7 @@ namespace GraphicsEditor
         {
             if (transform)
             {
-                Point positionMouseOnSubstrate = Mouse.GetPosition(padded);
+                Point positionMouseOnSubstrate = Mouse.GetPosition(pad);
                 if (positionMouseOnSubstrate.X > 0 && positionMouseOnSubstrate.Y > 0)
                 {
                     Resize(Math.Abs(positionMouseOnSubstrate.X), Math.Abs(positionMouseOnSubstrate.Y));
@@ -199,7 +199,7 @@ namespace GraphicsEditor
             previousMouse = point;
             ConfigureAnRectangle();
             SetPosition(point);
-            SelectFigure(this);
+            Select(this);
         }
 
         public void CanvasMouseLeftButtonDown()
@@ -207,22 +207,20 @@ namespace GraphicsEditor
             rotate = true;
         }
 
-        public List<UIElement> GetAllUIElements()
+        public UIElement GetAllUIElements()
         {
-            List<UIElement> uIElements = new();
-            uIElements.Add(padded);
-            return uIElements;
+            return pad;
         }
 
         public void MoveDistance(double deltaX, double deltaY)
         {
-            Point positionPadded = new(Canvas.GetLeft(padded), Canvas.GetTop(padded));
+            Point positionPadded = new(Canvas.GetLeft(pad), Canvas.GetTop(pad));
 
             positionPadded.X += deltaX;
             positionPadded.Y += deltaY;
 
-            Canvas.SetLeft(padded, positionPadded.X);
-            Canvas.SetTop(padded, positionPadded.Y);
+            Canvas.SetLeft(pad, positionPadded.X);
+            Canvas.SetTop(pad, positionPadded.Y);
         }
 
         public void CanvasMouseLeftButtonUp()
@@ -234,8 +232,8 @@ namespace GraphicsEditor
 
         private void SetPosition(Point point)
         {
-            Canvas.SetLeft(padded, point.X);
-            Canvas.SetTop(padded, point.Y);
+            Canvas.SetLeft(pad, point.X);
+            Canvas.SetTop(pad, point.Y);
         }
 
         private void HideMarker()
@@ -253,8 +251,8 @@ namespace GraphicsEditor
             thickness.Top = Height - 5;
             marker.Margin = thickness;
 
-            padded.Width = Widith;
-            padded.Height = Height;
+            pad.Width = Widith;
+            pad.Height = Height;
         }
     }
 }

@@ -11,7 +11,7 @@ namespace GraphicsEditor
 
     public interface IFigure
     {
-        public event EventSelectFigure SelectFigure;
+        public event EventSelectFigure Select;
 
         public void ChangeToDelta(double deltaX, double deltaY);
 
@@ -27,7 +27,7 @@ namespace GraphicsEditor
 
         public void CanvasMouseLeftButtonUp();
 
-        public List<UIElement> GetAllUIElements();
+        public UIElement GetAllUIElements();
 
         public FigureDataToSave GetDataToSave();
 

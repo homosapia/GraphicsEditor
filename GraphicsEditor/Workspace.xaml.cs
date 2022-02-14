@@ -84,7 +84,7 @@ namespace GraphicsEditor
             firstClickPosition = Mouse.GetPosition(canvas);
         }
 
-        public void SetKeyFigure(string key)
+        public void SetFigureKey(string key)
         {
             if (currentFigure != null)
                 currentFigure.RemoveSelection();
@@ -102,7 +102,6 @@ namespace GraphicsEditor
 
             currentFigure.SetColor(color);
             currentFigure.SetThickness(figureThickness);
-            figures.Add(currentFigure);
         }
 
         public WorkspaceDataToSave GetDataToSave()
@@ -135,17 +134,14 @@ namespace GraphicsEditor
         {
             foreach (IFigure figure in figures)
             {
-                List<UIElement> uIs = figure.GetAllUIElements();
-                foreach (UIElement uI in uIs)
-                {
-                    canvas.Children.Add(uI);
-                }
+                UIElement uIs = figure.GetAllUIElements();
+                canvas.Children.Add(uIs);
             }
         }
 
         private void Sign(IFigure figure)
         {
-            figure.SelectFigure += SelectedFigure;
+            figure.Select += Selected;
         }
 
         public void SetColor(Color colorPalette)
@@ -170,38 +166,29 @@ namespace GraphicsEditor
         {
             if (currentFigure != null)
             {
-                List<UIElement> uIElements = currentFigure.GetAllUIElements();
-                foreach (UIElement uIFigure in uIElements)
-                {
-                    canvas.Children.Remove(uIFigure);
-                }
+                UIElement uIElements = currentFigure.GetAllUIElements();
+                canvas.Children.Remove(uIElements);
             }
             figures.Remove(currentFigure);
             currentFigure = null;
             figureSelected = false;
         }
 
-        private void SelectedFigure(IFigure figure)
+        private void Selected(IFigure figure)
         {
             figureSelected = true;
-            if (currentFigure != figure)
-            {
-                currentFigure?.RemoveSelection();
-            }
             currentFigure = figure;
-            
-            for(int i = canvas.Children.Count - 1; i >= 0; i--)
-            {
-                Canvas.SetZIndex(canvas.Children[i], -i);
-            }
 
-            List<UIElement> uIs = currentFigure.GetAllUIElements();
-            foreach (UIElement uI in uIs)
+            UIElement element = figure.GetAllUIElements();
+            if (canvas.Children.Contains(element))
             {
-                Canvas.SetZIndex(uI, 1);
-                if (!canvas.Children.Contains(uI))
-                    canvas.Children.Add(uI);
+                Canvas.SetZIndex(element, 1);
+                return;
             }
+            
+            figures.Add(currentFigure);
+            Canvas.SetZIndex(element, 1);
+            canvas.Children.Add(element);
         }
     }
 }

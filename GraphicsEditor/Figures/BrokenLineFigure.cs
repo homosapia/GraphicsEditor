@@ -17,13 +17,13 @@ namespace GraphicsEditor
 {
     public class BrokenLineFigure : IFigure
     {
-        public event EventSelectFigure SelectFigure;
+        public event EventSelectFigure Select;
         
 
         private readonly List<Line> lines = new();
         private Line changeStart = new();
         private Line changeTheEnd = new();
-        private Canvas padded = new();
+        private Canvas pad = new();
 
         private List<Ellipse> markers = new();
         private Ellipse marker = new();
@@ -94,11 +94,11 @@ namespace GraphicsEditor
 
             foreach (var line in lines)
             {
-                padded.Children.Remove(line);
+                pad.Children.Remove(line);
             }
             
             SetMarkers();
-            SelectFigure(this);
+            Select(this);
         }
 
         private List<UIElement> GetLinesLess(int length)
@@ -134,14 +134,14 @@ namespace GraphicsEditor
             Point point = new(Canvas.GetLeft(marker) + 5, Canvas.GetTop(marker) + 5);
             PointInRadius(point, 0);
 
-            SelectFigure(this);
+            Select(this);
         }
 
         private void Line_MouseLeftDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             foreach (var marker in markers)
             {
-                padded.Children.Remove(marker);
+                pad.Children.Remove(marker);
             }
             //parentContainer.Remove(new List<UIElement>(markers));
 
@@ -161,7 +161,7 @@ namespace GraphicsEditor
                 markers.Add(marker);
                 markerSelected = true;
             }
-            SelectFigure(this);
+            Select(this);
         }
 
         private void PointInRadius(Point point, byte Radius)
@@ -201,7 +201,7 @@ namespace GraphicsEditor
             changeTheEnd = line;
             changeStart = newLine;
 
-            padded.Children.Add(newLine);
+            pad.Children.Add(newLine);
             lines.Add(newLine);
             int index = lines.IndexOf(line);
             lines.Insert(index + 1, lines.Last());
@@ -223,7 +223,7 @@ namespace GraphicsEditor
 
             changeTheEnd = line;
             lines.Add(line);
-            padded.Children.Add(line);
+            pad.Children.Add(line);
         }
 
         private void SetMarkers()
@@ -232,7 +232,7 @@ namespace GraphicsEditor
 
             foreach (var marker in markers)
             {
-                padded.Children.Remove(marker);
+                pad.Children.Remove(marker);
             }
             //parentContainer.Remove(new List<UIElement>(markers));
 
@@ -295,7 +295,7 @@ namespace GraphicsEditor
             Canvas.SetLeft(marker, point.X - 5);
             Canvas.SetTop(marker, point.Y - 5);
 
-            padded.Children.Add(marker);
+            pad.Children.Add(marker);
             return marker;
         }
 
@@ -321,12 +321,12 @@ namespace GraphicsEditor
         {
             foreach (var marker in markers)
             {
-                padded.Children.Remove(marker);
+                pad.Children.Remove(marker);
             }
 
             foreach (var plaque in CreatePlaque())
             {
-                padded.Children.Add(plaque);
+                pad.Children.Add(plaque);
             }
             //parentContainer.Remove(new List<UIElement>(markers));
             //parentContainer.Add(new List<UIElement>(CreatePlaque()));
@@ -378,22 +378,16 @@ namespace GraphicsEditor
             markers.Add(CreateMarker(point));
             markers.Add(marker = CreateMarker(point));
 
-            SelectFigure(this);
+            Select(this);
         }
 
         public void CanvasMouseLeftButtonDown()
         {
         }
 
-        public List<UIElement> GetAllUIElements()
+        public UIElement GetAllUIElements()
         {
-            List<UIElement> uIElements = new();
-
-            uIElements.Add(padded);
-
-            //uIElements.AddRange(markers);
-
-            return uIElements;
+            return pad;
         }
 
         public void MoveDistance(double deltaX, double deltaY)
