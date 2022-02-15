@@ -17,7 +17,7 @@ namespace GraphicsEditor
 {
     public class RectangleFigure : IFigure
     {
-        public event EventSelectFigure Select;
+        public event EventSelectFigure Selected;
 
         private Point previousMouse = new();
 
@@ -41,12 +41,12 @@ namespace GraphicsEditor
             marker.MouseLeftButtonUp += Marker_MouseLeftButtonUp;
         }
 
-        public FigureDataToSave GetDataToSave()
+        public FigureData DataSave()
         {
-            FigureDataToSave figureData = new();
+            FigureData figureData = new();
 
 
-            RectangleDataToSave rectangleData = new()
+            RectangleModel rectangleData = new()
             {
                 colorA = color.A,
                 colorR = color.R,
@@ -66,9 +66,9 @@ namespace GraphicsEditor
             return figureData;
         }
 
-        public void FillWithData(FigureDataToSave data)
+        public void FillWithData(FigureData data)
         {
-            RectangleDataToSave rectangleData = JsonConvert.DeserializeObject<RectangleDataToSave>(data.FigureJson);
+            RectangleModel rectangleData = JsonConvert.DeserializeObject<RectangleModel>(data.FigureJson);
             
             color.A = rectangleData.colorA;
             color.R = rectangleData.colorR;
@@ -130,7 +130,7 @@ namespace GraphicsEditor
             
             marker.Fill = Brushes.Red;
 
-            Select(this);
+            Selected?.Invoke(this);
         }
 
         private void Marker_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -206,7 +206,7 @@ namespace GraphicsEditor
             rotate = true;
         }
 
-        public UIElement GetAllUIElements()
+        public UIElement GetUIElement()
         {
             return pad;
         }

@@ -11,7 +11,7 @@ namespace GraphicsEditor
 
     public interface IFigure
     {
-        public event EventSelectFigure Select;
+        public event EventSelectFigure Selected;
 
         public void ChangeToDelta(double deltaX, double deltaY);
 
@@ -27,11 +27,11 @@ namespace GraphicsEditor
 
         public void CanvasMouseLeftButtonUp();
 
-        public UIElement GetAllUIElements();
+        public UIElement GetUIElement();
 
-        public FigureDataToSave GetDataToSave();
+        public FigureData DataSave();
 
-        public void FillWithData(FigureDataToSave json);
+        public void FillWithData(FigureData json);
 
         public void MoveDistance(double deltaX, double deltaY);
     }

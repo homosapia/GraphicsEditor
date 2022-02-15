@@ -43,12 +43,12 @@ namespace GraphicsEditor
 
         private void Download_Click(object sender, RoutedEventArgs e)
         {
-            workspace.SetWorkspaceData(Storage.Load());
+            workspace.SetData(Storage.Load());
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            Storage.Save(workspace.GetDataToSave());
+            Storage.Save(workspace.Save());
         }
 
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

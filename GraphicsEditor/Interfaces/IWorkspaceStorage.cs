@@ -9,8 +9,8 @@ namespace GraphicsEditor.Interfaces
 {
     interface IWorkspaceStorage
     {
-        public void Save(WorkspaceDataToSave workspaceData);
+        public void Save(WorkspaceData workspaceData);
         
-        public WorkspaceDataToSave Load();
+        public WorkspaceData Load();
     }
 }

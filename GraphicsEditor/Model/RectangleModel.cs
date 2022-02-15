@@ -8,7 +8,7 @@ using GraphicsEditor.Abstracts;
 
 namespace GraphicsEditor.Data
 {
-    class RectangleDataToSave
+    class RectangleModel
     {
         public byte colorA;
         public byte colorR;

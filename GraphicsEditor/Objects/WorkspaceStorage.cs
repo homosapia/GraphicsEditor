@@ -11,7 +11,7 @@ namespace GraphicsEditor.Objects
 {
     class WorkspaceStorage : IWorkspaceStorage
     {
-        public void Save(WorkspaceDataToSave workspaceData)
+        public void Save(WorkspaceData workspaceData)
         {
             SaveFileDialog saveFileDialog = new();
             saveFileDialog.ShowDialog();
@@ -25,9 +25,9 @@ namespace GraphicsEditor.Objects
             catch { }
         }
 
-        public WorkspaceDataToSave Load()
+        public WorkspaceData Load()
         {
-            WorkspaceDataToSave workspace = new();
+            WorkspaceData workspace = new();
             
             OpenFileDialog openFileDialog = new();
             openFileDialog.ShowDialog();
@@ -39,7 +39,7 @@ namespace GraphicsEditor.Objects
                     string line;
                     while ((line = sr.ReadLine()) != null)
                     {
-                        workspace = JsonConvert.DeserializeObject<WorkspaceDataToSave>(line);
+                        workspace = JsonConvert.DeserializeObject<WorkspaceData>(line);
                     }
                 }
             }

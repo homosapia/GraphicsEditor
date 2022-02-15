@@ -7,9 +7,9 @@ using GraphicsEditor.Abstracts;
 
 namespace GraphicsEditor.Interfaces
 {
-    public interface IFactory
+    public interface IFactoryFigur
     {
-        public IFigure CreateFromData(FigureDataToSave figureData);
-        public IFigure CreateFigure(string key);
+        public IFigure CreateFromData(FigureData figureData);
+        public IFigure Create(string key);
     }
 }

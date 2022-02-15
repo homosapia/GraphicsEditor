@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GraphicsEditor.Abstracts
 {
-    public class FigureDataToSave
+    public class FigureData
     {
         public string FigureJson;
         public string FigureType;

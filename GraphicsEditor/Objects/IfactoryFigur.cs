@@ -7,16 +7,16 @@ using GraphicsEditor.Resources;
 
 namespace GraphicsEditor.Objects
 {
-    class Factory : IFactory
+    class FactoryFigur : IFactoryFigur
     {
-        public IFigure CreateFromData(FigureDataToSave figureData)
+        public IFigure CreateFromData(FigureData figureData)
         {
-            IFigure figure = CreateFigure(figureData.FigureType);
+            IFigure figure = Create(figureData.FigureType);
             figure.FillWithData(figureData);
             return figure;
         }
 
-        public IFigure CreateFigure(string key)
+        public IFigure Create(string key)
         {
             if (key == DataResources.BrokenLine)
             {

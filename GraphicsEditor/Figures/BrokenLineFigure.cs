@@ -17,7 +17,7 @@ namespace GraphicsEditor
 {
     public class BrokenLineFigure : IFigure
     {
-        public event EventSelectFigure Select;
+        public event EventSelectFigure Selected;
         
 
         private readonly List<Line> lines = new();
@@ -32,9 +32,9 @@ namespace GraphicsEditor
         private Color color = Color.FromArgb(255, 0, 0, 0);
         private double thickness;
 
-        public FigureDataToSave GetDataToSave()
+        public FigureData DataSave()
         {
-            FigureDataToSave figureData = new();
+            FigureData figureData = new();
 
             Point[,] points = new Point[lines.Count, 2];
             for (int i = 0; i < lines.Count; i++)
@@ -46,7 +46,7 @@ namespace GraphicsEditor
                 points[i, 1] = point;
             }
 
-            BrokenLineDataToSave brokenLineData = new()
+            BrokenLineModel brokenLineData = new()
             {
                 points = points,
 
@@ -64,9 +64,9 @@ namespace GraphicsEditor
             return figureData;
         }
 
-        public void FillWithData(FigureDataToSave data)
+        public void FillWithData(FigureData data)
         {
-            BrokenLineDataToSave brokenLineData = JsonConvert.DeserializeObject<BrokenLineDataToSave>(data.FigureJson);
+            BrokenLineModel brokenLineData = JsonConvert.DeserializeObject<BrokenLineModel>(data.FigureJson);
 
             color.A = brokenLineData.colorA;
             color.R = brokenLineData.colorR;
@@ -97,7 +97,7 @@ namespace GraphicsEditor
             }
             
             SetMarkers();
-            Select(this);
+            Selected?.Invoke(this);
         }
 
         private List<UIElement> GetLinesLess(int length)
@@ -133,7 +133,7 @@ namespace GraphicsEditor
             Point point = new(Canvas.GetLeft(marker) + 5, Canvas.GetTop(marker) + 5);
             PointInRadius(point, 0);
 
-            Select(this);
+            Selected?.Invoke(this);
         }
 
         private void Line_MouseLeftDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -159,7 +159,7 @@ namespace GraphicsEditor
                 markers.Add(marker);
                 markerSelected = true;
             }
-            Select(this);
+            Selected?.Invoke(this);
         }
 
         private void PointInRadius(Point point, byte Radius)
@@ -378,7 +378,7 @@ namespace GraphicsEditor
         {
         }
 
-        public UIElement GetAllUIElements()
+        public UIElement GetUIElement()
         {
             return pad;
         }

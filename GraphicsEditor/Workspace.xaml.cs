@@ -12,24 +12,22 @@ namespace GraphicsEditor
 {
     public partial class Workspace : UserControl
     {
-        private ParentContainer parentContainer;
         private readonly List<IFigure> figures = new();
         private string key;
         private IFigure currentFigure;
-        private IFactory factory = new Factory();
+        private IFactoryFigur factoryFigur = new FactoryFigur();
 
-        private Point firstClickPosition = new();
+        private Point previousMouse = new();
 
         private bool figureSelected;
         private bool placingMode;
 
         private double figureThickness = 1;
-        private Color color = Color.FromArgb(255, 0, 0, 0);
+        private Color figureColor = Color.FromArgb(255, 0, 0, 0);
 
         public Workspace()
         {
             InitializeComponent();
-            parentContainer = new ParentContainer(canvas);
         }
 
         private void Сanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -38,7 +36,7 @@ namespace GraphicsEditor
             {
                 SetCurrentFigure(key);
                 currentFigure.StartDrawing(e.GetPosition(canvas));
-                canvas.Children.Add(currentFigure.GetAllUIElements());
+                canvas.Children.Add(currentFigure.GetUIElement());
                 placingMode = false;
             }
 
@@ -47,9 +45,9 @@ namespace GraphicsEditor
 
         private void Сanvas_MouseMove(object sender, MouseEventArgs e)
         {
-            Point CurrentMouse = Mouse.GetPosition(canvas);
-            double deltaX = CurrentMouse.X - firstClickPosition.X;
-            double deltaY = CurrentMouse.Y - firstClickPosition.Y;
+            Point currentMouse = Mouse.GetPosition(canvas);
+            double deltaX = currentMouse.X - previousMouse.X;
+            double deltaY = currentMouse.Y - previousMouse.Y;
             
             if  (figureSelected)
             {
@@ -64,7 +62,7 @@ namespace GraphicsEditor
                 }
             }
 
-            firstClickPosition = CurrentMouse;
+            previousMouse = currentMouse;
         }
 
         private void Canvas_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -82,7 +80,7 @@ namespace GraphicsEditor
                 currentFigure = null;
             }
 
-            firstClickPosition = Mouse.GetPosition(canvas);
+            previousMouse = Mouse.GetPosition(canvas);
         }
 
         public void SetDrawingMode(string key)
@@ -98,35 +96,35 @@ namespace GraphicsEditor
 
         public void SetCurrentFigure(string key)
         {
-            currentFigure = factory.CreateFigure(key);
-            Sign(currentFigure);
+            currentFigure = factoryFigur.Create(key);
+            currentFigure.Selected += Figure_Selected;
 
             figures.Add(currentFigure);
-            currentFigure.SetColor(color);
+            currentFigure.SetColor(figureColor);
             currentFigure.SetThickness(figureThickness);
         }
 
-        public WorkspaceDataToSave GetDataToSave()
+        public WorkspaceData Save()
         {
-            WorkspaceDataToSave workspaceData = new();
+            WorkspaceData workspaceData = new();
             foreach (IFigure figure in figures)
             {
-                FigureDataToSave figureData = figure.GetDataToSave();
+                FigureData figureData = figure.DataSave();
 
                 workspaceData.Figures.Add(figureData);
             }
             return workspaceData;
         }
 
-        public void SetWorkspaceData(WorkspaceDataToSave workspaceData)
+        public void SetData(WorkspaceData workspaceData)
         {
             canvas.Children.Clear();
             figures.Clear();
-            foreach (FigureDataToSave figureData in workspaceData.Figures)
+            foreach (FigureData figureData in workspaceData.Figures)
             {
-                IFigure figure = factory.CreateFromData(figureData);
+                IFigure figure = factoryFigur.CreateFromData(figureData);
                 figures.Add(figure);
-                Sign(figure);
+                figure.Selected += Figure_Selected;
             }
 
             DisplayFigures(figures);
@@ -136,19 +134,14 @@ namespace GraphicsEditor
         {
             foreach (IFigure figure in figures)
             {
-                UIElement uIs = figure.GetAllUIElements();
+                UIElement uIs = figure.GetUIElement();
                 canvas.Children.Add(uIs);
             }
         }
 
-        private void Sign(IFigure figure)
-        {
-            figure.Select += Selected;
-        }
-
         public void SetColor(Color colorPalette)
         {
-            color = colorPalette;
+            figureColor = colorPalette;
             if (currentFigure != null)
             {
                 currentFigure.SetColor(colorPalette);
@@ -168,7 +161,7 @@ namespace GraphicsEditor
         {
             if (currentFigure != null)
             {
-                UIElement uIElements = currentFigure.GetAllUIElements();
+                UIElement uIElements = currentFigure.GetUIElement();
                 canvas.Children.Remove(uIElements);
             }
             figures.Remove(currentFigure);
@@ -176,7 +169,7 @@ namespace GraphicsEditor
             figureSelected = false;
         }
 
-        private void Selected(IFigure figure)
+        private void Figure_Selected(IFigure figure)
         {
             if (currentFigure != figure && currentFigure != null)
                 currentFigure.RemoveSelection();
@@ -189,7 +182,7 @@ namespace GraphicsEditor
                 Canvas.SetZIndex(canvas.Children[i], -i);
             }
 
-            Canvas.SetZIndex(figure.GetAllUIElements(), 1);
+            Canvas.SetZIndex(figure.GetUIElement(), 1);
         }
     }
 }

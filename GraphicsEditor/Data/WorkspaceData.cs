@@ -4,8 +4,8 @@ using GraphicsEditor.Abstracts;
 
 namespace GraphicsEditor.Data
 {
-    public class WorkspaceDataToSave
+    public class WorkspaceData
     {
-        public List<FigureDataToSave> Figures = new();
+        public List<FigureData> Figures = new();
     }
 }
